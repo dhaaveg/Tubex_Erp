@@ -15,9 +15,10 @@ import {
   Wrench, 
   GitFork,
   Scale,
-  FileSpreadsheet
+  FileSpreadsheet,
 } from 'lucide-react';
 import { NavigationTab } from '../Sidebar';
+import RecentActivityFeed from '../RecentActivityFeed';
 
 interface OverviewDashboardProps {
   stats: any;
@@ -240,6 +241,13 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
           </div>
         </div>
       </div>
+
+      {/* Real-Time Operational Recent Activity Feed */}
+      <RecentActivityFeed
+        limit={15}
+        title="Recent Operational Activity"
+        onViewAll={() => onNavigate('admin-export')}
+      />
     </div>
   );
 }

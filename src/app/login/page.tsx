@@ -9,6 +9,7 @@ import {
   ArrowRight,
   AlertCircle,
   Building2,
+  Clock,
 } from 'lucide-react';
 import { COMPANY_NAME } from '@/lib/companyLogo';
 import { useAuth } from '@/context/AuthContext';
@@ -22,6 +23,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refetchUser } = useAuth();
+  const isTimeout = searchParams?.get('reason') === 'timeout';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +84,15 @@ export default function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="bg-slate-900/90 border border-slate-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10 backdrop-blur-xl">
           <form className="space-y-5" onSubmit={handleLogin}>
+            {isTimeout && (
+              <div className="p-3.5 rounded-xl bg-amber-950/80 border border-amber-600/70 text-amber-200 text-xs flex items-center space-x-2.5 shadow-lg shadow-amber-950/40">
+                <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="font-semibold leading-relaxed">
+                  You were signed out due to 2 hours of inactivity.
+                </span>
+              </div>
+            )}
+
             {error && (
               <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-700/60 text-rose-200 text-xs flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />

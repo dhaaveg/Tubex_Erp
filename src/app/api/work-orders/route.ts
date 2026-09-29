@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { WorkOrderSchema } from '@/lib/validations';
+import { getCurrentSession } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
@@ -186,6 +187,25 @@ export async function POST(request: Request) {
         data: { pipe_allocation_status: 'Allocated' },
       });
     }
+
+    // Audit Log WO_RELEASED
+    const current = await getCurrentSession().catch(() => null);
+    await prisma.auditLog.create({
+      data: {
+        user_id: current?.user?.id || null,
+        action: 'WO_RELEASED',
+        entity_type: 'WorkOrder',
+        entity_id: workOrder.wo_id,
+        details: JSON.stringify({
+          wo_id: workOrder.wo_id,
+          grade: workOrder.grade,
+          size: workOrder.size,
+          machine_line_no: workOrder.machine_line_no,
+          planned_parts: workOrder.planned_parts_to_produce,
+          shift: workOrder.shift,
+        }),
+      },
+    }).catch(() => {});
 
     return NextResponse.json(workOrder, { status: 201 });
   } catch (error: any) {

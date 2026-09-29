@@ -49,9 +49,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate unique session token
+    // Generate unique session token (strict 2-hour idle window)
     const sessionId = `SES-${crypto.randomUUID()}`;
-    const maxAgeSeconds = 7 * 24 * 60 * 60; // 7 days
+    const maxAgeSeconds = 7200; // 2 hours = 120 minutes = 7200 seconds
     const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000);
 
     const clientIp = request.headers.get('x-forwarded-for') || 'local';

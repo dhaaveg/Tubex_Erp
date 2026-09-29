@@ -47,7 +47,10 @@ export async function encryptSessionToken(payload: SessionPayload): Promise<stri
   return `${ivB64}.${cipherB64}`;
 }
 
-export async function decryptSessionToken(token: string): Promise<SessionPayload | null> {
+export async function decryptSessionToken(
+  token: string,
+  options?: { ignoreExpiry?: boolean }
+): Promise<SessionPayload | null> {
   try {
     const [ivB64, cipherB64] = token.split('.');
     if (!ivB64 || !cipherB64) return null;
@@ -60,7 +63,7 @@ export async function decryptSessionToken(token: string): Promise<SessionPayload
     const decoder = new TextDecoder();
     const parsed = JSON.parse(decoder.decode(decrypted)) as SessionPayload;
 
-    if (Date.now() > parsed.exp) {
+    if (!options?.ignoreExpiry && Date.now() > parsed.exp) {
       return null;
     }
     return parsed;
@@ -127,8 +130,10 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!token) return null;
 
-  const payload = await decryptSessionToken(token);
+  const payload = await decryptSessionToken(token, { ignoreExpiry: true });
   if (!payload) return null;
+
+  const isTokenExpired = Date.now() > payload.exp;
 
   const dbSession = await prisma.session.findUnique({
     where: { session_token: payload.sessionId },
@@ -136,8 +141,35 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
   });
 
   if (!dbSession) return null;
-  if (new Date() > dbSession.expires_at) {
+
+  const isSessionExpired = isTokenExpired || new Date() > dbSession.expires_at;
+
+  if (isSessionExpired) {
+    // Delete session from DB
     await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
+    // Record AuditLog entry for SESSION_TIMEOUT
+    await prisma.auditLog.create({
+      data: {
+        user_id: dbSession.user_id,
+        action: 'SESSION_TIMEOUT',
+        entity_type: 'Session',
+        entity_id: dbSession.session_token,
+        ip_address: dbSession.ip_address || null,
+        details: JSON.stringify({ reason: 'Session expired due to 2 hours of inactivity' }),
+      },
+    }).catch(() => {});
+
+    try {
+      cookieStore.set({
+        name: SESSION_COOKIE_NAME,
+        value: '',
+        maxAge: 0,
+        path: '/',
+      });
+    } catch {
+      // In Server Components cookie mutation may be restricted; handled by middleware/client
+    }
+
     return null;
   }
 

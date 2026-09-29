@@ -28,10 +28,12 @@ interface DecryptedToken {
   exp: number;
 }
 
-async function decryptToken(token: string): Promise<DecryptedToken | null> {
+async function decryptToken(
+  token: string
+): Promise<{ payload: DecryptedToken | null; isExpired: boolean }> {
   try {
     const [ivB64, cipherB64] = token.split('.');
-    if (!ivB64 || !cipherB64) return null;
+    if (!ivB64 || !cipherB64) return { payload: null, isExpired: false };
 
     const ivBytes = base64UrlToUint8Array(ivB64);
     const cipherBytes = base64UrlToUint8Array(cipherB64);
@@ -55,12 +57,10 @@ async function decryptToken(token: string): Promise<DecryptedToken | null> {
     const decoder = new TextDecoder();
     const payload = JSON.parse(decoder.decode(decrypted)) as DecryptedToken;
 
-    if (Date.now() > payload.exp) {
-      return null;
-    }
-    return payload;
+    const isExpired = Date.now() > payload.exp;
+    return { payload: isExpired ? null : payload, isExpired };
   } catch {
-    return null;
+    return { payload: null, isExpired: false };
   }
 }
 
@@ -270,9 +270,49 @@ export async function middleware(request: NextRequest) {
   // 4. Extract and Verify Session Cookie
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   let payload: DecryptedToken | null = null;
+  let isExpired = false;
 
   if (sessionCookie) {
-    payload = await decryptToken(sessionCookie);
+    const decryptResult = await decryptToken(sessionCookie);
+    payload = decryptResult.payload;
+    isExpired = decryptResult.isExpired;
+  }
+
+  // If token is expired due to 2-hour inactivity:
+  if (isExpired) {
+    if (pathname.startsWith('/api/')) {
+      const response = NextResponse.json(
+        { error: 'Session expired due to 2 hours of inactivity.', code: 'SESSION_TIMEOUT' },
+        { status: 401 }
+      );
+      response.cookies.set({
+        name: SESSION_COOKIE_NAME,
+        value: '',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 0,
+      });
+      return response;
+    }
+
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('reason', 'timeout');
+    if (pathname !== '/' && pathname !== '/login') {
+      loginUrl.searchParams.set('from', pathname);
+    }
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: '',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+    });
+    return response;
   }
 
   // If no valid session token exists:

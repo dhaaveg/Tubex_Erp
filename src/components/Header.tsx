@@ -14,8 +14,10 @@ import {
   CheckCircle,
   AlertTriangle,
   X,
+  Activity,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import RecentActivityFeed from './RecentActivityFeed';
 
 interface HeaderProps {
   onQuickSearch?: (query: string) => void;
@@ -39,6 +41,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
   const { user, logout, refetchUser } = useAuth();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileTab, setProfileTab] = useState<'profile' | 'activity'>('profile');
   const [profileName, setProfileName] = useState('');
   const [profileEmail, setProfileEmail] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -51,6 +54,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
     setProfileEmail(user.email);
     setErrorMsg(null);
     setSuccessMsg(null);
+    setProfileTab('profile');
     setIsProfileModalOpen(true);
   };
 
@@ -195,7 +199,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
       {/* MODAL: EDIT MY PROFILE IDENTITY */}
       {isProfileModalOpen && user && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
               <div className="flex items-center space-x-2">
                 <User className="w-4 h-4 text-blue-400" />
@@ -211,6 +215,40 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
               </button>
             </div>
 
+            {/* Modal Tabs Bar */}
+            <div className="flex border-b border-slate-800 bg-slate-950/70 px-5 pt-2">
+              <button
+                type="button"
+                onClick={() => setProfileTab('profile')}
+                className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
+                  profileTab === 'profile'
+                    ? 'border-blue-500 text-blue-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Profile & Roles</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setProfileTab('activity')}
+                className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
+                  profileTab === 'activity'
+                    ? 'border-blue-500 text-blue-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                <span>Recent Activity</span>
+              </button>
+            </div>
+
+            {profileTab === 'activity' ? (
+              <div className="p-5">
+                <RecentActivityFeed compact limit={10} title="My Recent Activity" showRefresh />
+              </div>
+            ) : (
             <form onSubmit={handleSaveProfile} className="p-5 space-y-4">
               {errorMsg && (
                 <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-700/60 text-rose-200 text-xs flex items-center space-x-2">
@@ -295,6 +333,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                 </button>
               </div>
             </form>
+            )}
           </div>
         </div>
       )}

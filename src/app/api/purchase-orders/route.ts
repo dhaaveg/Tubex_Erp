@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { PurchaseOrderSchema } from '@/lib/validations';
+import { getCurrentSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -171,6 +172,23 @@ export async function POST(request: Request) {
         },
       },
     });
+ 
+    // Audit Log PO_CREATED
+    const current = await getCurrentSession().catch(() => null);
+    await prisma.auditLog.create({
+      data: {
+        user_id: current?.user?.id || null,
+        action: 'PO_CREATED',
+        entity_type: 'PurchaseOrder',
+        entity_id: po.po_no,
+        details: JSON.stringify({
+          po_no: po.po_no,
+          supplier: po.supplier?.supplier_name,
+          total_value: totalPOValue,
+          items_count: itemsData.length,
+        }),
+      },
+    }).catch(() => {});
 
     return NextResponse.json(po, { status: 201 });
   } catch (error: any) {

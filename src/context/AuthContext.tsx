@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SafeUser, Role, MODULE_ACCESS_MAP } from '@/lib/auth-types';
+import SessionTimeoutModal from '@/components/SessionTimeoutModal';
 
 export interface EffectivePermission {
   is_enabled: boolean;
@@ -139,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+      <SessionTimeoutModal />
     </AuthContext.Provider>
   );
 }
