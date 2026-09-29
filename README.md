@@ -353,5 +353,5 @@ node scripts/verify-business-logic.js
 
 ## 9. License & Support
 
-Copyright &copy; 2026 Energy Oilfield Technologies (EOT Couplings). All rights reserved.  
+Copyright &copy; 2026 Dhaaveg. All rights reserved.  
 Confidential and proprietary industrial enterprise software.
