@@ -1,0 +1,404 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+const SESSION_COOKIE_NAME = 'eot_session';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'eot_couplings_super_secret_auth_encryption_key_2026_xyz';
+
+function base64UrlToUint8Array(base64Url: string): Uint8Array {
+  let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+interface DecryptedToken {
+  sessionId: string;
+  userId: string;
+  email: string;
+  name: string;
+  role: string;
+  roles?: string[];
+  force_password_change?: boolean;
+  exp: number;
+}
+
+async function decryptToken(token: string): Promise<DecryptedToken | null> {
+  try {
+    const [ivB64, cipherB64] = token.split('.');
+    if (!ivB64 || !cipherB64) return null;
+
+    const ivBytes = base64UrlToUint8Array(ivB64);
+    const cipherBytes = base64UrlToUint8Array(cipherB64);
+
+    const encoder = new TextEncoder();
+    const keyMaterial = await crypto.subtle.digest('SHA-256', encoder.encode(SESSION_SECRET));
+    const key = await crypto.subtle.importKey(
+      'raw',
+      keyMaterial,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
+    );
+
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: ivBytes as any },
+      key,
+      cipherBytes as any
+    );
+
+    const decoder = new TextDecoder();
+    const payload = JSON.parse(decoder.decode(decrypted)) as DecryptedToken;
+
+    if (Date.now() > payload.exp) {
+      return null;
+    }
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+// -------------------------------------------------------------
+// Edge Dynamic Permission Cache & Fallback Mapping
+// -------------------------------------------------------------
+let cachedMatrixByRole: Record<string, Record<string, { is_enabled: boolean; can_read: boolean; can_write: boolean }>> | null = null;
+let lastCacheFetchTime = 0;
+const CACHE_TTL_MS = 5000; // 5 seconds in-memory TTL
+
+const FALLBACK_DEFAULT_ROLES: Record<string, Record<string, { is_enabled: boolean; can_read: boolean; can_write: boolean }>> = {
+  SUPER_ADMIN: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: true, can_read: true, can_write: true },
+    'procurement': { is_enabled: true, can_read: true, can_write: true },
+    'receiving': { is_enabled: true, can_read: true, can_write: true },
+    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
+    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
+    'quality': { is_enabled: true, can_read: true, can_write: true },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: true, can_read: true, can_write: true },
+    'user-management': { is_enabled: true, can_read: true, can_write: true },
+  },
+  ADMIN: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: true, can_read: true, can_write: true },
+    'procurement': { is_enabled: true, can_read: true, can_write: true },
+    'receiving': { is_enabled: true, can_read: true, can_write: true },
+    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
+    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
+    'quality': { is_enabled: true, can_read: true, can_write: true },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: true, can_read: true, can_write: true },
+    'user-management': { is_enabled: true, can_read: true, can_write: true },
+  },
+  MD: {
+    'overview': { is_enabled: true, can_read: true, can_write: false },
+    'master-data': { is_enabled: true, can_read: true, can_write: false },
+    'procurement': { is_enabled: true, can_read: true, can_write: false },
+    'receiving': { is_enabled: true, can_read: true, can_write: false },
+    'customer-orders': { is_enabled: true, can_read: true, can_write: false },
+    'shop-floor': { is_enabled: true, can_read: true, can_write: false },
+    'quality': { is_enabled: true, can_read: true, can_write: false },
+    'traceability': { is_enabled: true, can_read: true, can_write: false },
+    'admin-export': { is_enabled: true, can_read: true, can_write: true },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+  PROCUREMENT: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: true, can_read: true, can_write: true },
+    'procurement': { is_enabled: true, can_read: true, can_write: true },
+    'receiving': { is_enabled: false, can_read: false, can_write: false },
+    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
+    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
+    'quality': { is_enabled: false, can_read: false, can_write: false },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: false, can_read: false, can_write: false },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+  MANUFACTURING: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: true, can_read: true, can_write: true },
+    'procurement': { is_enabled: false, can_read: false, can_write: false },
+    'receiving': { is_enabled: false, can_read: false, can_write: false },
+    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
+    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
+    'quality': { is_enabled: false, can_read: false, can_write: false },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: false, can_read: false, can_write: false },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+  SALES: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: false, can_read: false, can_write: false },
+    'procurement': { is_enabled: false, can_read: false, can_write: false },
+    'receiving': { is_enabled: false, can_read: false, can_write: false },
+    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
+    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
+    'quality': { is_enabled: false, can_read: false, can_write: false },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: false, can_read: false, can_write: false },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+  INVENTORY: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: false, can_read: false, can_write: false },
+    'procurement': { is_enabled: false, can_read: false, can_write: false },
+    'receiving': { is_enabled: true, can_read: true, can_write: true },
+    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
+    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
+    'quality': { is_enabled: false, can_read: false, can_write: false },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: false, can_read: false, can_write: false },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+  QUALITY: {
+    'overview': { is_enabled: true, can_read: true, can_write: true },
+    'master-data': { is_enabled: true, can_read: true, can_write: true },
+    'procurement': { is_enabled: false, can_read: false, can_write: false },
+    'receiving': { is_enabled: false, can_read: false, can_write: false },
+    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
+    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
+    'quality': { is_enabled: true, can_read: true, can_write: true },
+    'traceability': { is_enabled: true, can_read: true, can_write: true },
+    'admin-export': { is_enabled: false, can_read: false, can_write: false },
+    'user-management': { is_enabled: false, can_read: false, can_write: false },
+  },
+};
+
+function resolveModuleKey(pathname: string): string | null {
+  if (pathname === '/' || pathname === '/overview') return 'overview';
+  if (pathname === '/master-data' || pathname.startsWith('/api/suppliers') || pathname.startsWith('/api/products')) {
+    return 'master-data';
+  }
+  if (
+    pathname === '/procurement' ||
+    pathname === '/po' ||
+    pathname === '/pos' ||
+    pathname === '/purchase-orders' ||
+    pathname.startsWith('/api/purchase-orders')
+  ) {
+    return 'procurement';
+  }
+  if (
+    pathname === '/receiving' ||
+    pathname === '/tally' ||
+    pathname === '/grn' ||
+    pathname === '/inwarding' ||
+    pathname.startsWith('/api/grn') ||
+    pathname.startsWith('/api/tally')
+  ) {
+    return 'receiving';
+  }
+  if (
+    pathname === '/customer-orders' ||
+    pathname === '/cpo' ||
+    pathname === '/orders' ||
+    pathname === '/customers' ||
+    pathname.startsWith('/api/customer-orders')
+  ) {
+    return 'customer-orders';
+  }
+  if (
+    pathname === '/shop-floor' ||
+    pathname === '/wo' ||
+    pathname === '/wos' ||
+    pathname === '/work-orders' ||
+    pathname === '/shopfloor' ||
+    pathname.startsWith('/api/work-orders') ||
+    pathname.startsWith('/api/production-postings')
+  ) {
+    return 'shop-floor';
+  }
+  if (
+    pathname === '/quality' ||
+    pathname === '/qa' ||
+    pathname === '/rejections' ||
+    pathname.startsWith('/api/rejections')
+  ) {
+    return 'quality';
+  }
+  if (pathname === '/traceability' || pathname.startsWith('/api/traceability')) {
+    return 'traceability';
+  }
+  if (pathname === '/admin-export' || pathname === '/export' || pathname.startsWith('/api/export')) {
+    return 'admin-export';
+  }
+  if (pathname === '/user-management' || pathname.startsWith('/api/users') || pathname.startsWith('/api/admin/')) {
+    return 'user-management';
+  }
+
+  return null;
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const method = request.method.toUpperCase();
+
+  // 1. Unconditionally allow static assets, favicon, Next internals
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname === '/favicon.ico'
+  ) {
+    return NextResponse.next();
+  }
+
+  // 2. Cache Invalidation and Direct Cache Endpoint Bypass
+  if (pathname === '/api/admin/role-permissions/cache') {
+    if (request.nextUrl.searchParams.get('clear') === '1') {
+      cachedMatrixByRole = null;
+      lastCacheFetchTime = 0;
+    }
+    return NextResponse.next();
+  }
+
+  // 3. Public Auth Routes
+  const isAuthRoute =
+    pathname === '/login' ||
+    pathname === '/api/auth/login' ||
+    pathname === '/api/auth/logout';
+
+  if (isAuthRoute) {
+    return NextResponse.next();
+  }
+
+  // 4. Extract and Verify Session Cookie
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  let payload: DecryptedToken | null = null;
+
+  if (sessionCookie) {
+    payload = await decryptToken(sessionCookie);
+  }
+
+  // If no valid session token exists:
+  if (!payload) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Valid session required.' },
+        { status: 401 }
+      );
+    }
+    const loginUrl = new URL('/login', request.url);
+    if (pathname !== '/') {
+      loginUrl.searchParams.set('from', pathname);
+    }
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // 5. Force Password Change Enforcement
+  if (payload.force_password_change) {
+    const isChangePasswordRoute =
+      pathname === '/change-password' ||
+      pathname === '/api/auth/change-password' ||
+      pathname === '/api/auth/me';
+
+    if (!isChangePasswordRoute) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          {
+            error: 'Password reset required on initial login before proceeding.',
+            force_password_change: true,
+          },
+          { status: 403 }
+        );
+      }
+      return NextResponse.redirect(new URL('/change-password', request.url));
+    }
+  }
+
+  // Extract all user roles (support multi-role assignment)
+  const roles: string[] =
+    payload.roles && payload.roles.length > 0
+      ? payload.roles
+      : payload.role
+      ? [payload.role]
+      : ['PROCUREMENT'];
+
+  // 6. Super Admin has unrestricted core root privilege across all routes
+  if (roles.includes('SUPER_ADMIN') || payload.role === 'SUPER_ADMIN') {
+    return NextResponse.next();
+  }
+
+  // 7. Allow self-profile updates
+  if (method === 'PUT' && pathname === `/api/users/${payload.userId}`) {
+    return NextResponse.next();
+  }
+
+  // 8. Fetch or Sync Dynamic Permission Matrix
+  const now = Date.now();
+  if (!cachedMatrixByRole || now - lastCacheFetchTime > CACHE_TTL_MS) {
+    try {
+      const cacheUrl = new URL('/api/admin/role-permissions/cache', request.url);
+      const res = await fetch(cacheUrl.toString(), {
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.matrixByRole) {
+          cachedMatrixByRole = data.matrixByRole;
+          lastCacheFetchTime = now;
+        }
+      }
+    } catch {
+      // Fallback silently if internal fetch is unavailable
+    }
+  }
+
+  const matrix = cachedMatrixByRole || FALLBACK_DEFAULT_ROLES;
+
+  // 9. Resolve target module
+  const moduleKey = resolveModuleKey(pathname);
+  if (!moduleKey) {
+    return NextResponse.next();
+  }
+
+  // 10. Multi-Role Union Evaluation: Is module enabled for ANY assigned role?
+  const isEnabled = roles.some((r) => matrix[r]?.[moduleKey]?.is_enabled === true);
+
+  if (!isEnabled) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        {
+          error: `Forbidden: Assigned roles (${roles.join(', ')}) do not permit access to module "${moduleKey}".`,
+        },
+        { status: 403 }
+      );
+    }
+    const homeUrl = new URL('/', request.url);
+    homeUrl.searchParams.set('unauthorized', moduleKey);
+    return NextResponse.redirect(homeUrl);
+  }
+
+  // 11. Mutation & Write Permission Check: Can any assigned role write to this module?
+  const isMutation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+  if (isMutation) {
+    const canWrite = roles.some((r) => matrix[r]?.[moduleKey]?.can_write === true);
+    if (!canWrite) {
+      return NextResponse.json(
+        {
+          error: `Forbidden: Assigned roles (${roles.join(', ')}) have read-only access for module "${moduleKey}". Mutations not permitted.`,
+        },
+        { status: 403 }
+      );
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
+};

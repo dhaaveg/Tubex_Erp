@@ -1,0 +1,349 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Supplier Table (Master)
+model Supplier {
+  supplier_id             String          @id
+  supplier_name           String
+  supplier_onboarding_date DateTime
+  supplier_address        String
+  contact_person          String
+  telephone_no            String
+  supplier_mail           String
+  mill_name               String
+  mill_address            String
+  gst_tax_id              String
+  status                  String          // 'Active' | 'Inactive'
+  created_at              DateTime        @default(now())
+  updated_at              DateTime        @updatedAt
+
+  purchase_orders         PurchaseOrder[]
+}
+
+// 2. Product Table (Master)
+model Product {
+  product_id          String          @id
+  product_description String
+  size_od             Float           // Outer Diameter in mm or inches
+  wall_thickness      Float           // Wall thickness in mm
+  grade               String          // e.g., J55, K55, L80, P110, Q125
+  thread_type         String          // e.g., BTC, LTC, STC, Premium
+  cvn_requirement     String          // Charpy V-Notch (e.g., 27J @ -10C)
+  nominal_weight_kg_m Float           // Nominal weight kg/m
+  uom                 String          // Unit of Measure (Meters, Tubes, MT)
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @updatedAt
+
+  po_items            POItem[]
+  grn_items           GRNItem[]
+  work_orders         WorkOrder[]
+}
+
+// 3. Purchase Order Table (Header)
+model PurchaseOrder {
+  po_no            String      @id
+  po_date          DateTime
+  supplier_id      String
+  shipping_address String
+  delivery_date    DateTime
+  payment_terms        String
+  delivery_terms       String?     @default("FOB Mill Yard")
+  quality_stipulations String?
+  advance_amount       Float       @default(0.0)
+  remaining_amount Float       @default(0.0) // Total_PO_Value - Advance_Amount
+  po_status        String      @default("Draft") // 'Draft' | 'Approved' | 'Open' | 'Closed'
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+
+  supplier         Supplier    @relation(fields: [supplier_id], references: [supplier_id])
+  po_items         POItem[]
+  grns             GRN[]
+  work_orders      WorkOrder[]
+}
+
+// 4. PO Items Table (Lines)
+model POItem {
+  po_item_id            String        @id
+  po_no                 String
+  product_id            String
+  ordered_qty           Float         @default(0.0)
+  ordered_qty_mt        Float
+  unit_rate             Float
+  line_total            Float         // ordered_qty_mt * unit_rate
+  tolerable_variance_pct Float        @default(5.0)
+  line_status           String        @default("Pending") // 'Pending' | 'Partially Received' | 'Fulfilled'
+  created_at            DateTime      @default(now())
+  updated_at            DateTime      @updatedAt
+
+  purchase_order        PurchaseOrder @relation(fields: [po_no], references: [po_no], onDelete: Cascade)
+  product               Product       @relation(fields: [product_id], references: [product_id])
+  grn_items             GRNItem[]
+}
+
+// 5. GRN Table (Goods Receipt Note Header)
+model GRN {
+  grn_id                       String      @id
+  grn_date                     DateTime
+  po_no                        String
+  invoice_no                   String
+  invoice_date                 DateTime
+  vehicle_transporter_no       String
+  invoice_weight_mt            Float
+  actual_weighbridge_weight_mt Float
+  weight_difference_mt         Float       // Actual - Invoice
+  total_tubes_received_actual  Int         @default(0)
+  total_tubes_tally            Int         @default(0) // Count from Tally Items
+  tally_match_status           String      @default("Mismatch") // 'Matched' | 'Mismatch'
+  created_at                   DateTime    @default(now())
+  updated_at                   DateTime    @updatedAt
+
+  purchase_order               PurchaseOrder @relation(fields: [po_no], references: [po_no])
+  grn_items                    GRNItem[]
+}
+
+// 6. GRN Items Table (Lines)
+model GRNItem {
+  grn_item_id            String       @id
+  grn_id                 String
+  po_item_id             String
+  product_id             String
+  invoice_quantity       Float        @default(0.0)
+  received_quantity      Float        @default(0.0)
+  invoice_quantity_mt    Float        @default(0.0) // Qty as per invoice (MT)
+  actual_quantity_mt     Float        @default(0.0) // Actual Qty (MT)
+  rejected_damaged_qty   Float        @default(0.0)
+  item_inspection_status String       @default("Pending QA") // 'Pending QA' | 'Accepted' | 'Rejected'
+  created_at             DateTime     @default(now())
+  updated_at             DateTime     @updatedAt
+
+  grn                    GRN          @relation(fields: [grn_id], references: [grn_id], onDelete: Cascade)
+  po_item                POItem       @relation(fields: [po_item_id], references: [po_item_id])
+  product                Product      @relation(fields: [product_id], references: [product_id])
+  tally_sheets           TallySheet[]
+}
+
+// 7. Tally Sheet Table (Lot & Heat Master)
+model TallySheet {
+  ts_id                    String       @id
+  grn_item_id              String
+  lot_no                   String?
+  heat_no                  String?
+  mill_test_certificate_no String?
+  tally_sheet_date         DateTime
+  inspector_name           String
+  bundle_count             Int          @default(1)
+  created_at               DateTime     @default(now())
+  updated_at               DateTime     @updatedAt
+
+  grn_item                 GRNItem      @relation(fields: [grn_item_id], references: [grn_item_id], onDelete: Cascade)
+  tally_items              TallyItem[]
+}
+
+// 8. Tally Items Table (Lot-by-Lot Dimensional Inwarding Log)
+model TallyItem {
+  ti_id                  String       @id // Barcode / Lot Tag (e.g. LOT-HT84920-001)
+  ts_id                  String
+  tube_sr_no             Int
+  heat_no                String?      // Heat Number for this lot
+  lot_no                 String?      // Lot Number for this lot
+  mill_test_certificate_no String?    // MTC reference for this lot
+  tube_count             Int?         @default(1) // Number of tubes in this lot
+  tube_length_mm         Float        // Total combined length of tubes in this lot (mm)
+  parting_length_mm      Float
+  expected_qty           Float        // tube_length_mm / parting_length_mm
+  rounded_qty            Int          // FLOOR(tube_length_mm / parting_length_mm)
+  end_scrap_mm           Float        // tube_length_mm - (rounded_qty * parting_length_mm)
+  pipe_allocation_status String       @default("Available") // 'Available' | 'Allocated' | 'Consumed' | 'Scrapped'
+  created_at             DateTime     @default(now())
+  updated_at             DateTime     @updatedAt
+
+  tally_sheet            TallySheet   @relation(fields: [ts_id], references: [ts_id], onDelete: Cascade)
+  work_orders            WorkOrder[]
+}
+
+// 9. Customer Order Table (Sales Order / Customer PO Header)
+model CustomerOrder {
+  customer_po_no      String                @id
+  customer_name       String
+  order_date          DateTime              @default(now())
+  payment_terms       String
+  delivery_terms      String
+  delivery_due_date   DateTime
+  remarks             String?
+  order_status        String                @default("Open") // 'Open' | 'In Production' | 'Partially Fulfilled' | 'Fulfilled' | 'Cancelled'
+  total_amount        Float                 @default(0.0)
+  total_quantity      Float                 @default(0.0)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+
+  items               CustomerPOLineItem[]
+  work_orders         WorkOrder[]
+}
+
+// 10. Customer PO Line Items Table (Sales Demand Specification)
+model CustomerPOLineItem {
+  cpo_item_id         String                @id
+  customer_po_no      String
+  item_seq_no         Int                   @default(1)
+  size                String                // e.g., 7 in (177.8 mm), 9-5/8 in
+  grade               String                // e.g., L80, P110, J55
+  thread              String                // e.g., BTC, LTC, Premium
+  quantity            Float                 // Quantity ordered
+  price_per_unit      Float                 // Price per unit
+  line_total          Float                 // quantity * price_per_unit
+  fulfilled_qty       Float                 @default(0.0)
+  line_status         String                @default("Open") // 'Open' | 'In Production' | 'Fulfilled'
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+
+  customer_order      CustomerOrder         @relation(fields: [customer_po_no], references: [customer_po_no], onDelete: Cascade)
+  work_orders         WorkOrder[]
+}
+
+// 11. Work Order Table (Shop Job Card)
+model WorkOrder {
+  wo_id                   String              @id
+  wo_date                 DateTime
+  source_type             String              @default("PO") // 'PO' | 'Stock'
+  po_no                   String?             // Link to Purchase Order
+  size                    String?             // e.g., 7 in (177.8 mm)
+  grade                   String?             // e.g., L80, P110
+  thread                  String?             // e.g., BTC, Premium
+  order_quantity          Int?                // User entered quantity in Pcs
+  ti_id                   String?             // Optional Link to specific Tally Pipe Tag
+  target_product_id       String
+  planned_parts_to_produce Int                // Target parts to produce
+  machine_line_no         String
+  shift                   String              // 'Shift A' | 'Shift B' | 'Shift C'
+  wo_status               String              @default("Released") // 'Released' | 'In Progress' | 'Completed' | 'Closed'
+  customer_po_no          String?             // Link to Customer Order
+  cpo_item_id             String?             // Link to specific Customer PO Line Item
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  tally_item              TallyItem?          @relation(fields: [ti_id], references: [ti_id])
+  target_product          Product             @relation(fields: [target_product_id], references: [product_id])
+  purchase_order          PurchaseOrder?      @relation(fields: [po_no], references: [po_no])
+  customer_order          CustomerOrder?      @relation(fields: [customer_po_no], references: [customer_po_no])
+  customer_po_line_item   CustomerPOLineItem? @relation(fields: [cpo_item_id], references: [cpo_item_id])
+  production_postings     ProductionPosting[]
+  rejection_postings      RejectionPosting[]
+}
+
+// 10. Production Posting Table (Routing Logs)
+model ProductionPosting {
+  pp_id                      String             @id
+  wo_id                      String
+  process_stage_name         String             // 'Cutting' | 'ID Roughing' | 'OD Roughing' | 'Threading' | 'MPI' | 'Phosphating' | 'Painting' | 'Packing'
+  operation_seq_no           Int                // 10, 20, 30, 40, 50, 60, 70, 80
+  operator_machine_id        String
+  input_quantity             Int
+  accepted_quantity          Int
+  rejected_quantity          Int
+  rework_quantity            Int
+  stage_completion_timestamp DateTime           @default(now())
+  created_at                 DateTime           @default(now())
+  updated_at                 DateTime           @updatedAt
+
+  work_order                 WorkOrder          @relation(fields: [wo_id], references: [wo_id], onDelete: Cascade)
+  rejections                 RejectionPosting[]
+}
+
+// 11. Rejection Posting Table (Defect Categorization)
+model RejectionPosting {
+  rp_id               String            @id
+  pp_id               String
+  wo_id               String
+  defect_category     String            // e.g. 'MPI Rejection', 'Material Fault (M.F.)', 'Thread Mismatch', etc.
+  defect_quantity     Int
+  disposition_action  String            // 'Scrap' | 'Down-grade' | 'Recut Short' | 'Rework Thread'
+  inspector_remarks   String?
+  logged_timestamp    DateTime          @default(now())
+  created_at          DateTime          @default(now())
+  updated_at          DateTime          @updatedAt
+
+  production_posting  ProductionPosting @relation(fields: [pp_id], references: [pp_id], onDelete: Cascade)
+  work_order          WorkOrder         @relation(fields: [wo_id], references: [wo_id], onDelete: Cascade)
+}
+
+// 12. User Authentication & RBAC Table
+model User {
+  id                    String      @id @default(uuid())
+  email                 String      @unique
+  name                  String
+  password_hash         String
+  role                  String      @default("PROCUREMENT") // Primary role for legacy compatibility
+  roles                 String?     // JSON array string of assigned roles, e.g. ["QUALITY", "INVENTORY"]
+  department            String?
+  is_active             Boolean     @default(true)
+  force_password_change Boolean     @default(false)
+  last_login_at         DateTime?
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+
+  sessions              Session[]
+  audit_logs            AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// 13. User Session Table (Encrypted HTTP-only cookies reference)
+model Session {
+  id            String   @id @default(uuid())
+  session_token String   @unique
+  user_id       String
+  user_agent    String?
+  ip_address    String?
+  expires_at    DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([session_token])
+  @@index([expires_at])
+}
+
+// 14. Audit Log Table (Tracking system events & user management mutations)
+model AuditLog {
+  id          String   @id @default(uuid())
+  user_id     String?
+  action      String   // 'USER_CREATED' | 'USER_UPDATED' | 'USER_DEACTIVATED' | 'USER_ACTIVATED' | 'PASSWORD_CHANGED' | 'LOGIN' | 'LOGOUT' | 'ROLE_PERMISSIONS_UPDATED'
+  entity_type String   // 'User' | 'Session' | 'PurchaseOrder' | 'WorkOrder' | 'RolePermission'
+  entity_id   String?
+  details     String?  // JSON formatted details
+  ip_address  String?
+  created_at  DateTime @default(now())
+
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
+  @@index([action])
+  @@index([created_at])
+}
+
+// 15. Dynamic Role-to-Module Mapping & Permissions Table
+model RoleModulePermission {
+  id         String   @id @default(uuid())
+  role       String   // e.g. 'PROCUREMENT', 'SALES', etc.
+  module_key String   // e.g. 'overview', 'procurement', 'inventory', 'shop-floor', 'quality', 'sales', 'tally', 'master-data'
+  route_path String   // e.g. '/procurement', '/shop-floor'
+  can_read   Boolean  @default(true)
+  can_write  Boolean  @default(false)
+  is_enabled Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([role, module_key])
+  @@index([role])
+  @@index([module_key])
+}
+

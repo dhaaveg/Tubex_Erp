@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  erp-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tubex-erp-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://erp_user:erp_secret_pass@erp-postgres:5432/tubex_erp?schema=public
+    depends_on:
+      erp-postgres:
+        condition: service_healthy
+
+  erp-postgres:
+    image: postgres:16-alpine
+    container_name: tubex-erp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: erp_user
+      POSTGRES_PASSWORD: erp_secret_pass
+      POSTGRES_DB: tubex_erp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp_user -d tubex_erp"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
