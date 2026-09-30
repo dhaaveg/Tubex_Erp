@@ -239,11 +239,14 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const method = request.method.toUpperCase();
 
-  // 1. Unconditionally allow static assets, favicon, Next internals
+  // 1. Unconditionally allow static assets, favicon, Next internals, and public images
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    pathname === '/logo.png' ||
+    pathname === '/app-icon.png' ||
+    pathname.match(/\.(png|jpg|jpeg|svg|webp|ico)$/i)
   ) {
     return NextResponse.next();
   }
@@ -438,7 +441,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - logo.png / images
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo.png|app-icon.png|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
   ],
 };

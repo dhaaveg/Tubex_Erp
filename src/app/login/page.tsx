@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import {
-  ShieldCheck,
   Lock,
   Mail,
   ArrowRight,
   AlertCircle,
-  Building2,
   Clock,
 } from 'lucide-react';
 import { COMPANY_NAME } from '@/lib/companyLogo';
@@ -67,8 +66,15 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-center mb-3">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 p-0.5 shadow-xl shadow-blue-500/20 flex items-center justify-center">
-            <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
-              <Building2 className="w-7 h-7 text-blue-400" />
+            <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden relative">
+              <Image
+                src="/logo.png"
+                alt="Dhaaveg ERP Logo"
+                width={56}
+                height={56}
+                priority
+                className="w-full h-full object-contain rounded-[14px]"
+              />
             </div>
           </div>
         </div>
@@ -151,9 +157,8 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-4 text-center">
-          <p className="text-[11px] text-slate-500 flex items-center justify-center space-x-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Encrypted HTTP-Only Sessions • Argon2id Secure Hash</span>
+          <p className="text-[11px] text-slate-500 font-medium tracking-wide flex items-center justify-center">
+            <span>Powered By Dhaaveg</span>
           </p>
         </div>
       </div>

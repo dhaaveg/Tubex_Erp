@@ -120,6 +120,8 @@ async function run() {
     '/api/users',
     '/api/admin/role-permissions',
     '/api/admin/role-permissions/cache',
+    '/api/activity/recent',
+    '/api/auth/refresh',
   ];
 
   let passedApis = 0;
