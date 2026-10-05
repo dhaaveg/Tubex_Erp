@@ -354,3 +354,97 @@ export function maskAuthorIdentity(
   }
   return authorName;
 }
+
+// -------------------------------------------------------------
+// Audit Log Action Categorization & RBAC Classification
+// -------------------------------------------------------------
+
+/**
+ * Operational Actions: Visible to ADMIN & SUPER_ADMIN.
+ * Encompasses standard manufacturing, procurement, inventory, quality, sales, and user session events.
+ */
+export const OPERATIONAL_ACTIONS = [
+  'PO_CREATED',
+  'PO_APPROVED',
+  'GRN_RECORDED',
+  'WO_RELEASED',
+  'ROUTING_STAGE_COMPLETED',
+  'QUALITY_INSPECTION',
+  'DEFECT_LOGGED',
+  'HEAT_TAGGED',
+  'CUSTOMER_ORDER_PLACED',
+  'DISPATCH_RECORDED',
+  'LOGIN',
+  'LOGOUT',
+  'SESSION_TIMEOUT',
+] as const;
+
+export type OperationalAction = (typeof OPERATIONAL_ACTIONS)[number];
+
+/**
+ * Sensitive Governance Actions: Exclusive to SUPER_ADMIN.
+ * Strictly filtered out from ADMIN and non-super-admin audit views.
+ */
+export const SENSITIVE_GOVERNANCE_ACTIONS = [
+  'USER_ROLE_CHANGED',
+  'ROLE_PERMISSIONS_UPDATED',
+  'USER_DEACTIVATED',
+  'USER_DELETED',
+  'PASSWORD_RESET_OVERRIDE',
+  'ADMIN_PASSWORD_RESET',
+  'SYSTEM_CONFIG_CHANGED',
+  'AUDIT_LOG_EXPORT',
+  'DATABASE_MIGRATION',
+  'SUPER_ADMIN_INITIALIZED',
+] as const;
+
+export type SensitiveGovernanceAction = (typeof SENSITIVE_GOVERNANCE_ACTIONS)[number];
+
+/**
+ * Check whether an action is classified as a sensitive governance action.
+ */
+export function isSensitiveGovernanceAction(action: string): boolean {
+  return (SENSITIVE_GOVERNANCE_ACTIONS as readonly string[]).includes(action);
+}
+
+/**
+ * Check whether an action is classified as an operational action.
+ */
+export function isOperationalAction(action: string): boolean {
+  return (OPERATIONAL_ACTIONS as readonly string[]).includes(action);
+}
+
+export type AuditFeedScope = 'SYSTEM_AUDIT' | 'PLANT_OPERATIONS' | 'USER_ACTIVITY';
+
+export interface AuditFeedScopeMeta {
+  scope: AuditFeedScope;
+  label: string;
+  badge: string;
+  description: string;
+}
+
+export function getAuditFeedScopeMeta(userRole?: Role, userRoles?: Role[]): AuditFeedScopeMeta {
+  const roles = userRoles && userRoles.length > 0 ? userRoles : userRole ? [userRole] : [];
+  if (roles.includes('SUPER_ADMIN')) {
+    return {
+      scope: 'SYSTEM_AUDIT',
+      label: 'System & Security Audit Feed',
+      badge: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+      description: 'System-wide governance, operational events & security audit trail',
+    };
+  }
+  if (roles.includes('ADMIN') || roles.includes('MD')) {
+    return {
+      scope: 'PLANT_OPERATIONS',
+      label: 'Plant Operations Feed',
+      badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+      description: 'Plant-wide operational events across manufacturing, procurement, and inventory',
+    };
+  }
+  return {
+    scope: 'USER_ACTIVITY',
+    label: 'My Activity Feed',
+    badge: 'bg-slate-500/10 text-slate-400 border-slate-500/30',
+    description: 'Personal operational activities & session events',
+  };
+}

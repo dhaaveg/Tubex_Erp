@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { DEFECT_CATEGORIES, DISPOSITION_ACTIONS, PROCESS_STAGES, SHIFTS } from './types';
+import { 
+  DEFECT_CATEGORIES, 
+  DISPOSITION_ACTIONS, 
+  PROCESS_STAGES, 
+  SHIFTS, 
+  CVN_REQUIREMENT_OPTIONS, 
+  DEFAULT_CVN_REQUIREMENT, 
+  type CvnRequirementOption 
+} from './types';
+
+export { CVN_REQUIREMENT_OPTIONS, DEFAULT_CVN_REQUIREMENT, type CvnRequirementOption };
 
 export const SupplierSchema = z.object({
   supplier_id: z.string().optional().or(z.literal('')),

@@ -3,10 +3,8 @@
 import React from 'react';
 import { 
   Factory, 
-  TrendingUp, 
   Package, 
   AlertTriangle, 
-  CheckCircle2, 
   Scissors, 
   ArrowUpRight, 
   Plus, 
@@ -177,7 +175,7 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
       </div>
 
       {/* Industrial Business Logic Highlights */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Cutting Yield Architecture */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -217,27 +215,6 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
             <div className="text-emerald-400">Input ≡ Accepted + Rejected + Rework</div>
             <div className="text-rose-400">If Rejected &gt; 0, defect log required</div>
             <div className="text-indigo-400">Total Defect Parts: {stats?.quality?.totalDefectParts ?? 0} pcs</div>
-          </div>
-        </div>
-
-        {/* Provenance & Traceability */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div className="flex items-center space-x-2">
-              <GitFork className="w-4 h-4 text-indigo-400" />
-              <h3 className="text-sm font-semibold text-white">Forward & Backward Traceability</h3>
-            </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800/80 text-indigo-300">
-              11 Tables
-            </span>
-          </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Bidirectional audit trail linking Supplier Mill, PO Lines, Weighbridge, Heat/Lot MTC, Individual Pipe Barcode, Work Order, 8 Routing stages, and Defect Scrap.
-          </p>
-          <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
-            <div className="text-slate-400">Sample Heat: <span className="text-blue-300">HT-84920</span></div>
-            <div className="text-slate-400">Sample Pipe Tag: <span className="text-amber-300">TAG-HT84920-001</span></div>
-            <div className="text-slate-400">Sample Work Order: <span className="text-emerald-300">WO-2026-001</span></div>
           </div>
         </div>
       </div>

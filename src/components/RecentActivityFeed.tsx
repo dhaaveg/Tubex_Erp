@@ -17,6 +17,11 @@ import {
   ArrowRight,
   Database,
   ExternalLink,
+  Factory,
+  Truck,
+  Tag,
+  Settings,
+  Download,
 } from 'lucide-react';
 
 export interface ActivityItem {
@@ -78,15 +83,75 @@ const ACTION_CONFIG: Record<
     badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
     icon: FileText,
   },
+  PO_APPROVED: {
+    label: 'PO Approved',
+    badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    icon: CheckCircle2,
+  },
+  GRN_RECORDED: {
+    label: 'GRN Inward',
+    badge: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    icon: Truck,
+  },
   WO_RELEASED: {
     label: 'WO Released',
     badge: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
     icon: Wrench,
   },
+  ROUTING_STAGE_COMPLETED: {
+    label: 'Routing Stage',
+    badge: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+    icon: Factory,
+  },
   QUALITY_INSPECTION: {
     label: 'QA Inspection',
     badge: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
     icon: Shield,
+  },
+  DEFECT_LOGGED: {
+    label: 'Defect Log',
+    badge: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
+    icon: AlertCircle,
+  },
+  HEAT_TAGGED: {
+    label: 'Heat Tagged',
+    badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+    icon: Tag,
+  },
+  CUSTOMER_ORDER_PLACED: {
+    label: 'CPO Placed',
+    badge: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
+    icon: FileText,
+  },
+  DISPATCH_RECORDED: {
+    label: 'Dispatch',
+    badge: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+    icon: Truck,
+  },
+  USER_ROLE_CHANGED: {
+    label: 'Role Changed',
+    badge: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+    icon: ShieldAlert,
+  },
+  PASSWORD_RESET_OVERRIDE: {
+    label: 'Pwd Override',
+    badge: 'bg-amber-600/10 text-amber-400 border-amber-600/30',
+    icon: Key,
+  },
+  SYSTEM_CONFIG_CHANGED: {
+    label: 'System Config',
+    badge: 'bg-purple-600/10 text-purple-400 border-purple-600/30',
+    icon: Settings,
+  },
+  AUDIT_LOG_EXPORT: {
+    label: 'Audit Export',
+    badge: 'bg-blue-600/10 text-blue-400 border-blue-600/30',
+    icon: Download,
+  },
+  DATABASE_MIGRATION: {
+    label: 'DB Migration',
+    badge: 'bg-red-600/10 text-red-400 border-red-600/30',
+    icon: Database,
   },
   USER_CREATED: {
     label: 'User Created',
@@ -160,6 +225,9 @@ export default function RecentActivityFeed({
   onViewAll,
 }: RecentActivityFeedProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [feedScope, setFeedScope] = useState<'SYSTEM_AUDIT' | 'PLANT_OPERATIONS' | 'USER_ACTIVITY'>('PLANT_OPERATIONS');
+  const [feedLabel, setFeedLabel] = useState<string>('Plant Operations Feed');
+  const [feedDescription, setFeedDescription] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -180,6 +248,9 @@ export default function RecentActivityFeed({
 
       const data = await res.json();
       setActivities(data.activities || []);
+      if (data.feedScope) setFeedScope(data.feedScope);
+      if (data.feedLabel) setFeedLabel(data.feedLabel);
+      if (data.feedDescription) setFeedDescription(data.feedDescription);
     } catch (err: any) {
       setError(err.message || 'Error fetching activity log');
     } finally {
@@ -205,10 +276,32 @@ export default function RecentActivityFeed({
             <Activity className="w-4 h-4 text-blue-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white tracking-wide">{title}</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-sm font-bold text-white tracking-wide">{title}</h3>
+              {feedLabel && (
+                <span
+                  className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${
+                    feedScope === 'SYSTEM_AUDIT'
+                      ? 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60'
+                      : feedScope === 'PLANT_OPERATIONS'
+                      ? 'bg-cyan-950/80 text-cyan-300 border-cyan-700/60'
+                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                  }`}
+                >
+                  {feedScope === 'SYSTEM_AUDIT' ? (
+                    <Shield className="w-2.5 h-2.5 text-indigo-400 shrink-0" />
+                  ) : feedScope === 'PLANT_OPERATIONS' ? (
+                    <Factory className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+                  ) : (
+                    <User className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+                  )}
+                  <span>{feedLabel}</span>
+                </span>
+              )}
+            </div>
             {!compact && (
-              <p className="text-[11px] text-slate-400">
-                Real-time operational audit trail & security events
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                {feedDescription || 'Real-time operational audit trail & security events'}
               </p>
             )}
           </div>

@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getCurrentSession } from '@/lib/auth';
+import {
+  getCurrentSession,
+  getAuditLogQueryWhere,
+  getAuditFeedScopeMeta,
+  maskAuthorIdentity,
+} from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,25 +25,12 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
     const actionFilter = searchParams.get('action');
 
-    const userRoles =
-      current.user.roles && current.user.roles.length > 0
-        ? current.user.roles
-        : [current.user.role];
-
-    const isAdminOrExecutive = userRoles.some((r) =>
-      ['SUPER_ADMIN', 'ADMIN', 'MD'].includes(r)
-    );
-
-    const where: any = {};
-
-    // Standard non-admin users can only view their own activity history
-    if (!isAdminOrExecutive) {
-      where.user_id = current.user.id;
-    }
-
-    if (actionFilter) {
-      where.action = actionFilter;
-    }
+    // Strict hierarchical query filtering enforced at the database layer:
+    // - SUPER_ADMIN: Unrestricted system & governance audit logs
+    // - ADMIN: Operational events across all plant departments; strict exclusion of SUPER_ADMIN actors and sensitive actions
+    // - Standard Users: Only their individual activity history (user_id === current.user.id)
+    const where = await getAuditLogQueryWhere(current.user, { actionFilter });
+    const scopeMeta = getAuditFeedScopeMeta(current.user.role, current.user.roles);
 
     const [logs, total] = await Promise.all([
       prisma.auditLog.findMany({
@@ -79,12 +71,28 @@ export async function GET(request: Request) {
             detailSummary = `Purchase Order ${parsedDetails.po_no}${
               parsedDetails.supplier ? ` • ${parsedDetails.supplier}` : ''
             }${parsedDetails.total_value ? ` ($${Number(parsedDetails.total_value).toLocaleString()})` : ''}`;
+          } else if (parsedDetails.grn_no) {
+            detailSummary = `GRN ${parsedDetails.grn_no}${
+              parsedDetails.heat_no ? ` • Heat ${parsedDetails.heat_no}` : ''
+            }${parsedDetails.pipes_received ? ` (${parsedDetails.pipes_received} pipes)` : ''}`;
+          } else if (parsedDetails.cpo_no) {
+            detailSummary = `Customer Order ${parsedDetails.cpo_no}${
+              parsedDetails.customer_name ? ` • ${parsedDetails.customer_name}` : ''
+            }`;
+          } else if (parsedDetails.dispatch_no) {
+            detailSummary = `Dispatch ${parsedDetails.dispatch_no}${
+              parsedDetails.destination ? ` • Destination: ${parsedDetails.destination}` : ''
+            }`;
           } else if (parsedDetails.wo_id) {
             detailSummary = `Work Order ${parsedDetails.wo_id}${
               parsedDetails.grade ? ` • Grade ${parsedDetails.grade}` : ''
             }${parsedDetails.planned_parts ? ` (${parsedDetails.planned_parts} pcs)` : ''}`;
           } else if (parsedDetails.stage_name) {
             detailSummary = `Routing: ${parsedDetails.stage_name} (Acc: ${parsedDetails.accepted ?? 0}, Rej: ${parsedDetails.rejected ?? 0})`;
+          } else if (parsedDetails.defect_type) {
+            detailSummary = `QA Defect: ${parsedDetails.defect_type}${
+              parsedDetails.part_id ? ` on Part ${parsedDetails.part_id}` : ''
+            }`;
           } else if (parsedDetails.target_email || parsedDetails.target_name) {
             detailSummary = `User ${parsedDetails.target_name || parsedDetails.target_email} (${parsedDetails.target_role || 'Member'})`;
           } else if (parsedDetails.email) {
@@ -118,7 +126,7 @@ export async function GET(request: Request) {
         user: log.user
           ? {
               id: log.user.id,
-              name: log.user.name,
+              name: maskAuthorIdentity(log.user.name, log.user.role, current.user.role, undefined, current.user.roles),
               email: log.user.email,
               role: log.user.role,
               department: log.user.department || 'Operations',
@@ -136,6 +144,9 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       activities: formattedActivities,
+      feedScope: scopeMeta.scope,
+      feedLabel: scopeMeta.label,
+      feedDescription: scopeMeta.description,
       pagination: {
         total,
         page,

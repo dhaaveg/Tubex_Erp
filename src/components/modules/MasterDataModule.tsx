@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import MasterDataTagModal from '../MasterDataTagModal';
 import { formatDate } from '@/lib/formatters';
+import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 
 export default function MasterDataModule() {
   const [activeTab, setActiveTab] = useState<'suppliers' | 'products'>('suppliers');
@@ -48,14 +49,24 @@ export default function MasterDataModule() {
   });
 
   // Product Form State
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<{
+    product_id: string;
+    product_description: string;
+    size_od: number;
+    wall_thickness: number;
+    grade: string;
+    thread_type: string;
+    cvn_requirement: string;
+    nominal_weight_kg_m: number;
+    uom: string;
+  }>({
     product_id: '',
     product_description: '',
     size_od: 177.8,
     wall_thickness: 10.36,
     grade: 'L80',
     thread_type: 'BTC',
-    cvn_requirement: '27J Min Avg @ -10°C',
+    cvn_requirement: DEFAULT_CVN_REQUIREMENT,
     nominal_weight_kg_m: 43.15,
     uom: 'Meters',
   });
@@ -134,7 +145,7 @@ export default function MasterDataModule() {
         wall_thickness: 10.36,
         grade: 'L80',
         thread_type: 'BTC',
-        cvn_requirement: '27J Min Avg @ -10°C',
+        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
         nominal_weight_kg_m: 43.15,
         uom: 'Meters',
       });
@@ -171,7 +182,7 @@ export default function MasterDataModule() {
       wall_thickness: p.wall_thickness || 10.36,
       grade: p.grade || 'L80',
       thread_type: p.thread_type || 'BTC',
-      cvn_requirement: p.cvn_requirement || '27J Min Avg @ -10°C',
+      cvn_requirement: p.cvn_requirement || DEFAULT_CVN_REQUIREMENT,
       nominal_weight_kg_m: p.nominal_weight_kg_m || 43.15,
       uom: p.uom || 'Meters',
     });

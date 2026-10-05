@@ -139,3 +139,17 @@ export const DEFAULT_QUALITY_STIPULATIONS = `1. Mill Test Certificate (MTC Type 
 2. Actual weighbridge net weights will be reconciled against invoice MT. Variance exceeding ±1.5% triggers automatic QA hold.
 3. Pipe ends must be fitted with protective bevel protectors / end caps and anti-corrosive mill varnish prior to dispatch.`;
 
+export const CVN_REQUIREMENT_OPTIONS = [
+  'L-7-21J (21°C ± 3°C)',
+  'L-10-27J (21°C ± 3°C)',
+  'T-10-20J (21°C ± 3°C)',
+  'L-7-43J (0°C ± 3°C)',
+  'L-10-54J (0°C ± 3°C)',
+  'T-10-27J (0°C ± 3°C)',
+  'T-10-30J (0°C ± 3°C)',
+  'T-10-32J (0°C ± 3°C)',
+] as const;
+
+export type CvnRequirementOption = (typeof CVN_REQUIREMENT_OPTIONS)[number];
+export const DEFAULT_CVN_REQUIREMENT: CvnRequirementOption = 'L-10-27J (21°C ± 3°C)';
+

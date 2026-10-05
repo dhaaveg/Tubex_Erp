@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { PurchaseOrderSchema } from '@/lib/validations';
 import { getCurrentSession } from '@/lib/auth';
+import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,28 +68,32 @@ async function resolveProductId(item: {
     }
   }
 
-  // 2. Check if a product exists matching size_od, grade, and wall_thickness
+  // 2. Check if a product exists matching size_od, grade, wall_thickness, and cvn_requirement
   if (item.size_od && item.grade && item.wall_thickness) {
-    // Prefer Plain End raw pipe if one already exists
+    const targetCvn = item.cvn_requirement || DEFAULT_CVN_REQUIREMENT;
+
+    // Prefer Plain End raw pipe if one already exists matching CVN
     const matchedPlain = await prisma.product.findFirst({
       where: {
         size_od: Number(item.size_od),
         wall_thickness: Number(item.wall_thickness),
         grade: item.grade,
         thread_type: 'Plain End',
+        cvn_requirement: targetCvn,
       },
     });
     if (matchedPlain) return matchedPlain.product_id;
 
-    // Otherwise link to any existing catalog item matching size, WT, and grade
-    const matchedAny = await prisma.product.findFirst({
+    // Otherwise link to any existing catalog item matching size, WT, grade, and CVN
+    const matchedWithCvn = await prisma.product.findFirst({
       where: {
         size_od: Number(item.size_od),
         wall_thickness: Number(item.wall_thickness),
         grade: item.grade,
+        cvn_requirement: targetCvn,
       },
     });
-    if (matchedAny) return matchedAny.product_id;
+    if (matchedWithCvn) return matchedWithCvn.product_id;
 
     // 3. Auto-create a Plain End raw pipe catalog product for procurement
     const count = await prisma.product.count();
@@ -106,7 +111,7 @@ async function resolveProductId(item: {
         wall_thickness: Number(item.wall_thickness),
         grade: item.grade,
         thread_type: 'Plain End',
-        cvn_requirement: item.cvn_requirement || '27J Min Avg @ -10°C',
+        cvn_requirement: targetCvn,
         nominal_weight_kg_m: nomWeight > 0 ? nomWeight : 30.0,
         uom: 'Meters',
       },

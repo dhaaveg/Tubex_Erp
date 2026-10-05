@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import PoInvoiceModal from '@/components/PoInvoiceModal';
 import { formatDate } from '@/lib/formatters';
-import { DEFAULT_QUALITY_STIPULATIONS } from '@/lib/types';
+import { DEFAULT_QUALITY_STIPULATIONS, CVN_REQUIREMENT_OPTIONS, DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 
 export default function ProcurementModule() {
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
@@ -81,7 +81,7 @@ export default function ProcurementModule() {
       grade: 'L80',
       wall_thickness: 10.36,
       schedule: 'Sch 80',
-      cvn_requirement: '27J Min Avg @ -10°C',
+      cvn_requirement: DEFAULT_CVN_REQUIREMENT,
       ordered_qty: 1000,
       ordered_qty_mt: 43.15,
       unit_rate: 45,
@@ -142,7 +142,7 @@ export default function ProcurementModule() {
         grade: 'L80',
         wall_thickness: 10.36,
         schedule: 'Sch 80',
-        cvn_requirement: '27J Min Avg @ -10°C',
+        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
         ordered_qty: 1000,
         ordered_qty_mt: calcEstMt(1000, 177.8, 10.36),
         unit_rate: 45,
@@ -179,7 +179,7 @@ export default function ProcurementModule() {
               grade: item.grade || prd?.grade || 'L80',
               wall_thickness: wt,
               schedule: wt <= 7 ? 'Sch 40' : wt <= 10 ? 'Sch 80' : 'Sch 120',
-              cvn_requirement: item.cvn_requirement || prd?.cvn_requirement || '27J Min Avg @ -10°C',
+              cvn_requirement: item.cvn_requirement || prd?.cvn_requirement || DEFAULT_CVN_REQUIREMENT,
               ordered_qty: item.ordered_qty,
               ordered_qty_mt: item.ordered_qty_mt || calcEstMt(item.ordered_qty, od, wt),
               unit_rate: item.unit_rate,
@@ -193,7 +193,7 @@ export default function ProcurementModule() {
               grade: 'L80',
               wall_thickness: 10.36,
               schedule: 'Sch 80',
-              cvn_requirement: '27J Min Avg @ -10°C',
+              cvn_requirement: DEFAULT_CVN_REQUIREMENT,
               ordered_qty: 1000,
               ordered_qty_mt: 43.15,
               unit_rate: 45,
@@ -229,7 +229,7 @@ export default function ProcurementModule() {
         grade: 'L80',
         wall_thickness: 10.36,
         schedule: 'Sch 80',
-        cvn_requirement: '27J Min Avg @ -10°C',
+        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
         ordered_qty: 500,
         ordered_qty_mt: calcEstMt(500, 177.8, 10.36),
         unit_rate: 50,
@@ -891,15 +891,18 @@ export default function ProcurementModule() {
                                 4. CVN (Charpy V-Notch)
                               </label>
                               <select
-                                value={item.cvn_requirement || '27J Min Avg @ -10°C'}
+                                value={item.cvn_requirement || DEFAULT_CVN_REQUIREMENT}
                                 onChange={(e) => handleItemSpecChange(idx, 'cvn_requirement', e.target.value)}
                                 className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:border-blue-500"
                               >
-                                <option value="27J Min Avg @ -10°C">27J Min Avg @ -10°C (API 5CT SR16)</option>
-                                <option value="42J Min Avg @ -20°C">42J Min Avg @ -20°C (Severe / Arctic)</option>
-                                <option value="20J Min Avg @ 0°C">20J Min Avg @ 0°C</option>
-                                <option value="API 5CT Standard SR16">API 5CT Standard SR16</option>
-                                <option value="N/A - Non-Impact Tested">N/A - Non-Impact Tested</option>
+                                {item.cvn_requirement && !CVN_REQUIREMENT_OPTIONS.includes(item.cvn_requirement as any) && (
+                                  <option value={item.cvn_requirement}>{item.cvn_requirement} (Legacy)</option>
+                                )}
+                                {CVN_REQUIREMENT_OPTIONS.map((cvn) => (
+                                  <option key={cvn} value={cvn}>
+                                    {cvn}
+                                  </option>
+                                ))}
                               </select>
                               <div className="mt-1.5 text-[9px] text-slate-500 truncate">
                                 Impact energy & test temp

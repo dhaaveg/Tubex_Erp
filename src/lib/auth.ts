@@ -14,6 +14,9 @@ import {
   getUserQueryFilter,
   maskAuthorIdentity,
   parseRoles,
+  SENSITIVE_GOVERNANCE_ACTIONS,
+  isSensitiveGovernanceAction,
+  OPERATIONAL_ACTIONS,
 } from './auth-types';
 
 export * from './auth-types';
@@ -212,4 +215,113 @@ export async function requireRole(allowedRoles: Role[]): Promise<{ user: SafeUse
     throw err;
   }
   return current;
+}
+
+/**
+ * Constructs the secure database query filter for audit logs.
+ * Enforces strict hierarchical partitioning and prevents IDOR / privilege escalation:
+ * - SUPER_ADMIN: Unrestricted visibility across all operations, user management, and governance logs.
+ * - ADMIN & MD: Full operational visibility across all departments (Procurement, Shop Floor, Inventory, QA, Sales).
+ *   Strict Exclusion:
+ *     1. Automatically filters out any actions taken by a SUPER_ADMIN actor.
+ *     2. Automatically filters out all sensitive governance actions (USER_ROLE_CHANGED, ROLE_PERMISSIONS_UPDATED, USER_DEACTIVATED, USER_DELETED, etc.).
+ *     3. Automatically filters out any actions targeting a SUPER_ADMIN account.
+ *     4. Rejects or neutralizes client parameter tampering (e.g. attempting to filter on sensitive actions).
+ * - Standard Staff: Restricted strictly to their own individual activity entries (user_id === user.id).
+ */
+export async function getAuditLogQueryWhere(
+  user: { id: string; role: Role; roles?: Role[] },
+  options?: { actionFilter?: string | null }
+): Promise<any> {
+  const userRoles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
+  const isSuperAdmin = userRoles.includes('SUPER_ADMIN');
+  const isAdminOrMD = userRoles.includes('ADMIN') || userRoles.includes('MD');
+
+  const where: any = {};
+
+  if (isSuperAdmin) {
+    if (options?.actionFilter) {
+      where.action = options.actionFilter;
+    }
+    return where;
+  }
+
+  // Retrieve all SUPER_ADMIN IDs to prevent any actions targeting them from leaking
+  const superAdminUsers = await prisma.user.findMany({
+    where: {
+      OR: [
+        { role: 'SUPER_ADMIN' },
+        { roles: { contains: 'SUPER_ADMIN' } },
+      ],
+    },
+    select: { id: true },
+  });
+  const superAdminIds = superAdminUsers.map((u) => u.id);
+
+  if (isAdminOrMD) {
+    where.AND = [
+      // 1. Exclude events where actor is a SUPER_ADMIN (allow system automation where user_id is null)
+      {
+        OR: [
+          { user_id: null },
+          {
+            user: {
+              AND: [
+                { role: { not: 'SUPER_ADMIN' } },
+                {
+                  OR: [
+                    { roles: null },
+                    { roles: { not: { contains: 'SUPER_ADMIN' } } },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+      // 2. Exclude sensitive governance actions
+      {
+        action: {
+          notIn: Array.from(SENSITIVE_GOVERNANCE_ACTIONS),
+        },
+      },
+    ];
+
+    // 3. Exclude any action targeting a SUPER_ADMIN account
+    if (superAdminIds.length > 0) {
+      where.NOT = [
+        {
+          entity_type: 'User',
+          entity_id: { in: superAdminIds },
+        },
+      ];
+    }
+
+    // 4. Parameter tampering guard: if client requested an action filter, ensure it's not a sensitive action
+    if (options?.actionFilter) {
+      if (isSensitiveGovernanceAction(options.actionFilter)) {
+        where.action = '__FORBIDDEN_SENSITIVE_ACTION__'; // Guarantees zero records leak
+      } else {
+        where.action = options.actionFilter;
+      }
+    }
+
+    return where;
+  }
+
+  // Standard Departmental Users
+  where.user_id = user.id;
+  where.action = {
+    notIn: Array.from(SENSITIVE_GOVERNANCE_ACTIONS),
+  };
+
+  if (options?.actionFilter) {
+    if (isSensitiveGovernanceAction(options.actionFilter)) {
+      where.action = '__FORBIDDEN_SENSITIVE_ACTION__';
+    } else {
+      where.action = options.actionFilter;
+    }
+  }
+
+  return where;
 }
