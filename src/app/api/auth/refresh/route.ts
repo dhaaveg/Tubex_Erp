@@ -7,6 +7,7 @@ import {
   SESSION_COOKIE_NAME,
   sanitizeUser,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,7 @@ async function handleRefresh() {
 
     if (!token) {
       return NextResponse.json(
-        { error: 'No active session token provided.' },
+        { success: false, error: 'No active session token provided.' },
         { status: 401 }
       );
     }
@@ -25,7 +26,7 @@ async function handleRefresh() {
     const payload = await decryptSessionToken(token);
     if (!payload) {
       return NextResponse.json(
-        { error: 'Session has expired or is invalid.' },
+        { success: false, error: 'Session has expired or is invalid.' },
         { status: 401 }
       );
     }
@@ -37,7 +38,7 @@ async function handleRefresh() {
 
     if (!dbSession) {
       return NextResponse.json(
-        { error: 'Session not found in active registry.' },
+        { success: false, error: 'Session not found in active registry.' },
         { status: 401 }
       );
     }
@@ -57,7 +58,7 @@ async function handleRefresh() {
       }).catch(() => {});
 
       const response = NextResponse.json(
-        { error: 'Session has expired due to 2 hours of inactivity.' },
+        { success: false, error: 'Session has expired due to 2 hours of inactivity.' },
         { status: 401 }
       );
       response.cookies.set({
@@ -75,7 +76,7 @@ async function handleRefresh() {
     if (!dbSession.user || !dbSession.user.is_active) {
       await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
       return NextResponse.json(
-        { error: 'User account has been deactivated.' },
+        { success: false, error: 'User account has been deactivated.' },
         { status: 403 }
       );
     }
@@ -117,16 +118,11 @@ async function handleRefresh() {
   } catch (error: any) {
     console.error('Session refresh error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to refresh session.' },
+      { success: false, error: error.message || 'Failed to refresh session.' },
       { status: 500 }
     );
   }
 }
 
-export async function POST() {
-  return handleRefresh();
-}
-
-export async function GET() {
-  return handleRefresh();
-}
+export const POST = withApiHandler(async () => handleRefresh());
+export const GET = withApiHandler(async () => handleRefresh());

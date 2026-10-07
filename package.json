@@ -9,6 +9,9 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "node prisma/seed.js",
+    "db:push": "prisma db push",
+    "db:deploy": "prisma migrate deploy",
+    "db:migrate:postgres": "node scripts/migrate-sqlite-to-postgres.mjs",
     "db:setup": "prisma db push && node prisma/seed.js"
   },
   "dependencies": {

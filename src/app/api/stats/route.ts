@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withApiHandler(async () => {
   try {
     const [
       totalSuppliers,
@@ -96,6 +97,6 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error('Error fetching dashboard stats:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error fetching dashboard stats' }, { status: 500 });
   }
-}
+});

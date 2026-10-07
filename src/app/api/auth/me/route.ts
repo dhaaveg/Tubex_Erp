@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getCurrentSession } from '@/lib/auth';
 import { getUserEffectivePermissions } from '@/lib/dynamic-permissions';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withApiHandler(async () => {
   try {
     const current = await getCurrentSession();
     if (!current) {
-      return NextResponse.json({ authenticated: false, user: null }, { status: 401 });
+      return NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
     }
 
     const roles =
@@ -19,11 +20,12 @@ export async function GET() {
     const effectivePermissions = await getUserEffectivePermissions(roles);
 
     return NextResponse.json({
+      success: true,
       authenticated: true,
       user: current.user,
       effectivePermissions,
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error fetching user session' }, { status: 500 });
   }
-}
+});

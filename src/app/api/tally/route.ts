@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { TallySheetSchema } from '@/lib/validations';
 import { calculateCuttingYield } from '@/lib/calculations';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const heatNo = searchParams.get('heat_no') || '';
@@ -46,11 +47,11 @@ export async function GET(request: Request) {
     return NextResponse.json(tallySheets);
   } catch (error: any) {
     console.error('Error fetching tally sheets:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error fetching tally sheets' }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = TallySheetSchema.parse(body);
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
     });
     if (existingTs) {
       return NextResponse.json(
-        { error: `Duplicate Tally Sheet Error: Tally Sheet ID "${validated.ts_id}" already exists. Please specify a unique Tally Sheet ID.` },
+        { success: false, error: `Duplicate Tally Sheet Error: Tally Sheet ID "${validated.ts_id}" already exists. Please specify a unique Tally Sheet ID.` },
         { status: 400 }
       );
     }
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
       const upper = item.ti_id.trim().toUpperCase();
       if (seenTiIds.has(upper)) {
         return NextResponse.json(
-          { error: `Duplicate Barcode in Form: Lot Tag / Barcode "${item.ti_id}" appears more than once in this Tally Sheet. Every lot must have a unique barcode.` },
+          { success: false, error: `Duplicate Barcode in Form: Lot Tag / Barcode "${item.ti_id}" appears more than once in this Tally Sheet. Every lot must have a unique barcode.` },
           { status: 400 }
         );
       }
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
       const dup = existingTiCollisions[0];
       return NextResponse.json(
         {
+          success: false,
           error: `Duplicate Barcode Error: Lot Tag / Barcode "${dup.ti_id}" already exists in Tally Sheet "${dup.ts_id}". Every lot must have a unique Lot Tag Barcode.`,
         },
         { status: 400 }
@@ -126,7 +128,7 @@ export async function POST(request: Request) {
     });
 
     if (!grnItem) {
-      return NextResponse.json({ error: `GRN Item ${validated.grn_item_id} not found` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `GRN Item ${validated.grn_item_id} not found` }, { status: 404 });
     }
 
     const firstHeat = computedItems[0]?.heat_no || null;
@@ -209,13 +211,13 @@ export async function POST(request: Request) {
       errorMsg = `Duplicate Entry Error: A record with this unique identifier (${target}) already exists in the database. Every lot barcode must be unique.`;
     }
     return NextResponse.json(
-      { error: errorMsg, details: error.errors },
+      { success: false, error: errorMsg, details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = TallySheetSchema.parse(body);
@@ -226,7 +228,7 @@ export async function PUT(request: Request) {
     });
 
     if (!existingSheet) {
-      return NextResponse.json({ error: `Tally Sheet ${validated.ts_id} not found` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `Tally Sheet ${validated.ts_id} not found` }, { status: 404 });
     }
 
     // Compute cutting yield math for each lot item
@@ -255,7 +257,7 @@ export async function PUT(request: Request) {
       const upper = item.ti_id.trim().toUpperCase();
       if (seenTiIds.has(upper)) {
         return NextResponse.json(
-          { error: `Duplicate Barcode in Form: Lot Tag / Barcode "${item.ti_id}" appears more than once in this Tally Sheet. Every lot must have a unique barcode.` },
+          { success: false, error: `Duplicate Barcode in Form: Lot Tag / Barcode "${item.ti_id}" appears more than once in this Tally Sheet. Every lot must have a unique barcode.` },
           { status: 400 }
         );
       }
@@ -279,6 +281,7 @@ export async function PUT(request: Request) {
       const dup = otherSheetCollisions[0];
       return NextResponse.json(
         {
+          success: false,
           error: `Duplicate Barcode Error: Lot Tag / Barcode "${dup.ti_id}" is already registered under Tally Sheet "${dup.ts_id}". Every lot must have a unique Lot Tag Barcode.`,
         },
         { status: 400 }
@@ -291,7 +294,7 @@ export async function PUT(request: Request) {
     });
 
     if (!grnItem) {
-      return NextResponse.json({ error: `GRN Item ${validated.grn_item_id} not found` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `GRN Item ${validated.grn_item_id} not found` }, { status: 404 });
     }
 
     const firstHeat = computedItems[0]?.heat_no || null;
@@ -427,19 +430,19 @@ export async function PUT(request: Request) {
       errorMsg = `Duplicate Entry Error: A record with this unique identifier (${target}) already exists in the database. Every lot barcode must be unique.`;
     }
     return NextResponse.json(
-      { error: errorMsg, details: error.errors },
+      { success: false, error: errorMsg, details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const tsId = searchParams.get('ts_id');
 
     if (!tsId) {
-      return NextResponse.json({ error: 'Tally Sheet ID (ts_id) is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Tally Sheet ID (ts_id) is required' }, { status: 400 });
     }
 
     const ts = await prisma.tallySheet.findUnique({
@@ -455,7 +458,7 @@ export async function DELETE(request: Request) {
     });
 
     if (!ts) {
-      return NextResponse.json({ error: `Tally Sheet ${tsId} not found` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `Tally Sheet ${tsId} not found` }, { status: 404 });
     }
 
     // Check if any lots have work orders
@@ -463,6 +466,7 @@ export async function DELETE(request: Request) {
     if (lotsWithWos.length > 0) {
       return NextResponse.json(
         {
+          success: false,
           error: `Cannot delete Tally Sheet ${tsId} because ${lotsWithWos.length} lot(s) (${lotsWithWos.map((p) => p.ti_id).join(', ')}) have active Shop Work Orders.`,
         },
         { status: 400 }
@@ -508,6 +512,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true, message: `Tally Sheet ${tsId} deleted successfully` });
   } catch (error: any) {
     console.error('Error deleting tally sheet:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error deleting tally sheet' }, { status: 500 });
   }
-}
+});

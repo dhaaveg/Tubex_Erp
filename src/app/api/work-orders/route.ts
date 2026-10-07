@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { WorkOrderSchema } from '@/lib/validations';
 import { getCurrentSession } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || '';
@@ -66,11 +67,11 @@ export async function GET(request: Request) {
     return NextResponse.json(workOrders);
   } catch (error: any) {
     console.error('Error fetching work orders:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = WorkOrderSchema.parse(body);
@@ -211,13 +212,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating work order:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = WorkOrderSchema.parse(body);
@@ -338,13 +339,13 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating work order:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     let woId = searchParams.get('wo_id');
@@ -356,7 +357,7 @@ export async function DELETE(request: Request) {
 
     if (!woId) {
       return NextResponse.json(
-        { error: 'Work Order ID (wo_id) is required.' },
+        { success: false, error: 'Work Order ID (wo_id) is required.' },
         { status: 400 }
       );
     }
@@ -371,7 +372,7 @@ export async function DELETE(request: Request) {
 
     if (!existing) {
       return NextResponse.json(
-        { error: `Work Order '${woId}' not found.` },
+        { success: false, error: `Work Order '${woId}' not found.` },
         { status: 404 }
       );
     }
@@ -395,6 +396,6 @@ export async function DELETE(request: Request) {
     });
   } catch (error: any) {
     console.error('Error deleting work order:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+});

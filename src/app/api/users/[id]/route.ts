@@ -11,16 +11,17 @@ import {
   encryptSessionToken,
   SESSION_COOKIE_NAME,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
 interface RouteContext {
   params: { id: string };
 }
 
-export async function PUT(request: Request, { params }: RouteContext) {
+export const PUT = withApiHandler(async (request: Request, { params }: RouteContext) => {
   try {
     const currentSession = await getCurrentSession();
     if (!currentSession) {
-      return NextResponse.json({ error: 'Unauthorized: Authentication required.' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized: Authentication required.' }, { status: 401 });
     }
 
     const currentUser = currentSession.user;
@@ -34,7 +35,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
     // Must be either editing self OR have ADMIN/SUPER_ADMIN role
     if (!isSelfEdit && !isCallerAdmin && !isCallerSuperAdmin) {
       return NextResponse.json(
-        { error: 'Forbidden: You do not have permission to modify other user accounts.' },
+        { success: false, error: 'Forbidden: You do not have permission to modify other user accounts.' },
         { status: 403 }
       );
     }
@@ -44,7 +45,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
     });
 
     if (!targetUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     const targetRoles = parseRoles(targetUser);
@@ -52,7 +53,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
 
     // Super Admin invisibility: If target is SUPER_ADMIN and caller is not, pretend 404 (unless self-edit)
     if (isTargetSuperAdmin && !isCallerSuperAdmin && !isSelfEdit) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     const body = await request.json();
@@ -65,7 +66,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
       const cleanName = String(name).trim();
       if (!cleanName) {
         return NextResponse.json(
-          { error: 'User name cannot be empty.' },
+          { success: false, error: 'User name cannot be empty.' },
           { status: 400 }
         );
       }
@@ -78,7 +79,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!cleanEmail || !emailRegex.test(cleanEmail)) {
         return NextResponse.json(
-          { error: 'A valid corporate email address is required (e.g. name@energyoilfield.com).' },
+          { success: false, error: 'A valid corporate email address is required (e.g. name@energyoilfield.com).' },
           { status: 400 }
         );
       }
@@ -89,7 +90,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
         });
         if (existing && existing.id !== targetUserId) {
           return NextResponse.json(
-            { error: `The email address "${cleanEmail}" is already registered to another user.` },
+            { success: false, error: `The email address "${cleanEmail}" is already registered to another user.` },
             { status: 400 }
           );
         }
@@ -114,7 +115,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
       // Admin privileges check: Non-super-admins cannot assign or elevate to SUPER_ADMIN
       if (newRoles && newRoles.includes('SUPER_ADMIN') && !isCallerSuperAdmin) {
         return NextResponse.json(
-          { error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
+          { success: false, error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
           { status: 403 }
         );
       }
@@ -134,7 +135,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
 
           if (activeSuperAdminCount <= 1) {
             return NextResponse.json(
-              { error: 'Action Blocked: Cannot demote or deactivate the last remaining active Super Administrator.' },
+              { success: false, error: 'Action Blocked: Cannot demote or deactivate the last remaining active Super Administrator.' },
               { status: 400 }
             );
           }
@@ -158,6 +159,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
         if (cleanPassword.length < 8 || !hasLetter || !hasNumber || !hasSymbol) {
           return NextResponse.json(
             {
+              success: false,
               error:
                 'Password complexity required: Temporary password must be at least 8 characters long and contain letters, numbers, and symbols.',
             },
@@ -256,18 +258,18 @@ export async function PUT(request: Request, { params }: RouteContext) {
   } catch (error: any) {
     console.error('Update user error:', error);
     const status = error.status || 500;
-    return NextResponse.json({ error: error.message }, { status });
+    return NextResponse.json({ success: false, error: error.message }, { status });
   }
-}
+});
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+export const DELETE = withApiHandler(async (request: Request, { params }: RouteContext) => {
   try {
     const { user: currentUser } = await requireRole(['SUPER_ADMIN']);
     const targetUserId = params.id;
 
     if (currentUser.id === targetUserId) {
       return NextResponse.json(
-        { error: 'Self-deletion is prohibited. You cannot delete your own account.' },
+        { success: false, error: 'Self-deletion is prohibited. You cannot delete your own account.' },
         { status: 400 }
       );
     }
@@ -277,7 +279,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     });
 
     if (!targetUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     const targetRoles = parseRoles(targetUser);
@@ -289,7 +291,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
 
       if (superAdminCount <= 1) {
         return NextResponse.json(
-          { error: 'Action Blocked: Cannot delete the last remaining Super Administrator.' },
+          { success: false, error: 'Action Blocked: Cannot delete the last remaining Super Administrator.' },
           { status: 400 }
         );
       }
@@ -317,6 +319,6 @@ export async function DELETE(request: Request, { params }: RouteContext) {
   } catch (error: any) {
     console.error('Delete user error:', error);
     const status = error.status || 500;
-    return NextResponse.json({ error: error.message }, { status });
+    return NextResponse.json({ success: false, error: error.message }, { status });
   }
-}
+});

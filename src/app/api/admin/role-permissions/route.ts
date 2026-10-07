@@ -10,14 +10,15 @@ import {
   invalidatePermissionCache,
 } from '@/lib/dynamic-permissions';
 import { Role } from '@/lib/auth-types';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const current = await getCurrentSession();
     if (!current) {
-      return NextResponse.json({ error: 'Unauthorized: Authentication required.' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized: Authentication required.' }, { status: 401 });
     }
 
     const userRoles = current.user.roles && current.user.roles.length > 0 ? current.user.roles : [current.user.role];
@@ -25,12 +26,13 @@ export async function GET(request: NextRequest) {
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: 'Forbidden: Role permissions matrix requires Administrator privileges.' },
+        { success: false, error: 'Forbidden: Role permissions matrix requires Administrator privileges.' },
         { status: 403 }
       );
     }
 
-    const bypassCache = request.nextUrl.searchParams.get('fresh') === 'true';
+    const nextUrl = new URL(request.url);
+    const bypassCache = nextUrl.searchParams.get('fresh') === 'true';
     const matrix = await getRolePermissionsMatrix(bypassCache);
 
     return NextResponse.json({
@@ -43,15 +45,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error in GET /api/admin/role-permissions:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Internal server error' }, { status: 500 });
   }
-}
+});
 
-export async function PUT(request: NextRequest) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const current = await getCurrentSession();
     if (!current) {
-      return NextResponse.json({ error: 'Unauthorized: Authentication required.' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized: Authentication required.' }, { status: 401 });
     }
 
     const userRoles = current.user.roles && current.user.roles.length > 0 ? current.user.roles : [current.user.role];
@@ -59,7 +61,7 @@ export async function PUT(request: NextRequest) {
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: 'Forbidden: Modifying role permissions requires Administrator privileges.' },
+        { success: false, error: 'Forbidden: Modifying role permissions requires Administrator privileges.' },
         { status: 403 }
       );
     }
@@ -72,7 +74,7 @@ export async function PUT(request: NextRequest) {
       const targetRole = body.resetRole as Role;
       if (targetRole === 'SUPER_ADMIN') {
         return NextResponse.json(
-          { error: 'SUPER_ADMIN root privileges cannot be altered or reset.' },
+          { success: false, error: 'SUPER_ADMIN root privileges cannot be altered or reset.' },
           { status: 400 }
         );
       }
@@ -85,7 +87,7 @@ export async function PUT(request: NextRequest) {
 
       // Notify middleware / clear edge cache
       try {
-        const origin = request.nextUrl.origin;
+        const origin = new URL(request.url).origin;
         await fetch(`${origin}/api/admin/role-permissions/cache?clear=1`, { cache: 'no-store' });
       } catch {}
 
@@ -99,7 +101,7 @@ export async function PUT(request: NextRequest) {
     const updates = Array.isArray(body) ? body : body.updates;
     if (!Array.isArray(updates) || updates.length === 0) {
       return NextResponse.json(
-        { error: 'Invalid payload: "updates" must be a non-empty array of permission objects.' },
+        { success: false, error: 'Invalid payload: "updates" must be a non-empty array of permission objects.' },
         { status: 400 }
       );
     }
@@ -109,7 +111,7 @@ export async function PUT(request: NextRequest) {
       if (item.role === 'SUPER_ADMIN') {
         if (item.is_enabled === false || item.can_read === false || item.can_write === false) {
           return NextResponse.json(
-            { error: 'Security Violation: SUPER_ADMIN core root privileges cannot be revoked or restricted.' },
+            { success: false, error: 'Security Violation: SUPER_ADMIN core root privileges cannot be revoked or restricted.' },
             { status: 400 }
           );
         }
@@ -124,7 +126,7 @@ export async function PUT(request: NextRequest) {
 
     // Notify middleware / clear edge cache
     try {
-      const origin = request.nextUrl.origin;
+      const origin = new URL(request.url).origin;
       await fetch(`${origin}/api/admin/role-permissions/cache?clear=1`, { cache: 'no-store' });
     } catch {}
 
@@ -135,6 +137,6 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error in PUT /api/admin/role-permissions:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Internal server error' }, { status: 500 });
   }
-}
+});

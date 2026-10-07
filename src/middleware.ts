@@ -260,11 +260,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Public Auth Routes
+  // 3. Public Auth Routes & Public LOVs
   const isAuthRoute =
     pathname === '/login' ||
     pathname === '/api/auth/login' ||
-    pathname === '/api/auth/logout';
+    pathname === '/api/auth/logout' ||
+    pathname === '/api/lov';
 
   if (isAuthRoute) {
     return NextResponse.next();
@@ -285,7 +286,7 @@ export async function middleware(request: NextRequest) {
   if (isExpired) {
     if (pathname.startsWith('/api/')) {
       const response = NextResponse.json(
-        { error: 'Session expired due to 2 hours of inactivity.', code: 'SESSION_TIMEOUT' },
+        { success: false, error: 'Session expired due to 2 hours of inactivity.', code: 'SESSION_TIMEOUT' },
         { status: 401 }
       );
       response.cookies.set({
@@ -322,7 +323,7 @@ export async function middleware(request: NextRequest) {
   if (!payload) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
-        { error: 'Unauthorized: Valid session required.' },
+        { success: false, error: 'Unauthorized: Valid session required.' },
         { status: 401 }
       );
     }
@@ -344,6 +345,7 @@ export async function middleware(request: NextRequest) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json(
           {
+            success: false,
             error: 'Password reset required on initial login before proceeding.',
             force_password_change: true,
           },
@@ -407,6 +409,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         {
+          success: false,
           error: `Forbidden: Assigned roles (${roles.join(', ')}) do not permit access to module "${moduleKey}".`,
         },
         { status: 403 }
@@ -424,6 +427,7 @@ export async function middleware(request: NextRequest) {
     if (!canWrite) {
       return NextResponse.json(
         {
+          success: false,
           error: `Forbidden: Assigned roles (${roles.join(', ')}) have read-only access for module "${moduleKey}". Mutations not permitted.`,
         },
         { status: 403 }

@@ -32,12 +32,15 @@ prisma/*.db-journal
 prisma/*.db-wal
 prisma/*.db-shm
 
-# Debug logs
+# Debug & Application logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+logs/
+/logs/
+*.log
 
 # IDE & Editor Files
 .idea/
@@ -66,3 +69,4 @@ temp/
 .turbo/
 *.tsbuildinfo
 next-env.d.ts.bak
+prisma/generated/

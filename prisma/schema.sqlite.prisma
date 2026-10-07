@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated/sqlite-client"
 }
 
 // 1. Supplier Table (Master)
@@ -345,5 +346,22 @@ model RoleModulePermission {
   @@unique([role, module_key])
   @@index([role])
   @@index([module_key])
+}
+
+// 16. Dynamic List of Values (LOV) Table
+model ListOfValue {
+  id                String   @id @default(uuid())
+  category          String   // e.g., 'CVN_REQUIREMENT', 'DEFECT_CATEGORY', 'DISPOSITION_ACTION', 'PROCESS_STAGE', 'PIPE_STATUS', 'SHIFT', 'STEEL_GRADE', 'THREAD_TYPE'
+  code              String   // unique within category
+  label             String   // display label
+  value             String   // stored value
+  sort_order        Int      @default(0)
+  is_active         Boolean  @default(true)
+  is_system_default Boolean  @default(false)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@unique([category, code])
+  @@index([category, is_active, sort_order])
 }
 

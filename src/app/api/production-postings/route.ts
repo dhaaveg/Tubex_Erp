@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { ProductionPostingSchema } from '@/lib/validations';
 import { validateProductionBalance, validateWorkOrderStageQuantityLimit } from '@/lib/calculations';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const woId = searchParams.get('wo_id');
@@ -30,11 +31,11 @@ export async function GET(request: Request) {
     return NextResponse.json(postings);
   } catch (error: any) {
     console.error('Error fetching production postings:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error fetching production postings' }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = ProductionPostingSchema.parse(body);
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
 
     if (!balanceCheck.isBalanced) {
       return NextResponse.json(
-        { error: balanceCheck.errorMessage },
+        { success: false, error: balanceCheck.errorMessage },
         { status: 400 }
       );
     }
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
       if (!validated.rejections || validated.rejections.length === 0) {
         return NextResponse.json(
           {
+            success: false,
             error: `Rejected quantity is ${validated.rejected_quantity}, but no defect log entries were provided. At least one defect entry is mandatory.`,
           },
           { status: 400 }
@@ -73,6 +75,7 @@ export async function POST(request: Request) {
       if (totalDefects !== validated.rejected_quantity) {
         return NextResponse.json(
           {
+            success: false,
             error: `Defect quantity mismatch: Total logged defects (${totalDefects}) does not equal Rejected Quantity (${validated.rejected_quantity}).`,
           },
           { status: 400 }
@@ -92,7 +95,7 @@ export async function POST(request: Request) {
 
     if (!wo) {
       return NextResponse.json(
-        { error: `Work Order '${validated.wo_id}' not found.` },
+        { success: false, error: `Work Order '${validated.wo_id}' not found.` },
         { status: 404 }
       );
     }
@@ -117,7 +120,7 @@ export async function POST(request: Request) {
 
       if (stageLimitGate.isExceeded) {
         return NextResponse.json(
-          { error: stageLimitGate.errorMessage },
+          { success: false, error: stageLimitGate.errorMessage },
           { status: 400 }
         );
       }
@@ -190,13 +193,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating production posting:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = ProductionPostingSchema.parse(body);
@@ -211,7 +214,7 @@ export async function PUT(request: Request) {
 
     if (!balanceCheck.isBalanced) {
       return NextResponse.json(
-        { error: balanceCheck.errorMessage },
+        { success: false, error: balanceCheck.errorMessage },
         { status: 400 }
       );
     }
@@ -221,6 +224,7 @@ export async function PUT(request: Request) {
       if (!validated.rejections || validated.rejections.length === 0) {
         return NextResponse.json(
           {
+            success: false,
             error: `Rejected quantity is ${validated.rejected_quantity}, but no defect log entries were provided. At least one defect entry is mandatory.`,
           },
           { status: 400 }
@@ -235,6 +239,7 @@ export async function PUT(request: Request) {
       if (totalDefects !== validated.rejected_quantity) {
         return NextResponse.json(
           {
+            success: false,
             error: `Defect quantity mismatch: Total logged defects (${totalDefects}) does not equal Rejected Quantity (${validated.rejected_quantity}).`,
           },
           { status: 400 }
@@ -250,7 +255,7 @@ export async function PUT(request: Request) {
 
     if (!existingPosting) {
       return NextResponse.json(
-        { error: `Production Posting '${validated.pp_id}' not found.` },
+        { success: false, error: `Production Posting '${validated.pp_id}' not found.` },
         { status: 404 }
       );
     }
@@ -283,7 +288,7 @@ export async function PUT(request: Request) {
 
         if (stageLimitGate.isExceeded) {
           return NextResponse.json(
-            { error: stageLimitGate.errorMessage },
+            { success: false, error: stageLimitGate.errorMessage },
             { status: 400 }
           );
         }
@@ -329,28 +334,28 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating production posting:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const ppId = searchParams.get('pp_id');
 
     if (!ppId) {
-      return NextResponse.json({ error: 'Posting ID (pp_id) is required.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Posting ID (pp_id) is required.' }, { status: 400 });
     }
 
     await prisma.rejectionPosting.deleteMany({ where: { pp_id: ppId } });
     await prisma.productionPosting.delete({ where: { pp_id: ppId } });
 
-    return NextResponse.json({ message: `Production Posting '${ppId}' deleted successfully.` });
+    return NextResponse.json({ success: true, message: `Production Posting '${ppId}' deleted successfully.` });
   } catch (error: any) {
     console.error('Error deleting production posting:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error deleting production posting' }, { status: 500 });
   }
-}
+});
 

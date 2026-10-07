@@ -8,15 +8,16 @@ import {
   Role,
   parseRoles,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const { email, password } = body;
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { success: false, error: 'Email and password are required' },
         { status: 400 }
       );
     }
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     if (!user) {
       // Constant-time / generic message to prevent email enumeration
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { success: false, error: 'Invalid email or password' },
         { status: 401 }
       );
     }
@@ -37,14 +38,14 @@ export async function POST(request: Request) {
     const isMatch = await verifyPassword(user.password_hash, password);
     if (!isMatch) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { success: false, error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
     if (!user.is_active) {
       return NextResponse.json(
-        { error: 'Account has been deactivated. Please contact your administrator.' },
+        { success: false, error: 'Account has been deactivated. Please contact your administrator.' },
         { status: 403 }
       );
     }
@@ -118,8 +119,8 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error during login' },
+      { success: false, error: error.message || 'Internal server error during login' },
       { status: 500 }
     );
   }
-}
+});

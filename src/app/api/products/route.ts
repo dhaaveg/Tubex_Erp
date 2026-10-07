@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { ProductSchema } from '@/lib/validations';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
@@ -37,11 +38,11 @@ export async function GET(request: Request) {
     return NextResponse.json(products);
   } catch (error: any) {
     console.error('Error fetching products:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = ProductSchema.parse(body);
@@ -78,13 +79,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating product:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = ProductSchema.parse(body);
@@ -127,8 +128,8 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating product:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});

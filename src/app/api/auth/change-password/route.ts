@@ -10,8 +10,9 @@ import {
   Role,
   parseRoles,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const { user, session } = await requireAuth();
     const body = await request.json();
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
 
     if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
       return NextResponse.json(
-        { error: 'New password must be at least 8 characters long.' },
+        { success: false, error: 'New password must be at least 8 characters long.' },
         { status: 400 }
       );
     }
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     });
 
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Always validate current password if provided or required
@@ -37,13 +38,13 @@ export async function POST(request: Request) {
       const isCurrentValid = await verifyPassword(dbUser.password_hash, currentPassword);
       if (!isCurrentValid) {
         return NextResponse.json(
-          { error: 'Current password is incorrect.' },
+          { success: false, error: 'Current password is incorrect.' },
           { status: 400 }
         );
       }
     } else if (!dbUser.force_password_change) {
       return NextResponse.json(
-        { error: 'Current password is required to set a new password.' },
+        { success: false, error: 'Current password is required to set a new password.' },
         { status: 400 }
       );
     }
@@ -103,8 +104,8 @@ export async function POST(request: Request) {
     console.error('Password change error:', error);
     const status = error.status || 500;
     return NextResponse.json(
-      { error: error.message || 'Failed to change password' },
+      { success: false, error: error.message || 'Failed to change password' },
       { status }
     );
   }
-}
+});

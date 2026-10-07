@@ -5,8 +5,9 @@ import {
   decryptSessionToken,
   SESSION_COOKIE_NAME,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
@@ -45,6 +46,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error: any) {
     console.error('Logout error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Logout error' }, { status: 500 });
   }
-}
+});

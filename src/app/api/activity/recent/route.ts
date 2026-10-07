@@ -6,15 +6,16 @@ import {
   getAuditFeedScopeMeta,
   maskAuthorIdentity,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const current = await getCurrentSession();
     if (!current) {
       return NextResponse.json(
-        { error: 'Unauthorized: Valid session required to view activity logs.' },
+        { success: false, error: 'Unauthorized: Valid session required to view activity logs.' },
         { status: 401 }
       );
     }
@@ -157,8 +158,8 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Error fetching recent activities:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error while fetching activities' },
+      { success: false, error: error.message || 'Internal server error while fetching activities' },
       { status: 500 }
     );
   }
-}
+});

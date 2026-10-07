@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { CustomerOrderSchema } from '@/lib/validations';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get('q')?.trim();
@@ -64,20 +65,20 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Error fetching customer orders:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch customer orders', details: error.message },
+      { success: false, error: 'Failed to fetch customer orders' },
       { status: 500 }
     );
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const parseResult = CustomerOrderSchema.safeParse(body);
 
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.message, details: parseResult.error.errors },
+        { success: false, error: parseResult.error.message, details: parseResult.error.errors },
         { status: 400 }
       );
     }
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: `Customer Order with PO No '${data.customer_po_no}' already exists.` },
+        { success: false, error: `Customer Order with PO No '${data.customer_po_no}' already exists.` },
         { status: 409 }
       );
     }
@@ -149,20 +150,20 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating customer order:', error);
     return NextResponse.json(
-      { error: 'Failed to create customer order', details: error.message },
+      { success: false, error: 'Failed to create customer order' },
       { status: 500 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const parseResult = CustomerOrderSchema.safeParse(body);
 
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.message, details: parseResult.error.errors },
+        { success: false, error: parseResult.error.message, details: parseResult.error.errors },
         { status: 400 }
       );
     }
@@ -176,7 +177,7 @@ export async function PUT(request: Request) {
 
     if (!existing) {
       return NextResponse.json(
-        { error: `Customer Order '${data.customer_po_no}' not found.` },
+        { success: false, error: `Customer Order '${data.customer_po_no}' not found.` },
         { status: 404 }
       );
     }
@@ -245,20 +246,20 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating customer order:', error);
     return NextResponse.json(
-      { error: 'Failed to update customer order', details: error.message },
+      { success: false, error: 'Failed to update customer order' },
       { status: 500 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const customer_po_no = searchParams.get('customer_po_no')?.trim();
 
     if (!customer_po_no) {
       return NextResponse.json(
-        { error: 'customer_po_no is required to delete an order' },
+        { success: false, error: 'customer_po_no is required to delete an order' },
         { status: 400 }
       );
     }
@@ -270,7 +271,7 @@ export async function DELETE(request: Request) {
 
     if (!order) {
       return NextResponse.json(
-        { error: `Customer Order '${customer_po_no}' not found.` },
+        { success: false, error: `Customer Order '${customer_po_no}' not found.` },
         { status: 404 }
       );
     }
@@ -278,6 +279,7 @@ export async function DELETE(request: Request) {
     if (order.work_orders.length > 0) {
       return NextResponse.json(
         {
+          success: false,
           error: `Cannot delete Customer Order '${customer_po_no}' because it has ${order.work_orders.length} active Work Orders linked.`,
         },
         { status: 400 }
@@ -292,8 +294,8 @@ export async function DELETE(request: Request) {
   } catch (error: any) {
     console.error('Error deleting customer order:', error);
     return NextResponse.json(
-      { error: 'Failed to delete customer order', details: error.message },
+      { success: false, error: 'Failed to delete customer order' },
       { status: 500 }
     );
   }
-}
+});

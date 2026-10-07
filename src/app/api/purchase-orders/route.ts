@@ -3,10 +3,11 @@ import prisma from '@/lib/prisma';
 import { PurchaseOrderSchema } from '@/lib/validations';
 import { getCurrentSession } from '@/lib/auth';
 import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
@@ -46,9 +47,9 @@ export async function GET(request: Request) {
     return NextResponse.json(pos);
   } catch (error: any) {
     console.error('Error fetching purchase orders:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+});
 
 async function resolveProductId(item: {
   product_id?: string;
@@ -123,7 +124,7 @@ async function resolveProductId(item: {
   return fallback?.product_id || 'PRD-001';
 }
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = PurchaseOrderSchema.parse(body);
@@ -199,13 +200,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating purchase order:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = PurchaseOrderSchema.parse(body);
@@ -321,19 +322,19 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating purchase order:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const poNo = searchParams.get('po_no');
 
     if (!poNo) {
-      return NextResponse.json({ error: 'PO Number (po_no) is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'PO Number (po_no) is required' }, { status: 400 });
     }
 
     const po = await prisma.purchaseOrder.findUnique({
@@ -342,12 +343,12 @@ export async function DELETE(request: Request) {
     });
 
     if (!po) {
-      return NextResponse.json({ error: `Purchase Order ${poNo} not found` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `Purchase Order ${poNo} not found` }, { status: 404 });
     }
 
     if (po.grns && po.grns.length > 0) {
       return NextResponse.json(
-        { error: `Cannot delete PO ${poNo} because it has ${po.grns.length} linked Goods Receipt Note(s).` },
+        { success: false, error: `Cannot delete PO ${poNo} because it has ${po.grns.length} linked Goods Receipt Note(s).` },
         { status: 400 }
       );
     }
@@ -359,6 +360,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true, message: `PO ${poNo} deleted successfully` });
   } catch (error: any) {
     console.error('Error deleting purchase order:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+});

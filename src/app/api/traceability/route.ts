@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const query = (searchParams.get('q') || searchParams.get('tag') || searchParams.get('heat'))?.trim();
 
     if (!query) {
       return NextResponse.json(
-        { error: 'Search parameter q (Heat No, Tube Tag, WO ID, PO No, or GRN ID) is required' },
+        { success: false, error: 'Search parameter q (Heat No, Tube Tag, WO ID, PO No, or GRN ID) is required' },
         { status: 400 }
       );
     }
@@ -239,11 +240,11 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json(
-      { error: `No traceability records found matching identifier "${query}"` },
+      { success: false, error: `No traceability records found matching identifier "${query}"` },
       { status: 404 }
     );
   } catch (error: any) {
     console.error('Error in traceability lookup:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error in traceability lookup' }, { status: 500 });
   }
-}
+});

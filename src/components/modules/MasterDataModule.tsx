@@ -19,11 +19,12 @@ import {
   Eye
 } from 'lucide-react';
 import MasterDataTagModal from '../MasterDataTagModal';
+import LovManagementTab from './LovManagementTab';
 import { formatDate } from '@/lib/formatters';
 import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 
 export default function MasterDataModule() {
-  const [activeTab, setActiveTab] = useState<'suppliers' | 'products'>('suppliers');
+  const [activeTab, setActiveTab] = useState<'suppliers' | 'products' | 'lov'>('suppliers');
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -262,38 +263,55 @@ export default function MasterDataModule() {
               <Package className="w-3.5 h-3.5" />
               <span>OCTG Products</span>
             </button>
+            <button
+              onClick={() => setActiveTab('lov')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
+                activeTab === 'lov'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Tag className="w-3.5 h-3.5" />
+              <span>Dropdown Lists (LOV)</span>
+            </button>
           </div>
 
-          <button
-            onClick={handleOpenCreateModal}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add {activeTab === 'suppliers' ? 'Supplier' : 'Product'}</span>
-          </button>
+          {activeTab !== 'lov' && (
+            <button
+              onClick={handleOpenCreateModal}
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add {activeTab === 'suppliers' ? 'Supplier' : 'Product'}</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="flex items-center space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder={
-              activeTab === 'suppliers'
-                ? 'Search by Supplier ID, Name, Mill, Tax ID...'
-                : 'Search by Product ID, Grade (J55, L80, P110), Thread (BTC, LTC)...'
-            }
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
-          />
-        </div>
-      </div>
+      {activeTab === 'lov' ? (
+        <LovManagementTab />
+      ) : (
+        <>
+          {/* Search & Filter Bar */}
+          <div className="flex items-center space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder={
+                  activeTab === 'suppliers'
+                    ? 'Search by Supplier ID, Name, Mill, Tax ID...'
+                    : 'Search by Product ID, Grade (J55, L80, P110), Thread (BTC, LTC)...'
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
 
-      {/* Table Content */}
-      {activeTab === 'suppliers' ? (
+          {/* Table Content */}
+          {activeTab === 'suppliers' ? (
         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -478,6 +496,8 @@ export default function MasterDataModule() {
             </table>
           </div>
         </div>
+      )}
+      </>
       )}
 
       {/* Creation Modal */}

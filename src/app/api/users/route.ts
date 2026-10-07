@@ -9,8 +9,9 @@ import {
   getUserQueryFilter,
   parseRoles,
 } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET() {
+export const GET = withApiHandler(async () => {
   try {
     const { user } = await requireRole(['SUPER_ADMIN', 'ADMIN']);
 
@@ -52,11 +53,11 @@ export async function GET() {
     });
   } catch (error: any) {
     const status = error.status || 500;
-    return NextResponse.json({ error: error.message }, { status });
+    return NextResponse.json({ success: false, error: error.message }, { status });
   }
-}
+});
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const { user: currentUser } = await requireRole(['SUPER_ADMIN', 'ADMIN']);
     const isSuperAdmin =
@@ -78,6 +79,7 @@ export async function POST(request: Request) {
       if (nonSuperAdminCount > 5) {
         return NextResponse.json(
           {
+            success: false,
             error: `Admin Provisioning Quota Exceeded: Administrators are permitted to provision new users only when the total count of non-Super-Admin accounts in the system is 5 or fewer (currently ${nonSuperAdminCount}). As the count exceeds 5, user creation is restricted to Super Administrators.`,
             quotaExceeded: true,
             currentCount: nonSuperAdminCount,
@@ -104,14 +106,14 @@ export async function POST(request: Request) {
     // Admins cannot assign the SUPER_ADMIN role
     if (!isSuperAdmin && assignedRoles.includes('SUPER_ADMIN')) {
       return NextResponse.json(
-        { error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
+        { success: false, error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
         { status: 403 }
       );
     }
 
     if (!email || !name || assignedRoles.length === 0) {
       return NextResponse.json(
-        { error: 'Name, email, and at least one role are required.' },
+        { success: false, error: 'Name, email, and at least one role are required.' },
         { status: 400 }
       );
     }
@@ -126,7 +128,7 @@ export async function POST(request: Request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: `User with email "${cleanEmail}" already exists.` },
+        { success: false, error: `User with email "${cleanEmail}" already exists.` },
         { status: 400 }
       );
     }
@@ -170,6 +172,6 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Create user error:', error);
     const status = error.status || 500;
-    return NextResponse.json({ error: error.message }, { status });
+    return NextResponse.json({ success: false, error: error.message }, { status });
   }
-}
+});

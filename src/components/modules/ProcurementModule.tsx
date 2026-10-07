@@ -22,8 +22,10 @@ import {
 import PoInvoiceModal from '@/components/PoInvoiceModal';
 import { formatDate } from '@/lib/formatters';
 import { DEFAULT_QUALITY_STIPULATIONS, CVN_REQUIREMENT_OPTIONS, DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
+import { useLov } from '@/hooks/useLov';
 
 export default function ProcurementModule() {
+  const { options: cvnOptions } = useLov('CVN_REQUIREMENT', CVN_REQUIREMENT_OPTIONS);
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -895,10 +897,10 @@ export default function ProcurementModule() {
                                 onChange={(e) => handleItemSpecChange(idx, 'cvn_requirement', e.target.value)}
                                 className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:border-blue-500"
                               >
-                                {item.cvn_requirement && !CVN_REQUIREMENT_OPTIONS.includes(item.cvn_requirement as any) && (
-                                  <option value={item.cvn_requirement}>{item.cvn_requirement} (Legacy)</option>
+                                {item.cvn_requirement && !cvnOptions.includes(item.cvn_requirement as any) && (
+                                  <option value={item.cvn_requirement}>{item.cvn_requirement} (Custom/Legacy)</option>
                                 )}
-                                {CVN_REQUIREMENT_OPTIONS.map((cvn) => (
+                                {cvnOptions.map((cvn) => (
                                   <option key={cvn} value={cvn}>
                                     {cvn}
                                   </option>

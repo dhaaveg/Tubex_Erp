@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { GRNSchema } from '@/lib/validations';
 import { calculateWeighbridge, validatePoGrnWeightLimit } from '@/lib/calculations';
+import { withApiHandler } from '@/lib/api-handler';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
@@ -45,9 +46,9 @@ export async function GET(request: Request) {
     return NextResponse.json(grns);
   } catch (error: any) {
     console.error('Error fetching GRNs:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error fetching GRNs' }, { status: 500 });
   }
-}
+});
 
 async function validateGrnLineItemQuantities(
   poNo: string,
@@ -279,7 +280,7 @@ async function resolveOrCreateProduct(item: {
   return createdProduct.product_id;
 }
 
-export async function POST(request: Request) {
+export const POST = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = GRNSchema.parse(body);
@@ -294,7 +295,7 @@ export async function POST(request: Request) {
     });
 
     if (!purchaseOrder) {
-      return NextResponse.json({ error: `Purchase Order ${validated.po_no} not found.` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `Purchase Order ${validated.po_no} not found.` }, { status: 404 });
     }
 
     const poOrderedMtSum = Number(
@@ -325,6 +326,7 @@ export async function POST(request: Request) {
     if (weightGate.isExceeded) {
       return NextResponse.json(
         {
+          success: false,
           error: `Validation Error: Cumulative GRN Invoice Weight (${weightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds PO ${validated.po_no}'s Total Ordered Weight (${poOrderedMtSum.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. Maximum allowable remaining Invoice Weight is ${weightGate.remainingAllowableMt.toFixed(3)} MT.`,
           po_no: validated.po_no,
           po_ordered_mt_sum: weightGate.poOrderedMtSum,
@@ -378,6 +380,7 @@ export async function POST(request: Request) {
     if (!lineItemGate.isValid) {
       return NextResponse.json(
         {
+          success: false,
           error: lineItemGate.error,
           po_item_id: lineItemGate.po_item_id,
           ordered_qty_mt: lineItemGate.ordered_qty_mt,
@@ -420,13 +423,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating GRN:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function PUT(request: Request) {
+export const PUT = withApiHandler(async (request: Request) => {
   try {
     const body = await request.json();
     const validated = GRNSchema.parse(body);
@@ -443,7 +446,7 @@ export async function PUT(request: Request) {
     });
 
     if (!existingGrn) {
-      return NextResponse.json({ error: `GRN ${validated.grn_id} not found.` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `GRN ${validated.grn_id} not found.` }, { status: 404 });
     }
 
     // Domain Gate: Cumulative GRN invoice MT <= PO Ordered MT sum
@@ -456,7 +459,7 @@ export async function PUT(request: Request) {
     });
 
     if (!purchaseOrder) {
-      return NextResponse.json({ error: `Purchase Order ${validated.po_no} not found.` }, { status: 404 });
+      return NextResponse.json({ success: false, error: `Purchase Order ${validated.po_no} not found.` }, { status: 404 });
     }
 
     const poOrderedMtSum = Number(
@@ -487,6 +490,7 @@ export async function PUT(request: Request) {
     if (weightGate.isExceeded) {
       return NextResponse.json(
         {
+          success: false,
           error: `Validation Error: Cumulative GRN Invoice Weight (${weightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds PO ${validated.po_no}'s Total Ordered Weight (${poOrderedMtSum.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. Maximum allowable remaining Invoice Weight is ${weightGate.remainingAllowableMt.toFixed(3)} MT.`,
           po_no: validated.po_no,
           po_ordered_mt_sum: weightGate.poOrderedMtSum,
@@ -545,6 +549,7 @@ export async function PUT(request: Request) {
     if (!lineItemGate.isValid) {
       return NextResponse.json(
         {
+          success: false,
           error: lineItemGate.error,
           po_item_id: lineItemGate.po_item_id,
           ordered_qty_mt: lineItemGate.ordered_qty_mt,
@@ -646,13 +651,13 @@ export async function PUT(request: Request) {
   } catch (error: any) {
     console.error('Error updating GRN:', error);
     return NextResponse.json(
-      { error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: error.message || 'Validation error', details: error.errors },
       { status: 400 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request) {
+export const DELETE = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const grnId = searchParams.get('grn_id');
@@ -660,7 +665,7 @@ export async function DELETE(request: Request) {
 
     if (!grnId && !grnItemId) {
       return NextResponse.json(
-        { error: 'Missing parameter: either grn_id or grn_item_id is required.' },
+        { success: false, error: 'Missing parameter: either grn_id or grn_item_id is required.' },
         { status: 400 }
       );
     }
@@ -687,7 +692,7 @@ export async function DELETE(request: Request) {
       });
 
       if (!grn) {
-        return NextResponse.json({ error: `GRN ${grnId} not found.` }, { status: 404 });
+        return NextResponse.json({ success: false, error: `GRN ${grnId} not found.` }, { status: 404 });
       }
 
       // Check if any pipes are locked by Work Orders or consumed
@@ -708,6 +713,7 @@ export async function DELETE(request: Request) {
       if (activeWorkOrders.length > 0) {
         return NextResponse.json(
           {
+            success: false,
             error: `Cannot delete GRN ${grnId}: Contains pipes linked to Work Orders (${activeWorkOrders.slice(0, 5).join(', ')}${activeWorkOrders.length > 5 ? '...' : ''}). Please close or remove the Work Orders first.`,
           },
           { status: 400 }
@@ -770,12 +776,13 @@ export async function DELETE(request: Request) {
       });
 
       if (!grnItem) {
-        return NextResponse.json({ error: `GRN Item ${grnItemId} not found.` }, { status: 404 });
+        return NextResponse.json({ success: false, error: `GRN Item ${grnItemId} not found.` }, { status: 404 });
       }
 
       if (grnItem.grn.grn_items.length <= 1) {
         return NextResponse.json(
           {
+            success: false,
             error: `Cannot delete GRN Item ${grnItemId}: It is the only line item for GRN ${grnItem.grn_id}. A GRN must have at least one line item. To remove this item, delete the GRN itself or add another line item first.`,
           },
           { status: 400 }
@@ -797,6 +804,7 @@ export async function DELETE(request: Request) {
       if (activeWorkOrders.length > 0) {
         return NextResponse.json(
           {
+            success: false,
             error: `Cannot delete GRN Item ${grnItemId}: Contains pipes linked to Work Orders (${activeWorkOrders.slice(0, 5).join(', ')}${activeWorkOrders.length > 5 ? '...' : ''}).`,
           },
           { status: 400 }
@@ -839,7 +847,7 @@ export async function DELETE(request: Request) {
     }
   } catch (error: any) {
     console.error('Error deleting GRN / GRN Item:', error);
-    return NextResponse.json({ error: error.message || 'Server error during deletion' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Server error during deletion' }, { status: 500 });
   }
-}
+});
 

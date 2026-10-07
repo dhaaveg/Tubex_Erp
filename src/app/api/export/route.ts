@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { formatDate, formatDateTime } from '@/lib/formatters';
+import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export const GET = withApiHandler(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const dataset = searchParams.get('dataset') || 'all';
@@ -419,6 +420,6 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error('Error in export data API:', error);
-    return NextResponse.json({ error: error.message || 'Failed to export data' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Failed to export data' }, { status: 500 });
   }
-}
+});
