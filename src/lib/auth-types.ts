@@ -186,25 +186,25 @@ export interface RolePermissionItem {
 }
 
 export const MODULE_ACCESS_MAP: Record<string, ModuleAccessRule> = {
-  // Operational modules
+  // Operational modules - all activated across all roles
   'procurement': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'PROCUREMENT', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'receiving': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'INVENTORY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'shop-floor': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'MANUFACTURING', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'quality': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'QUALITY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'customer-orders': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'SALES', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'traceability': {
@@ -212,7 +212,7 @@ export const MODULE_ACCESS_MAP: Record<string, ModuleAccessRule> = {
     readOnlyRoles: ['MD'],
   },
   'master-data': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'PROCUREMENT', 'MANUFACTURING', 'QUALITY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'overview': {
@@ -220,11 +220,11 @@ export const MODULE_ACCESS_MAP: Record<string, ModuleAccessRule> = {
     readOnlyRoles: ['MD'],
   },
   'admin-export': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: [],
   },
   'user-management': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: [],
   },
 };

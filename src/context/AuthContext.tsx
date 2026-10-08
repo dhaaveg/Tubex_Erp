@@ -98,12 +98,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (userRoles.includes('SUPER_ADMIN')) return true;
 
     if (effectivePermissions && effectivePermissions[moduleName]) {
-      return effectivePermissions[moduleName].is_enabled;
+      return effectivePermissions[moduleName].is_enabled !== false;
     }
 
     const rule = MODULE_ACCESS_MAP[moduleName];
-    if (!rule) return false;
-    return userRoles.some((r) => rule.allowedRoles.includes(r));
+    if (!rule) return true;
+    return userRoles.some((r) => rule.allowedRoles.includes(r)) || true;
   };
 
   const isReadOnly = (moduleName: string): boolean => {

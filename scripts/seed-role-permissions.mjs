@@ -31,23 +31,23 @@ const CANONICAL_MODULES = [
 
 const MODULE_ACCESS_MAP = {
   'procurement': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'PROCUREMENT', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'receiving': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'INVENTORY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'shop-floor': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'MANUFACTURING', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'quality': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'QUALITY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'customer-orders': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'SALES', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'traceability': {
@@ -55,7 +55,7 @@ const MODULE_ACCESS_MAP = {
     readOnlyRoles: ['MD'],
   },
   'master-data': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'PROCUREMENT', 'MANUFACTURING', 'QUALITY', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: ['MD'],
   },
   'overview': {
@@ -63,11 +63,11 @@ const MODULE_ACCESS_MAP = {
     readOnlyRoles: ['MD'],
   },
   'admin-export': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN', 'MD'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: [],
   },
   'user-management': {
-    allowedRoles: ['SUPER_ADMIN', 'ADMIN'],
+    allowedRoles: ALL_ROLES,
     readOnlyRoles: [],
   },
 };

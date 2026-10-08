@@ -71,108 +71,54 @@ let cachedMatrixByRole: Record<string, Record<string, { is_enabled: boolean; can
 let lastCacheFetchTime = 0;
 const CACHE_TTL_MS = 5000; // 5 seconds in-memory TTL
 
+const ALL_MODULES_ACTIVE_RW = {
+  'overview': { is_enabled: true, can_read: true, can_write: true },
+  'master-data': { is_enabled: true, can_read: true, can_write: true },
+  'procurement': { is_enabled: true, can_read: true, can_write: true },
+  'receiving': { is_enabled: true, can_read: true, can_write: true },
+  'customer-orders': { is_enabled: true, can_read: true, can_write: true },
+  'shop-floor': { is_enabled: true, can_read: true, can_write: true },
+  'quality': { is_enabled: true, can_read: true, can_write: true },
+  'traceability': { is_enabled: true, can_read: true, can_write: true },
+  'admin-export': { is_enabled: true, can_read: true, can_write: true },
+  'user-management': { is_enabled: true, can_read: true, can_write: true },
+};
+
+const ALL_MODULES_ACTIVE_RO = {
+  'overview': { is_enabled: true, can_read: true, can_write: false },
+  'master-data': { is_enabled: true, can_read: true, can_write: false },
+  'procurement': { is_enabled: true, can_read: true, can_write: false },
+  'receiving': { is_enabled: true, can_read: true, can_write: false },
+  'customer-orders': { is_enabled: true, can_read: true, can_write: false },
+  'shop-floor': { is_enabled: true, can_read: true, can_write: false },
+  'quality': { is_enabled: true, can_read: true, can_write: false },
+  'traceability': { is_enabled: true, can_read: true, can_write: false },
+  'admin-export': { is_enabled: true, can_read: true, can_write: true },
+  'user-management': { is_enabled: true, can_read: true, can_write: false },
+};
+
 const FALLBACK_DEFAULT_ROLES: Record<string, Record<string, { is_enabled: boolean; can_read: boolean; can_write: boolean }>> = {
-  SUPER_ADMIN: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: true, can_read: true, can_write: true },
-    'procurement': { is_enabled: true, can_read: true, can_write: true },
-    'receiving': { is_enabled: true, can_read: true, can_write: true },
-    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
-    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
-    'quality': { is_enabled: true, can_read: true, can_write: true },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: true, can_read: true, can_write: true },
-    'user-management': { is_enabled: true, can_read: true, can_write: true },
-  },
-  ADMIN: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: true, can_read: true, can_write: true },
-    'procurement': { is_enabled: true, can_read: true, can_write: true },
-    'receiving': { is_enabled: true, can_read: true, can_write: true },
-    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
-    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
-    'quality': { is_enabled: true, can_read: true, can_write: true },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: true, can_read: true, can_write: true },
-    'user-management': { is_enabled: true, can_read: true, can_write: true },
-  },
-  MD: {
-    'overview': { is_enabled: true, can_read: true, can_write: false },
-    'master-data': { is_enabled: true, can_read: true, can_write: false },
-    'procurement': { is_enabled: true, can_read: true, can_write: false },
-    'receiving': { is_enabled: true, can_read: true, can_write: false },
-    'customer-orders': { is_enabled: true, can_read: true, can_write: false },
-    'shop-floor': { is_enabled: true, can_read: true, can_write: false },
-    'quality': { is_enabled: true, can_read: true, can_write: false },
-    'traceability': { is_enabled: true, can_read: true, can_write: false },
-    'admin-export': { is_enabled: true, can_read: true, can_write: true },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
-  PROCUREMENT: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: true, can_read: true, can_write: true },
-    'procurement': { is_enabled: true, can_read: true, can_write: true },
-    'receiving': { is_enabled: false, can_read: false, can_write: false },
-    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
-    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
-    'quality': { is_enabled: false, can_read: false, can_write: false },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: false, can_read: false, can_write: false },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
-  MANUFACTURING: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: true, can_read: true, can_write: true },
-    'procurement': { is_enabled: false, can_read: false, can_write: false },
-    'receiving': { is_enabled: false, can_read: false, can_write: false },
-    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
-    'shop-floor': { is_enabled: true, can_read: true, can_write: true },
-    'quality': { is_enabled: false, can_read: false, can_write: false },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: false, can_read: false, can_write: false },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
-  SALES: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: false, can_read: false, can_write: false },
-    'procurement': { is_enabled: false, can_read: false, can_write: false },
-    'receiving': { is_enabled: false, can_read: false, can_write: false },
-    'customer-orders': { is_enabled: true, can_read: true, can_write: true },
-    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
-    'quality': { is_enabled: false, can_read: false, can_write: false },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: false, can_read: false, can_write: false },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
-  INVENTORY: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: false, can_read: false, can_write: false },
-    'procurement': { is_enabled: false, can_read: false, can_write: false },
-    'receiving': { is_enabled: true, can_read: true, can_write: true },
-    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
-    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
-    'quality': { is_enabled: false, can_read: false, can_write: false },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: false, can_read: false, can_write: false },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
-  QUALITY: {
-    'overview': { is_enabled: true, can_read: true, can_write: true },
-    'master-data': { is_enabled: true, can_read: true, can_write: true },
-    'procurement': { is_enabled: false, can_read: false, can_write: false },
-    'receiving': { is_enabled: false, can_read: false, can_write: false },
-    'customer-orders': { is_enabled: false, can_read: false, can_write: false },
-    'shop-floor': { is_enabled: false, can_read: false, can_write: false },
-    'quality': { is_enabled: true, can_read: true, can_write: true },
-    'traceability': { is_enabled: true, can_read: true, can_write: true },
-    'admin-export': { is_enabled: false, can_read: false, can_write: false },
-    'user-management': { is_enabled: false, can_read: false, can_write: false },
-  },
+  SUPER_ADMIN: { ...ALL_MODULES_ACTIVE_RW },
+  ADMIN: { ...ALL_MODULES_ACTIVE_RW },
+  MD: { ...ALL_MODULES_ACTIVE_RO },
+  PROCUREMENT: { ...ALL_MODULES_ACTIVE_RW },
+  MANUFACTURING: { ...ALL_MODULES_ACTIVE_RW },
+  SALES: { ...ALL_MODULES_ACTIVE_RW },
+  INVENTORY: { ...ALL_MODULES_ACTIVE_RW },
+  QUALITY: { ...ALL_MODULES_ACTIVE_RW },
+  OPERATOR: { ...ALL_MODULES_ACTIVE_RW },
 };
 
 function resolveModuleKey(pathname: string): string | null {
-  if (pathname === '/' || pathname === '/overview') return 'overview';
-  if (pathname === '/master-data' || pathname.startsWith('/api/suppliers') || pathname.startsWith('/api/products')) {
+  if (pathname === '/' || pathname === '/overview' || pathname === '/dashboard' || pathname === '/home') return 'overview';
+  if (
+    pathname === '/master-data' ||
+    pathname === '/master' ||
+    pathname === '/suppliers' ||
+    pathname === '/products' ||
+    pathname.startsWith('/api/suppliers') ||
+    pathname.startsWith('/api/products')
+  ) {
     return 'master-data';
   }
   if (
@@ -180,6 +126,8 @@ function resolveModuleKey(pathname: string): string | null {
     pathname === '/po' ||
     pathname === '/pos' ||
     pathname === '/purchase-orders' ||
+    pathname === '/purchasing' ||
+    pathname === '/purchases' ||
     pathname.startsWith('/api/purchase-orders')
   ) {
     return 'procurement';
@@ -189,6 +137,7 @@ function resolveModuleKey(pathname: string): string | null {
     pathname === '/tally' ||
     pathname === '/grn' ||
     pathname === '/inwarding' ||
+    pathname === '/inward' ||
     pathname.startsWith('/api/grn') ||
     pathname.startsWith('/api/tally')
   ) {
@@ -199,6 +148,7 @@ function resolveModuleKey(pathname: string): string | null {
     pathname === '/cpo' ||
     pathname === '/orders' ||
     pathname === '/customers' ||
+    pathname === '/sales' ||
     pathname.startsWith('/api/customer-orders')
   ) {
     return 'customer-orders';
@@ -209,6 +159,8 @@ function resolveModuleKey(pathname: string): string | null {
     pathname === '/wos' ||
     pathname === '/work-orders' ||
     pathname === '/shopfloor' ||
+    pathname === '/production' ||
+    pathname === '/manufacturing' ||
     pathname.startsWith('/api/work-orders') ||
     pathname.startsWith('/api/production-postings')
   ) {
@@ -217,18 +169,27 @@ function resolveModuleKey(pathname: string): string | null {
   if (
     pathname === '/quality' ||
     pathname === '/qa' ||
+    pathname === '/qc' ||
+    pathname === '/inspection' ||
     pathname === '/rejections' ||
     pathname.startsWith('/api/rejections')
   ) {
     return 'quality';
   }
-  if (pathname === '/traceability' || pathname.startsWith('/api/traceability')) {
+  if (pathname === '/traceability' || pathname === '/trace' || pathname.startsWith('/api/traceability')) {
     return 'traceability';
   }
-  if (pathname === '/admin-export' || pathname === '/export' || pathname.startsWith('/api/export')) {
+  if (pathname === '/admin-export' || pathname === '/export' || pathname === '/reports' || pathname.startsWith('/api/export')) {
     return 'admin-export';
   }
-  if (pathname === '/user-management' || pathname.startsWith('/api/users') || pathname.startsWith('/api/admin/')) {
+  if (
+    pathname === '/user-management' ||
+    pathname === '/users' ||
+    pathname === '/admin' ||
+    pathname === '/roles' ||
+    pathname.startsWith('/api/users') ||
+    pathname.startsWith('/api/admin/')
+  ) {
     return 'user-management';
   }
 
@@ -403,7 +364,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // 10. Multi-Role Union Evaluation: Is module enabled for ANY assigned role?
-  const isEnabled = roles.some((r) => matrix[r]?.[moduleKey]?.is_enabled === true);
+  const isEnabled = roles.length === 0 || roles.some((r) => {
+    const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
+    return roleMatrix[moduleKey]?.is_enabled !== false;
+  });
 
   if (!isEnabled) {
     if (pathname.startsWith('/api/')) {
@@ -423,7 +387,10 @@ export async function middleware(request: NextRequest) {
   // 11. Mutation & Write Permission Check: Can any assigned role write to this module?
   const isMutation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
   if (isMutation) {
-    const canWrite = roles.some((r) => matrix[r]?.[moduleKey]?.can_write === true);
+    const canWrite = roles.some((r) => {
+      const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
+      return roleMatrix[moduleKey]?.can_write !== false;
+    });
     if (!canWrite) {
       return NextResponse.json(
         {
