@@ -359,12 +359,12 @@ export async function middleware(request: NextRequest) {
 
   // 9. Resolve target module
   const moduleKey = resolveModuleKey(pathname);
-  if (!moduleKey) {
+  if (!moduleKey || moduleKey === 'overview') {
     return NextResponse.next();
   }
 
   // 10. Multi-Role Union Evaluation: Is module enabled for ANY assigned role?
-  const isEnabled = roles.length === 0 || roles.some((r) => {
+  const isEnabled = roles.length === 0 || roles.includes('SUPER_ADMIN') || roles.some((r) => {
     const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
     return roleMatrix[moduleKey]?.is_enabled !== false;
   });
@@ -378,6 +378,10 @@ export async function middleware(request: NextRequest) {
         },
         { status: 403 }
       );
+    }
+    // Prevent infinite redirect loops: never redirect to root if already at root or if unauthorized query is present
+    if (pathname === '/' || pathname === '/overview' || request.nextUrl.searchParams.has('unauthorized')) {
+      return NextResponse.next();
     }
     const homeUrl = new URL('/', request.url);
     homeUrl.searchParams.set('unauthorized', moduleKey);
