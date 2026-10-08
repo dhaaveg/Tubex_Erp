@@ -57,6 +57,40 @@ export default function LoginPage() {
     }
   };
 
+  const handleQuickSignIn = async (quickEmail: string, quickPass: string) => {
+    setEmail(quickEmail);
+    setPassword(quickPass);
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: quickEmail, password: quickPass }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to authenticate');
+      }
+
+      await refetchUser();
+
+      const from = searchParams?.get('from');
+      if (from) {
+        router.push(from);
+      } else {
+        router.push('/');
+      }
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || 'Authentication error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Glows */}
@@ -80,10 +114,10 @@ export default function LoginPage() {
         </div>
 
         <h2 className="text-center text-2xl font-black text-white tracking-tight uppercase">
-          {COMPANY_NAME}
+          Dhaaveg
         </h2>
-        <p className="mt-1 text-center text-xs text-slate-400 font-medium">
-          Tubular & Casing Manufacturing ERP • Enterprise Access
+        <p className="mt-1 text-center text-xs text-slate-400 font-semibold tracking-wider uppercase">
+          ACCELERATING DIGITAL MOMENTUM
         </p>
       </div>
 
@@ -153,6 +187,30 @@ export default function LoginPage() {
                 </>
               )}
             </button>
+
+            <div className="pt-3 border-t border-slate-800/80">
+              <div className="text-[10px] uppercase font-mono text-slate-500 mb-2 text-center tracking-wider">
+                ⚡ Quick Access Demo Credentials
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleQuickSignIn('superadmin@energyoilfield.com', 'SuperAdmin@2026!')}
+                  disabled={loading}
+                  className="py-1.5 px-2 bg-slate-800/70 hover:bg-blue-600/20 text-blue-300 border border-slate-700 hover:border-blue-500/50 rounded-lg text-[11px] font-semibold text-center transition cursor-pointer"
+                >
+                  Super Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickSignIn('admin@energyoilfield.com', 'Admin@2026!')}
+                  disabled={loading}
+                  className="py-1.5 px-2 bg-slate-800/70 hover:bg-indigo-600/20 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 rounded-lg text-[11px] font-semibold text-center transition cursor-pointer"
+                >
+                  Plant Admin
+                </button>
+              </div>
+            </div>
           </form>
         </div>
 

