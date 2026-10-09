@@ -4,16 +4,20 @@ import prisma from '@/lib/prisma';
 import {
   decryptSessionToken,
   SESSION_COOKIE_NAME,
+  AUTH_COOKIES_TO_PURGE,
 } from '@/lib/auth';
 import { withApiHandler } from '@/lib/api-handler';
 
-export const POST = withApiHandler(async (request: Request) => {
+export const dynamic = 'force-dynamic';
+
+async function handleLogout() {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
     if (token) {
-      const payload = await decryptSessionToken(token);
+      // Decode with ignoreExpiry: true so even expired sessions can be deleted from DB and audited
+      const payload = await decryptSessionToken(token, { ignoreExpiry: true });
       if (payload?.sessionId) {
         await prisma.session.deleteMany({
           where: { session_token: payload.sessionId },
@@ -25,27 +29,37 @@ export const POST = withApiHandler(async (request: Request) => {
             action: 'LOGOUT',
             entity_type: 'Session',
             entity_id: payload.sessionId,
-            details: JSON.stringify({ email: payload.email }),
+            details: JSON.stringify({ email: payload.email, reason: 'User logout or session termination' }),
           },
         }).catch(() => {});
       }
     }
 
-    const response = NextResponse.json({ success: true, message: 'Logged out successfully' });
-
-    response.cookies.set({
-      name: SESSION_COOKIE_NAME,
-      value: '',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 0,
+    const response = NextResponse.json({
+      success: true,
+      message: 'Logged out successfully',
     });
+
+    // Deterministic Cookie Eviction: explicitly clear all auth cookies across identical Path=/, SameSite=Lax, HttpOnly=true, and Secure
+    for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+      response.cookies.set({
+        name: cookieName,
+        value: '',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 0,
+        expires: new Date(0), // Thu, 01 Jan 1970 00:00:00 GMT
+      });
+    }
 
     return response;
   } catch (error: any) {
     console.error('Logout error:', error);
     return NextResponse.json({ success: false, error: error.message || 'Logout error' }, { status: 500 });
   }
-});
+}
+
+export const POST = withApiHandler(async () => handleLogout());
+export const GET = withApiHandler(async () => handleLogout());

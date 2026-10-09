@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import {
   Lock,
@@ -11,29 +11,43 @@ import {
   Clock,
 } from 'lucide-react';
 import { COMPANY_NAME } from '@/lib/companyLogo';
-import { useAuth } from '@/context/AuthContext';
 import PasswordInput from '@/components/PasswordInput';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const { refetchUser } = useAuth();
-  const isTimeout = searchParams?.get('reason') === 'timeout';
+
+  const isTimeout =
+    searchParams?.get('expired') === 'true' ||
+    searchParams?.get('reason') === 'timeout';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
+    // Clean State Reset: clear any stale activity, logout events, or session storage flags
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('eot_last_activity');
+        localStorage.removeItem('eot_logout_event');
+        sessionStorage.clear();
+      } catch {}
+    }
+
     try {
+      const cleanEmail = email.trim().toLowerCase();
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+        body: JSON.stringify({ email: cleanEmail, password }),
       });
 
       const data = await res.json();
@@ -41,18 +55,26 @@ export default function LoginPage() {
         throw new Error(data.error || 'Failed to authenticate');
       }
 
-      await refetchUser();
-
-      const from = searchParams?.get('from');
-      if (from) {
-        router.push(from);
-      } else {
-        router.push('/');
+      // Initialize fresh activity timestamp for the new session
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('eot_last_activity', Date.now().toString());
+        } catch {}
       }
-      router.refresh();
+
+      // Resolve destination URL
+      const from = searchParams?.get('from');
+      const targetUrl =
+        from && from.startsWith('/') && !from.startsWith('/login')
+          ? from
+          : '/overview';
+
+      // Hard Hydration Navigation:
+      // Completely bypasses Next.js client App Router RSC cache to eliminate stale 401 states.
+      // Forces clean server hydration with the fresh authentication cookie on the very first attempt.
+      window.location.href = targetUrl;
     } catch (err: any) {
       setError(err.message || 'Authentication error');
-    } finally {
       setLoading(false);
     }
   };
@@ -94,7 +116,7 @@ export default function LoginPage() {
               <div className="p-3.5 rounded-xl bg-amber-950/80 border border-amber-600/70 text-amber-200 text-xs flex items-center space-x-2.5 shadow-lg shadow-amber-950/40">
                 <Clock className="w-4 h-4 text-amber-400 shrink-0" />
                 <span className="font-semibold leading-relaxed">
-                  You were signed out due to 2 hours of inactivity.
+                  Your session has expired due to 2 hours of inactivity. Please sign in again.
                 </span>
               </div>
             )}
@@ -163,5 +185,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const SESSION_COOKIE_NAME = 'eot_session';
+const AUTH_COOKIES_TO_PURGE = [
+  SESSION_COOKIE_NAME,
+  'token',
+  'session_id',
+  'refresh_token',
+  'session',
+  'auth_token',
+];
 const SESSION_SECRET = process.env.SESSION_SECRET || 'eot_couplings_super_secret_auth_encryption_key_2026_xyz';
 
 function base64UrlToUint8Array(base64Url: string): Uint8Array {
@@ -250,33 +258,40 @@ export async function middleware(request: NextRequest) {
         { success: false, error: 'Session expired due to 2 hours of inactivity.', code: 'SESSION_TIMEOUT' },
         { status: 401 }
       );
+      for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+        response.cookies.set({
+          name: cookieName,
+          value: '',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 0,
+          expires: new Date(0),
+        });
+      }
+      return response;
+    }
+
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('expired', 'true');
+    loginUrl.searchParams.set('reason', 'timeout');
+    if (pathname !== '/' && pathname !== '/login') {
+      loginUrl.searchParams.set('from', pathname);
+    }
+    const response = NextResponse.redirect(loginUrl);
+    for (const cookieName of AUTH_COOKIES_TO_PURGE) {
       response.cookies.set({
-        name: SESSION_COOKIE_NAME,
+        name: cookieName,
         value: '',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
         maxAge: 0,
+        expires: new Date(0),
       });
-      return response;
     }
-
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('reason', 'timeout');
-    if (pathname !== '/' && pathname !== '/login') {
-      loginUrl.searchParams.set('from', pathname);
-    }
-    const response = NextResponse.redirect(loginUrl);
-    response.cookies.set({
-      name: SESSION_COOKIE_NAME,
-      value: '',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 0,
-    });
     return response;
   }
 

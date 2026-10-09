@@ -71,6 +71,15 @@ export interface SessionPayload {
 
 export const SESSION_COOKIE_NAME = 'eot_session';
 
+export const AUTH_COOKIES_TO_PURGE = [
+  SESSION_COOKIE_NAME,
+  'token',
+  'session_id',
+  'refresh_token',
+  'session',
+  'auth_token',
+] as const;
+
 /**
  * Safely parse multi-role list from database user record.
  * Supports JSON string, comma-separated string, or fallback to single role.

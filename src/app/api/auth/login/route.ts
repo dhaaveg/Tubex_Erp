@@ -113,6 +113,7 @@ export const POST = withApiHandler(async (request: Request) => {
       sameSite: 'lax',
       path: '/',
       maxAge: maxAgeSeconds,
+      expires: expiresAt,
     });
 
     return response;

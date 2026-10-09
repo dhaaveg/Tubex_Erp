@@ -15,7 +15,7 @@ export interface EffectivePermission {
 interface AuthContextType {
   user: SafeUser | null;
   isLoading: boolean;
-  logout: () => Promise<void>;
+  logout: (expired?: boolean | any) => Promise<void>;
   refetchUser: () => Promise<void>;
   canAccess: (moduleName: string) => boolean;
   isReadOnly: (moduleName: string) => boolean;
@@ -81,14 +81,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [searchParams]);
 
-  const logout = async () => {
+  const logout = async (expiredArg?: boolean | any) => {
+    const expired = expiredArg === true;
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } finally {
       setUser(null);
       setEffectivePermissions(null);
-      router.push('/login');
-      router.refresh();
+      if (typeof window !== 'undefined') {
+        try {
+          if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('eot_auth_inactivity_channel');
+            bc.postMessage({ type: 'LOGOUT', reason: expired ? 'expired' : 'manual' });
+            bc.close();
+          }
+          localStorage.setItem(
+            'eot_logout_event',
+            JSON.stringify({ timestamp: Date.now(), reason: expired ? 'expired' : 'manual' })
+          );
+          localStorage.removeItem('eot_last_activity');
+          sessionStorage.clear();
+        } catch {}
+        window.location.href = expired ? '/login?expired=true' : '/login';
+      }
     }
   };
 

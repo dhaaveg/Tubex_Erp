@@ -9,7 +9,21 @@ export const GET = withApiHandler(async () => {
   try {
     const current = await getCurrentSession();
     if (!current) {
-      return NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
+      const res = NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
+      const { AUTH_COOKIES_TO_PURGE } = await import('@/lib/auth-types');
+      for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+        res.cookies.set({
+          name: cookieName,
+          value: '',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 0,
+          expires: new Date(0),
+        });
+      }
+      return res;
     }
 
     const roles =

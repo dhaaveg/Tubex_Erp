@@ -9,6 +9,7 @@ import {
   SafeUser,
   SessionPayload,
   SESSION_COOKIE_NAME,
+  AUTH_COOKIES_TO_PURGE,
   MODULE_ACCESS_MAP,
   canAccessModule,
   getUserQueryFilter,
@@ -163,12 +164,18 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
     }).catch(() => {});
 
     try {
-      cookieStore.set({
-        name: SESSION_COOKIE_NAME,
-        value: '',
-        maxAge: 0,
-        path: '/',
-      });
+      for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+        cookieStore.set({
+          name: cookieName,
+          value: '',
+          maxAge: 0,
+          expires: new Date(0),
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      }
     } catch {
       // In Server Components cookie mutation may be restricted; handled by middleware/client
     }

@@ -5,11 +5,28 @@ import {
   decryptSessionToken,
   encryptSessionToken,
   SESSION_COOKIE_NAME,
+  AUTH_COOKIES_TO_PURGE,
   sanitizeUser,
 } from '@/lib/auth';
 import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
+
+function purgeCookies(response: NextResponse) {
+  for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+    response.cookies.set({
+      name: cookieName,
+      value: '',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+      expires: new Date(0), // Thu, 01 Jan 1970 00:00:00 GMT
+    });
+  }
+  return response;
+}
 
 async function handleRefresh() {
   try {
@@ -17,18 +34,20 @@ async function handleRefresh() {
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
     if (!token) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { success: false, error: 'No active session token provided.' },
         { status: 401 }
       );
+      return purgeCookies(res);
     }
 
     const payload = await decryptSessionToken(token);
     if (!payload) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { success: false, error: 'Session has expired or is invalid.' },
         { status: 401 }
       );
+      return purgeCookies(res);
     }
 
     const dbSession = await prisma.session.findUnique({
@@ -37,10 +56,11 @@ async function handleRefresh() {
     });
 
     if (!dbSession) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { success: false, error: 'Session not found in active registry.' },
         { status: 401 }
       );
+      return purgeCookies(res);
     }
 
     const now = new Date();
@@ -61,24 +81,16 @@ async function handleRefresh() {
         { success: false, error: 'Session has expired due to 2 hours of inactivity.' },
         { status: 401 }
       );
-      response.cookies.set({
-        name: SESSION_COOKIE_NAME,
-        value: '',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 0,
-      });
-      return response;
+      return purgeCookies(response);
     }
 
     if (!dbSession.user || !dbSession.user.is_active) {
       await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
-      return NextResponse.json(
+      const res = NextResponse.json(
         { success: false, error: 'User account has been deactivated.' },
         { status: 403 }
       );
+      return purgeCookies(res);
     }
 
     // Extend session by 2 hours (7200 seconds)
@@ -112,6 +124,7 @@ async function handleRefresh() {
       sameSite: 'lax',
       path: '/',
       maxAge: maxAgeSeconds,
+      expires: newExpiresAt,
     });
 
     return response;
