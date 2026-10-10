@@ -20,6 +20,20 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
+  // Dynamic prefix detection for subpath deployment (e.g. /dhaaveg)
+  const [prefix, setPrefix] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg')) {
+      return '/dhaaveg';
+    }
+    return '';
+  });
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg')) {
+      setPrefix('/dhaaveg');
+    }
+  }, []);
+
   const isTimeout =
     searchParams?.get('expired') === 'true' ||
     searchParams?.get('reason') === 'timeout';
@@ -40,7 +54,8 @@ function LoginForm() {
 
     try {
       const cleanEmail = email.trim().toLowerCase();
-      const res = await fetch('/api/auth/login', {
+      const loginEndpoint = `${prefix}/api/auth/login`;
+      const res = await fetch(loginEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,9 +65,21 @@ function LoginForm() {
         body: JSON.stringify({ email: cleanEmail, password }),
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('Unable to reach the authentication service. Please check your internet connection or try again in a few moments.');
+      }
+
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to authenticate');
+        if (res.status === 401) {
+          throw new Error(data.error || 'Incorrect email or password. Please verify your login details and try again.');
+        }
+        if (res.status === 403) {
+          throw new Error(data.error || 'Your account is currently inactive. Please reach out to your system administrator for access.');
+        }
+        throw new Error(data.error || 'Unable to reach the authentication service. Please check your internet connection or try again in a few moments.');
       }
 
       // Initialize fresh activity timestamp for the new session
@@ -64,7 +91,6 @@ function LoginForm() {
 
       // Resolve destination URL
       const from = searchParams?.get('from');
-      const prefix = typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
       const defaultTarget = `${prefix}/overview`;
       const targetUrl =
         from && from.startsWith('/') && !from.includes('/login')
@@ -76,7 +102,19 @@ function LoginForm() {
       // Forces clean server hydration with the fresh authentication cookie on the very first attempt.
       window.location.href = targetUrl;
     } catch (err: any) {
-      setError(err.message || 'Authentication error');
+      const errMsg = err?.message || '';
+      if (
+        err?.name === 'TypeError' ||
+        /failed to fetch|network|offline|load failed|abort|connection/i.test(errMsg)
+      ) {
+        setError('Unable to reach the authentication service. Please check your internet connection or try again in a few moments.');
+      } else if (/deactivated|inactive/i.test(errMsg)) {
+        setError('Your account is currently inactive. Please reach out to your system administrator for access.');
+      } else if (/invalid|incorrect|credentials|password/i.test(errMsg)) {
+        setError('Incorrect email or password. Please verify your login details and try again.');
+      } else {
+        setError(errMsg || 'Unable to reach the authentication service. Please check your internet connection or try again in a few moments.');
+      }
       setLoading(false);
     }
   };
@@ -92,11 +130,12 @@ function LoginForm() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 p-0.5 shadow-xl shadow-blue-500/20 flex items-center justify-center">
             <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden relative">
               <Image
-                src="/logo.png"
+                src={`${prefix}/logo.png`}
                 alt="Dhaaveg ERP Logo"
                 width={56}
                 height={56}
                 priority
+                unoptimized
                 className="w-full h-full object-contain rounded-[14px]"
               />
             </div>

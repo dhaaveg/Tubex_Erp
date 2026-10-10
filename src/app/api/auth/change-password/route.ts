@@ -89,11 +89,14 @@ export const POST = withApiHandler(async (request: Request) => {
       user: sanitizeUser(updatedUser),
     });
 
+    const proto = (request.headers.get('x-forwarded-proto') || '').toLowerCase();
+    const isSecure = proto === 'https' || request.url.startsWith('https:');
+
     response.cookies.set({
       name: SESSION_COOKIE_NAME,
       value: refreshedToken,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       path: '/',
       maxAge: maxAgeSeconds,

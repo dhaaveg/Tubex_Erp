@@ -276,6 +276,9 @@ export async function middleware(request: NextRequest) {
 
   // If token is expired due to 2-hour inactivity:
   if (isExpired) {
+    const proto = (request.headers.get('x-forwarded-proto') || '').toLowerCase();
+    const isSecure = proto === 'https' || request.url.startsWith('https:');
+
     if (pathname.startsWith('/api/')) {
       const response = NextResponse.json(
         { success: false, error: 'Session expired due to 2 hours of inactivity.', code: 'SESSION_TIMEOUT' },
@@ -286,7 +289,7 @@ export async function middleware(request: NextRequest) {
           name: cookieName,
           value: '',
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: isSecure,
           sameSite: 'lax',
           path: '/',
           maxAge: 0,
@@ -308,7 +311,7 @@ export async function middleware(request: NextRequest) {
         name: cookieName,
         value: '',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isSecure,
         sameSite: 'lax',
         path: '/',
         maxAge: 0,

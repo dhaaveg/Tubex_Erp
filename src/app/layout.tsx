@@ -7,6 +7,11 @@ import { Suspense } from 'react';
 export const metadata: Metadata = {
   title: 'EOT Couplings ERP | Precision Tubulars & Casing System',
   description: 'Enterprise ERP for OCTG and industrial pipe manufacturing with strict relational integrity, cutting yield math, and full provenance traceability.',
+  icons: {
+    icon: '/app-icon.png',
+    shortcut: '/favicon.ico',
+    apple: '/app-icon.png',
+  },
 };
 
 export default function RootLayout({

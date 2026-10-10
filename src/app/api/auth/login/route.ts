@@ -30,7 +30,7 @@ export const POST = withApiHandler(async (request: Request) => {
     if (!user) {
       // Constant-time / generic message to prevent email enumeration
       return NextResponse.json(
-        { success: false, error: 'Invalid email or password' },
+        { success: false, error: 'Incorrect email or password. Please verify your login details and try again.' },
         { status: 401 }
       );
     }
@@ -38,14 +38,14 @@ export const POST = withApiHandler(async (request: Request) => {
     const isMatch = await verifyPassword(user.password_hash, password);
     if (!isMatch) {
       return NextResponse.json(
-        { success: false, error: 'Invalid email or password' },
+        { success: false, error: 'Incorrect email or password. Please verify your login details and try again.' },
         { status: 401 }
       );
     }
 
     if (!user.is_active) {
       return NextResponse.json(
-        { success: false, error: 'Account has been deactivated. Please contact your administrator.' },
+        { success: false, error: 'Your account is currently inactive. Please reach out to your system administrator for access.' },
         { status: 403 }
       );
     }
@@ -105,11 +105,14 @@ export const POST = withApiHandler(async (request: Request) => {
       user: sanitizeUser(user),
     });
 
+    const proto = (request.headers.get('x-forwarded-proto') || '').toLowerCase();
+    const isSecure = proto === 'https' || request.url.startsWith('https:');
+
     response.cookies.set({
       name: SESSION_COOKIE_NAME,
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       path: '/',
       maxAge: maxAgeSeconds,
@@ -120,7 +123,7 @@ export const POST = withApiHandler(async (request: Request) => {
   } catch (error: any) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal server error during login' },
+      { success: false, error: 'Unable to reach the authentication service. Please check your internet connection or try again in a few moments.' },
       { status: 500 }
     );
   }

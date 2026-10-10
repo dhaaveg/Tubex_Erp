@@ -10,7 +10,10 @@ import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-async function handleLogout() {
+async function handleLogout(request?: Request) {
+  const proto = (request?.headers.get('x-forwarded-proto') || '').toLowerCase();
+  const isSecure = proto === 'https' || (request?.url ? request.url.startsWith('https:') : false);
+
   try {
     const cookieStore = cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
@@ -46,7 +49,7 @@ async function handleLogout() {
         name: cookieName,
         value: '',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isSecure,
         sameSite: 'lax',
         path: '/',
         maxAge: 0,
@@ -61,5 +64,5 @@ async function handleLogout() {
   }
 }
 
-export const POST = withApiHandler(async () => handleLogout());
-export const GET = withApiHandler(async () => handleLogout());
+export const POST = withApiHandler(async (request: Request) => handleLogout(request));
+export const GET = withApiHandler(async (request: Request) => handleLogout(request));

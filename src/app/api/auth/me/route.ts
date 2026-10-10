@@ -5,8 +5,11 @@ import { withApiHandler } from '@/lib/api-handler';
 
 export const dynamic = 'force-dynamic';
 
-export const GET = withApiHandler(async () => {
+export const GET = withApiHandler(async (request: Request) => {
   try {
+    const proto = (request?.headers.get('x-forwarded-proto') || '').toLowerCase();
+    const isSecure = proto === 'https' || (request?.url ? request.url.startsWith('https:') : false);
+
     const current = await getCurrentSession();
     if (!current) {
       const res = NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
@@ -16,7 +19,7 @@ export const GET = withApiHandler(async () => {
           name: cookieName,
           value: '',
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: isSecure,
           sameSite: 'lax',
           path: '/',
           maxAge: 0,

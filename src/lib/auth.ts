@@ -1,7 +1,7 @@
 // src/lib/auth.ts
 // Server-Only Authentication & Session Management Library
 
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import prisma from './prisma';
 import { argon2id, argon2Verify } from 'hash-wasm';
 import {
@@ -166,6 +166,12 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
     }).catch(() => {});
 
     try {
+      let isSecure = false;
+      try {
+        const headerStore = headers();
+        const proto = (headerStore.get('x-forwarded-proto') || '').toLowerCase();
+        isSecure = proto === 'https';
+      } catch {}
       for (const cookieName of AUTH_COOKIES_TO_PURGE) {
         cookieStore.set({
           name: cookieName,
@@ -174,7 +180,7 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
           expires: new Date(0),
           path: '/',
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: isSecure,
           sameSite: 'lax',
         });
       }
