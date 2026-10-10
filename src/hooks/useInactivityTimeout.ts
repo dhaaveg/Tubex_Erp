@@ -90,7 +90,8 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       // Hard Hydration Navigation to /login?expired=true:
       // Eliminates stale Next.js App Router RSC cache and forces clean hydration
       if (typeof window !== 'undefined') {
-        window.location.href = reason === 'expired' ? '/login?expired=true' : '/login';
+        const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+        window.location.href = `${prefix}/login${reason === 'expired' ? '?expired=true' : ''}`;
       }
     },
     [broadcast, onLogout]
@@ -186,9 +187,11 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       } else if (e.key === STORAGE_KEY_LOGOUT_EVENT && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
-          window.location.href = parsed.reason === 'expired' ? '/login?expired=true' : '/login';
+          const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+          window.location.href = `${prefix}/login${parsed.reason === 'expired' ? '?expired=true' : ''}`;
         } catch {
-          window.location.href = '/login?expired=true';
+          const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+          window.location.href = `${prefix}/login?expired=true`;
         }
       }
     };
@@ -211,8 +214,8 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
               }
             }
           } else if (event.data?.type === 'LOGOUT') {
-            window.location.href =
-              event.data.reason === 'expired' ? '/login?expired=true' : '/login';
+            const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+            window.location.href = `${prefix}/login${event.data.reason === 'expired' ? '?expired=true' : ''}`;
           }
         };
       } catch {}

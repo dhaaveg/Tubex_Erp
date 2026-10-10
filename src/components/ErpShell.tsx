@@ -26,7 +26,16 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, unauthorizedNotice, clearUnauthorizedNotice } = useAuth();
+  const { user, isLoading: authLoading, unauthorizedNotice, clearUnauthorizedNotice } = useAuth();
+
+  // Client-Side Authentication Guard:
+  // Immediately redirect unauthenticated visitors without rendering ERP modules
+  useEffect(() => {
+    if (!authLoading && !user) {
+      const prefix = typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+      window.location.href = `${prefix}/login`;
+    }
+  }, [authLoading, user]);
 
   // Determine active tab from URL pathname or query params
   const getTabFromUrl = (): NavigationTab => {
@@ -94,6 +103,28 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
       router.push(`/traceability?search=${encodeURIComponent(query.trim())}`);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="h-screen w-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 font-sans">
+        <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+          Authenticating TUBEX ERP...
+        </p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="h-screen w-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 font-sans">
+        <div className="w-10 h-10 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+          Redirecting to Login...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-slate-950 overflow-hidden select-none">

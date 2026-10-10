@@ -67,7 +67,8 @@ export async function decryptSessionToken(
     const decoder = new TextDecoder();
     const parsed = JSON.parse(decoder.decode(decrypted)) as SessionPayload;
 
-    if (!options?.ignoreExpiry && Date.now() > parsed.exp) {
+    const expMs = parsed.exp < 100000000000 ? parsed.exp * 1000 : parsed.exp;
+    if (!options?.ignoreExpiry && Date.now() > expMs) {
       return null;
     }
     return parsed;
@@ -137,7 +138,8 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
   const payload = await decryptSessionToken(token, { ignoreExpiry: true });
   if (!payload) return null;
 
-  const isTokenExpired = Date.now() > payload.exp;
+  const expMs = payload.exp < 100000000000 ? payload.exp * 1000 : payload.exp;
+  const isTokenExpired = Date.now() > expMs;
 
   const dbSession = await prisma.session.findUnique({
     where: { session_token: payload.sessionId },

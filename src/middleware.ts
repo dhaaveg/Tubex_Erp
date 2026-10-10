@@ -65,7 +65,9 @@ async function decryptToken(
     const decoder = new TextDecoder();
     const payload = JSON.parse(decoder.decode(decrypted)) as DecryptedToken;
 
-    const isExpired = Date.now() > payload.exp;
+    // Strict 2-hour session expiration check (support both unix seconds and milliseconds)
+    const expMs = payload.exp < 100000000000 ? payload.exp * 1000 : payload.exp;
+    const isExpired = Date.now() > expMs;
     return { payload: isExpired ? null : payload, isExpired };
   } catch {
     return { payload: null, isExpired: false };
@@ -205,7 +207,13 @@ function resolveModuleKey(pathname: string): string | null {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const rawPathname = request.nextUrl.pathname;
+  // Detect subpath prefix (e.g. /dhaaveg)
+  const isDhaavegPrefix = rawPathname === '/dhaaveg' || rawPathname.startsWith('/dhaaveg/');
+  const prefix = isDhaavegPrefix ? '/dhaaveg' : '';
+  const pathname = isDhaavegPrefix
+    ? (rawPathname.slice('/dhaaveg'.length) || '/')
+    : rawPathname;
   const method = request.method.toUpperCase();
 
   // 1. Unconditionally allow static assets, favicon, Next internals, and public images
@@ -217,6 +225,9 @@ export async function middleware(request: NextRequest) {
     pathname === '/app-icon.png' ||
     pathname.match(/\.(png|jpg|jpeg|svg|webp|ico)$/i)
   ) {
+    if (isDhaavegPrefix) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    }
     return NextResponse.next();
   }
 
@@ -225,6 +236,9 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.searchParams.get('clear') === '1') {
       cachedMatrixByRole = null;
       lastCacheFetchTime = 0;
+    }
+    if (isDhaavegPrefix) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -243,6 +257,9 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/admin/lov');
 
   if (isAuthOrLovApiRoute) {
+    if (isDhaavegPrefix) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    }
     return NextResponse.next();
   }
 
@@ -279,11 +296,11 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = new URL(`${prefix}/login`, request.url);
     loginUrl.searchParams.set('expired', 'true');
     loginUrl.searchParams.set('reason', 'timeout');
     if (pathname !== '/' && pathname !== '/login') {
-      loginUrl.searchParams.set('from', pathname);
+      loginUrl.searchParams.set('from', rawPathname);
     }
     const response = NextResponse.redirect(loginUrl);
     for (const cookieName of AUTH_COOKIES_TO_PURGE) {
@@ -309,9 +326,9 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       );
     }
-    const loginUrl = new URL('/login', request.url);
-    if (pathname !== '/') {
-      loginUrl.searchParams.set('from', pathname);
+    const loginUrl = new URL(`${prefix}/login`, request.url);
+    if (pathname !== '/' && pathname !== '/login') {
+      loginUrl.searchParams.set('from', rawPathname);
     }
     return NextResponse.redirect(loginUrl);
   }
@@ -334,7 +351,7 @@ export async function middleware(request: NextRequest) {
           { status: 403 }
         );
       }
-      return NextResponse.redirect(new URL('/change-password', request.url));
+      return NextResponse.redirect(new URL(`${prefix}/change-password`, request.url));
     }
   }
 
@@ -348,6 +365,9 @@ export async function middleware(request: NextRequest) {
 
   // 6. Super Admin has unrestricted core root privilege across all routes
   if (roles.includes('SUPER_ADMIN') || payload.role === 'SUPER_ADMIN') {
+    if (isDhaavegPrefix) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    }
     return NextResponse.next();
   }
 
@@ -355,7 +375,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === '/admin/lov' || pathname === '/lov') {
     const isAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
     if (!isAdmin) {
-      const homeUrl = new URL('/', request.url);
+      const homeUrl = new URL(`${prefix}/`, request.url);
       homeUrl.searchParams.set('unauthorized', 'lov');
       return NextResponse.redirect(homeUrl);
     }
@@ -363,6 +383,9 @@ export async function middleware(request: NextRequest) {
 
   // 7. Allow self-profile updates
   if (method === 'PUT' && pathname === `/api/users/${payload.userId}`) {
+    if (isDhaavegPrefix) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    }
     return NextResponse.next();
   }
 
@@ -390,14 +413,12 @@ export async function middleware(request: NextRequest) {
 
   // 9. Resolve target module
   const moduleKey = resolveModuleKey(pathname);
-  if (!moduleKey || moduleKey === 'overview') {
-    return NextResponse.next();
-  }
+  const targetModule = moduleKey || 'overview';
 
   // 10. Multi-Role Union Evaluation: Is module enabled for ANY assigned role?
   const isEnabled = roles.length === 0 || roles.includes('SUPER_ADMIN') || roles.some((r) => {
     const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
-    return roleMatrix[moduleKey]?.is_enabled !== false;
+    return roleMatrix[targetModule]?.is_enabled !== false;
   });
 
   if (!isEnabled) {
@@ -405,17 +426,20 @@ export async function middleware(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: `Forbidden: Assigned roles (${roles.join(', ')}) do not permit access to module "${moduleKey}".`,
+          error: `Forbidden: Assigned roles (${roles.join(', ')}) do not permit access to module "${targetModule}".`,
         },
         { status: 403 }
       );
     }
     // Prevent infinite redirect loops: never redirect to root if already at root or if unauthorized query is present
     if (pathname === '/' || pathname === '/overview' || request.nextUrl.searchParams.has('unauthorized')) {
+      if (isDhaavegPrefix) {
+        return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      }
       return NextResponse.next();
     }
-    const homeUrl = new URL('/', request.url);
-    homeUrl.searchParams.set('unauthorized', moduleKey);
+    const homeUrl = new URL(`${prefix}/`, request.url);
+    homeUrl.searchParams.set('unauthorized', targetModule);
     return NextResponse.redirect(homeUrl);
   }
 
@@ -424,19 +448,22 @@ export async function middleware(request: NextRequest) {
   if (isMutation) {
     const canWrite = roles.some((r) => {
       const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
-      return roleMatrix[moduleKey]?.can_write !== false;
+      return roleMatrix[targetModule]?.can_write !== false;
     });
     if (!canWrite) {
       return NextResponse.json(
         {
           success: false,
-          error: `Forbidden: Assigned roles (${roles.join(', ')}) have read-only access for module "${moduleKey}". Mutations not permitted.`,
+          error: `Forbidden: Assigned roles (${roles.join(', ')}) have read-only access for module "${targetModule}". Mutations not permitted.`,
         },
         { status: 403 }
       );
     }
   }
 
+  if (isDhaavegPrefix) {
+    return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+  }
   return NextResponse.next();
 }
 

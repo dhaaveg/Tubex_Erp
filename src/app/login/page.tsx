@@ -64,10 +64,12 @@ function LoginForm() {
 
       // Resolve destination URL
       const from = searchParams?.get('from');
+      const prefix = typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+      const defaultTarget = `${prefix}/overview`;
       const targetUrl =
-        from && from.startsWith('/') && !from.startsWith('/login')
+        from && from.startsWith('/') && !from.includes('/login')
           ? from
-          : '/overview';
+          : defaultTarget;
 
       // Hard Hydration Navigation:
       // Completely bypasses Next.js client App Router RSC cache to eliminate stale 401 states.

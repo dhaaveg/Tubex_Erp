@@ -102,7 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('eot_last_activity');
           sessionStorage.clear();
         } catch {}
-        window.location.href = expired ? '/login?expired=true' : '/login';
+        const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
+        window.location.href = `${prefix}/login${expired ? '?expired=true' : ''}`;
       }
     }
   };
