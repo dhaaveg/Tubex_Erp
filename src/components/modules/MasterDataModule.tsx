@@ -22,9 +22,28 @@ import MasterDataTagModal from '../MasterDataTagModal';
 import LovManagementTab from './LovManagementTab';
 import { formatDate } from '@/lib/formatters';
 import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
+import { useAuth } from '@/context/AuthContext';
 
 export default function MasterDataModule() {
+  const { user } = useAuth();
+  const isAdmin = Boolean(
+    user && (
+      user.role === 'SUPER_ADMIN' ||
+      user.role === 'ADMIN' ||
+      user.roles?.includes('SUPER_ADMIN') ||
+      user.roles?.includes('ADMIN')
+    )
+  );
+
   const [activeTab, setActiveTab] = useState<'suppliers' | 'products' | 'lov'>('suppliers');
+
+  // Automatically reset to 'suppliers' if non-admin is on 'lov'
+  useEffect(() => {
+    if (!isAdmin && activeTab === 'lov') {
+      setActiveTab('suppliers');
+    }
+  }, [isAdmin, activeTab]);
+
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -263,17 +282,19 @@ export default function MasterDataModule() {
               <Package className="w-3.5 h-3.5" />
               <span>OCTG Products</span>
             </button>
-            <button
-              onClick={() => setActiveTab('lov')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
-                activeTab === 'lov'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Tag className="w-3.5 h-3.5" />
-              <span>Dropdown Lists (LOV)</span>
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => setActiveTab('lov')}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
+                  activeTab === 'lov'
+                    ? 'bg-blue-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Tag className="w-3.5 h-3.5" />
+                <span>Dropdown Lists (LOV)</span>
+              </button>
+            )}
           </div>
 
           {activeTab !== 'lov' && (
@@ -289,7 +310,25 @@ export default function MasterDataModule() {
       </div>
 
       {activeTab === 'lov' ? (
-        <LovManagementTab />
+        isAdmin ? (
+          <LovManagementTab />
+        ) : (
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center max-w-lg mx-auto my-8">
+            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-800/80 flex items-center justify-center mx-auto mb-4 text-red-400">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-100">Access Denied</h3>
+            <p className="text-xs text-slate-400 mt-2">
+              Only Super Admin or Admin can create, modify, or delete List of Values (LOV).
+            </p>
+            <button
+              onClick={() => setActiveTab('suppliers')}
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-all"
+            >
+              Return to Suppliers & Mills
+            </button>
+          </div>
+        )
       ) : (
         <>
           {/* Search & Filter Bar */}

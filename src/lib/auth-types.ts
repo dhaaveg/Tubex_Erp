@@ -386,6 +386,11 @@ export const OPERATIONAL_ACTIONS = [
   'LOGIN',
   'LOGOUT',
   'SESSION_TIMEOUT',
+  'LOV_CREATED',
+  'LOV_UPDATED',
+  'LOV_DELETED',
+  'LOV_REORDERED',
+  'LOV_UNAUTHORIZED_MUTATION_ATTEMPT',
 ] as const;
 
 export type OperationalAction = (typeof OPERATIONAL_ACTIONS)[number];

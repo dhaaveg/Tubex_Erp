@@ -1,27 +1,27 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withApiHandler } from '@/lib/api-handler';
-import { getCurrentSession } from '@/lib/auth';
+import {
+  verifyLovMutationAuth,
+  handleUnauthorizedLovMutation,
+  logLovSuccessAudit,
+} from '@/lib/lov-auth';
 
 export const dynamic = 'force-dynamic';
-
-const ALLOWED_ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN'];
 
 /**
  * PUT /api/admin/lov/[id]
  * Admin endpoint to update an existing LOV item.
+ * Strictly restricted to SUPER_ADMIN and ADMIN roles.
  */
 export const PUT = withApiHandler(
   async (request: Request, { params }: { params: { id: string } }) => {
-    const sessionContext = await getCurrentSession();
-    if (!sessionContext?.user || !ALLOWED_ADMIN_ROLES.includes(sessionContext.user.role)) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden: Admin access required.' },
-        { status: 403 }
-      );
+    const { id } = params;
+    const auth = await verifyLovMutationAuth(request);
+    if (!auth.isAuthorized) {
+      return handleUnauthorizedLovMutation(request, auth, id);
     }
 
-    const { id } = params;
     const body = await request.json();
     const { label, value, sort_order, is_active } = body;
 
@@ -46,27 +46,39 @@ export const PUT = withApiHandler(
       },
     });
 
+    // Record successful update in AuditLog
+    await logLovSuccessAudit('LOV_UPDATED', auth, updated.id, {
+      category: updated.category,
+      code: updated.code,
+      label: updated.label,
+      value: updated.value,
+      sort_order: updated.sort_order,
+      is_active: updated.is_active,
+    });
+
     return NextResponse.json(updated);
-  },
-  { requireAuth: true, allowedRoles: ALLOWED_ADMIN_ROLES }
+  }
 );
+
+/**
+ * PATCH /api/admin/lov/[id]
+ * Partial update for LOV item (e.g. sort order or status toggle).
+ */
+export const PATCH = PUT;
 
 /**
  * DELETE /api/admin/lov/[id]
  * Admin endpoint to delete an LOV item.
  * Protects is_system_default from deletion.
+ * Strictly restricted to SUPER_ADMIN and ADMIN roles.
  */
 export const DELETE = withApiHandler(
   async (request: Request, { params }: { params: { id: string } }) => {
-    const sessionContext = await getCurrentSession();
-    if (!sessionContext?.user || !ALLOWED_ADMIN_ROLES.includes(sessionContext.user.role)) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden: Admin access required.' },
-        { status: 403 }
-      );
-    }
-
     const { id } = params;
+    const auth = await verifyLovMutationAuth(request);
+    if (!auth.isAuthorized) {
+      return handleUnauthorizedLovMutation(request, auth, id);
+    }
 
     const existing = await prisma.listOfValue.findUnique({
       where: { id },
@@ -93,10 +105,17 @@ export const DELETE = withApiHandler(
       where: { id },
     });
 
+    // Record successful deletion in AuditLog
+    await logLovSuccessAudit('LOV_DELETED', auth, existing.id, {
+      category: existing.category,
+      code: existing.code,
+      label: existing.label,
+      value: existing.value,
+    });
+
     return NextResponse.json({
       success: true,
       message: `LOV item "${existing.label}" deleted successfully.`,
     });
-  },
-  { requireAuth: true, allowedRoles: ALLOWED_ADMIN_ROLES }
+  }
 );

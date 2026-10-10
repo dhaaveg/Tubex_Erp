@@ -12,9 +12,12 @@ import {
   Lock, 
   RefreshCw, 
   X,
-  AlertCircle 
+  AlertCircle,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { useAuth } from '@/context/AuthContext';
 
 export interface LovRecord {
   id: string;
@@ -31,12 +34,23 @@ export interface LovRecord {
 
 export default function LovManagementTab() {
   const { success, error } = useToast();
+  const { user } = useAuth();
+
+  const isAdmin = Boolean(
+    user && (
+      user.role === 'SUPER_ADMIN' ||
+      user.role === 'ADMIN' ||
+      user.roles?.includes('SUPER_ADMIN') ||
+      user.roles?.includes('ADMIN')
+    )
+  );
 
   const [items, setItems] = useState<LovRecord[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isReordering, setIsReordering] = useState<boolean>(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -53,20 +67,39 @@ export default function LovManagementTab() {
   const fetchItems = useCallback(async () => {
     setIsLoading(true);
     try {
-      const url =
-        selectedCategory && selectedCategory !== 'ALL'
-          ? `/api/admin/lov?category=${encodeURIComponent(selectedCategory)}`
-          : '/api/admin/lov';
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error('Failed to fetch LOV items');
-      }
-      const data = await res.json();
-      if (data?.items) {
-        setItems(data.items);
-      }
-      if (data?.categories) {
-        setCategories(data.categories);
+      if (isAdmin) {
+        const url =
+          selectedCategory && selectedCategory !== 'ALL'
+            ? `/api/admin/lov?category=${encodeURIComponent(selectedCategory)}`
+            : '/api/admin/lov';
+        const res = await fetch(url);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData?.error || 'Failed to fetch LOV items');
+        }
+        const data = await res.json();
+        if (data?.items) {
+          setItems(data.items);
+        }
+        if (data?.categories) {
+          setCategories(data.categories);
+        }
+      } else {
+        // Non-admin read-only fallback via /api/lov to allow active dropdown inspection without 403 errors
+        const url =
+          selectedCategory && selectedCategory !== 'ALL'
+            ? `/api/lov?category=${encodeURIComponent(selectedCategory)}`
+            : '/api/lov';
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error('Failed to fetch LOV items');
+        }
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setItems(data);
+          const distinct = Array.from(new Set(data.map((i: any) => i.category))).sort() as string[];
+          setCategories(distinct);
+        }
       }
     } catch (err: any) {
       console.error(err);
@@ -74,13 +107,65 @@ export default function LovManagementTab() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCategory, error]);
+  }, [isAdmin, selectedCategory, error]);
 
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
 
+  const handleMove = async (item: LovRecord, direction: 'up' | 'down') => {
+    if (!isAdmin || isReordering) return;
+
+    // Filter within same category as the item to ensure logical relative sorting
+    const categoryItems = items
+      .filter((i) => i.category === item.category)
+      .sort((a, b) => a.sort_order - b.sort_order);
+
+    const index = categoryItems.findIndex((i) => i.id === item.id);
+    if (index === -1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= categoryItems.length) return;
+
+    const targetItem = categoryItems[targetIndex];
+    setIsReordering(true);
+
+    try {
+      let newCurrentOrder = targetItem.sort_order;
+      let newTargetOrder = item.sort_order;
+      if (newCurrentOrder === newTargetOrder) {
+        newCurrentOrder = direction === 'up' ? targetItem.sort_order - 1 : targetItem.sort_order + 1;
+      }
+
+      const res = await fetch('/api/admin/lov', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [
+            { id: item.id, sort_order: newCurrentOrder },
+            { id: targetItem.id, sort_order: newTargetOrder },
+          ],
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to reorder items');
+      }
+      success(`Reordered "${item.label}" successfully.`);
+      await fetchItems();
+    } catch (err: any) {
+      error(err?.message || 'Error reordering items');
+    } finally {
+      setIsReordering(false);
+    }
+  };
+
   const handleOpenCreate = () => {
+    if (!isAdmin) {
+      error('Access denied. Only Super Admin or Admin can create List of Values (LOV).');
+      return;
+    }
     setEditingItem(null);
     setFormCategory(selectedCategory !== 'ALL' ? selectedCategory : categories[0] || 'CVN_REQUIREMENT');
     setFormCode('');
@@ -93,6 +178,10 @@ export default function LovManagementTab() {
   };
 
   const handleOpenEdit = (item: LovRecord) => {
+    if (!isAdmin) {
+      error('Access denied. Only Super Admin or Admin can modify List of Values (LOV).');
+      return;
+    }
     setEditingItem(item);
     setFormCategory(item.category);
     setFormCode(item.code);
@@ -106,6 +195,10 @@ export default function LovManagementTab() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) {
+      error('Access denied. Only Super Admin or Admin can create or modify List of Values (LOV).');
+      return;
+    }
     setModalError(null);
     setIsSubmitting(true);
 
@@ -158,6 +251,10 @@ export default function LovManagementTab() {
   };
 
   const handleToggleActive = async (item: LovRecord) => {
+    if (!isAdmin) {
+      error('Access denied. Only Super Admin or Admin can modify List of Values (LOV).');
+      return;
+    }
     try {
       const res = await fetch(`/api/admin/lov/${item.id}`, {
         method: 'PUT',
@@ -176,6 +273,10 @@ export default function LovManagementTab() {
   };
 
   const handleDelete = async (item: LovRecord) => {
+    if (!isAdmin) {
+      error('Access denied. Only Super Admin or Admin can delete List of Values (LOV).');
+      return;
+    }
     if (item.is_system_default) {
       error('System default items cannot be deleted. Deactivate them instead.');
       return;
@@ -218,6 +319,21 @@ export default function LovManagementTab() {
 
   return (
     <div className="space-y-4">
+      {/* Non-Admin Security Warning Banner */}
+      {!isAdmin && (
+        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/60 flex items-start space-x-3 text-amber-200 shadow-md">
+          <AlertCircle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+          <div>
+            <h4 className="font-semibold text-xs text-amber-200 uppercase tracking-wider font-mono">
+              Restricted Access &bull; Read-Only Mode
+            </h4>
+            <p className="text-xs text-amber-300/80 mt-1 leading-relaxed">
+              Access denied. Only Super Admin or Admin can create, modify, reorder, or delete List of Values (LOV). Dropdown entries are displayed for operational reference only.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Category Pills & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
@@ -257,14 +373,16 @@ export default function LovManagementTab() {
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Dropdown Option</span>
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Dropdown Option</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -293,7 +411,7 @@ export default function LovManagementTab() {
                 <th className="px-4 py-3 text-center">Order</th>
                 <th className="px-4 py-3 text-center">Type</th>
                 <th className="px-4 py-3 text-center">Status</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+                <th className="px-4 py-3 text-center">{isAdmin ? 'Actions' : 'Access'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-sans">
@@ -321,7 +439,31 @@ export default function LovManagementTab() {
                       {item.value}
                     </td>
                     <td className="px-4 py-3 text-center font-mono text-slate-400">
-                      {item.sort_order}
+                      <div className="flex items-center justify-center space-x-1">
+                        <span className="w-6 text-right">{item.sort_order}</span>
+                        {isAdmin && (
+                          <div className="flex flex-col ml-1">
+                            <button
+                              type="button"
+                              onClick={() => handleMove(item, 'up')}
+                              disabled={isReordering}
+                              className="p-0.5 text-slate-400 hover:text-blue-400 disabled:opacity-30 transition-colors"
+                              title="Move Up"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMove(item, 'down')}
+                              disabled={isReordering}
+                              className="p-0.5 text-slate-400 hover:text-blue-400 disabled:opacity-30 transition-colors"
+                              title="Move Down"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-center">
                       {item.is_system_default ? (
@@ -335,55 +477,85 @@ export default function LovManagementTab() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleToggleActive(item)}
-                        className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-semibold border transition-all ${
-                          item.is_active
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60'
-                            : 'bg-red-950/60 text-red-400 border-red-800/60 hover:bg-red-900/60'
-                        }`}
-                        title="Click to toggle status"
-                      >
-                        {item.is_active ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Active
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="w-3 h-3 text-red-400" /> Inactive
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center space-x-1.5">
+                      {isAdmin ? (
                         <button
                           type="button"
-                          onClick={() => handleOpenEdit(item)}
-                          className="p-1.5 rounded-lg bg-slate-950 hover:bg-blue-600/20 text-slate-400 hover:text-blue-400 border border-slate-800 transition-colors"
-                          title="Edit LOV"
+                          onClick={() => handleToggleActive(item)}
+                          className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-semibold border transition-all ${
+                            item.is_active
+                              ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60'
+                              : 'bg-red-950/60 text-red-400 border-red-800/60 hover:bg-red-900/60'
+                          }`}
+                          title="Click to toggle status"
                         >
-                          <Edit2 className="w-3.5 h-3.5" />
+                          {item.is_active ? (
+                            <>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Active
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="w-3 h-3 text-red-400" /> Inactive
+                            </>
+                          )}
                         </button>
-                        {!item.is_system_default ? (
+                      ) : (
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-semibold border ${
+                            item.is_active
+                              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40'
+                              : 'bg-red-950/40 text-red-400 border-red-800/40'
+                          }`}
+                          title="Status (Read-Only)"
+                        >
+                          {item.is_active ? (
+                            <>
+                              <CheckCircle2 className="w-3 h-3" /> Active
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="w-3 h-3" /> Inactive
+                            </>
+                          )}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {isAdmin ? (
+                        <div className="flex items-center justify-center space-x-1.5">
                           <button
                             type="button"
-                            onClick={() => handleDelete(item)}
-                            className="p-1.5 rounded-lg bg-slate-950 hover:bg-red-600/20 text-slate-400 hover:text-red-400 border border-slate-800 transition-colors"
-                            title="Delete custom option"
+                            onClick={() => handleOpenEdit(item)}
+                            className="p-1.5 rounded-lg bg-slate-950 hover:bg-blue-600/20 text-slate-400 hover:text-blue-400 border border-slate-800 transition-colors"
+                            title="Edit LOV"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Edit2 className="w-3.5 h-3.5" />
                           </button>
-                        ) : (
-                          <span
-                            className="p-1.5 rounded-lg bg-slate-950 text-slate-600 border border-slate-850 cursor-not-allowed opacity-50"
-                            title="System defaults cannot be deleted"
-                          >
-                            <Lock className="w-3.5 h-3.5" />
-                          </span>
-                        )}
-                      </div>
+                          {!item.is_system_default ? (
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item)}
+                              className="p-1.5 rounded-lg bg-slate-950 hover:bg-red-600/20 text-slate-400 hover:text-red-400 border border-slate-800 transition-colors"
+                              title="Delete custom option"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          ) : (
+                            <span
+                              className="p-1.5 rounded-lg bg-slate-950 text-slate-600 border border-slate-850 cursor-not-allowed opacity-50"
+                              title="System defaults cannot be deleted"
+                            >
+                              <Lock className="w-3.5 h-3.5" />
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md bg-slate-950 text-slate-500 border border-slate-800 font-mono"
+                          title="Restricted: Read-only access"
+                        >
+                          <Lock className="w-2.5 h-2.5" /> Read-Only
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))

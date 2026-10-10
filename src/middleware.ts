@@ -229,14 +229,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Public Auth Routes & Public LOVs
-  const isAuthRoute =
+  // 3. Public Auth Routes & Dedicated LOV RBAC Endpoints
+  // Note: GET /api/lov is public for standard dropdown reads across operational modules.
+  // All mutations to /api/lov and all calls to /api/admin/lov are passed through
+  // directly to their respective API route handlers where verifyLovMutationAuth executes strict
+  // SUPER_ADMIN / ADMIN authorization, logs security warnings to logs/error-YYYY-MM-DD.log,
+  // records unauthorized attempts in the AuditLog database table, and returns HTTP 403 Forbidden.
+  const isAuthOrLovApiRoute =
     pathname === '/login' ||
     pathname === '/api/auth/login' ||
     pathname === '/api/auth/logout' ||
-    pathname === '/api/lov';
+    pathname === '/api/lov' ||
+    pathname.startsWith('/api/admin/lov');
 
-  if (isAuthRoute) {
+  if (isAuthOrLovApiRoute) {
     return NextResponse.next();
   }
 
@@ -343,6 +349,16 @@ export async function middleware(request: NextRequest) {
   // 6. Super Admin has unrestricted core root privilege across all routes
   if (roles.includes('SUPER_ADMIN') || payload.role === 'SUPER_ADMIN') {
     return NextResponse.next();
+  }
+
+  // 6b. Direct LOV Page Protection: strictly restrict LOV configuration views to Super Admin or Admin
+  if (pathname === '/admin/lov' || pathname === '/lov') {
+    const isAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+    if (!isAdmin) {
+      const homeUrl = new URL('/', request.url);
+      homeUrl.searchParams.set('unauthorized', 'lov');
+      return NextResponse.redirect(homeUrl);
+    }
   }
 
   // 7. Allow self-profile updates
