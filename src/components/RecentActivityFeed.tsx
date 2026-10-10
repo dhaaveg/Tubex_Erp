@@ -79,12 +79,12 @@ const ACTION_CONFIG: Record<
     icon: Key,
   },
   PO_CREATED: {
-    label: 'PO Created',
+    label: 'RM PO Created',
     badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
     icon: FileText,
   },
   PO_APPROVED: {
-    label: 'PO Approved',
+    label: 'RM PO Approved',
     badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
     icon: CheckCircle2,
   },

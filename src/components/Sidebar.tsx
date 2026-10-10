@@ -68,7 +68,7 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
   const allNavItems: { id: NavigationTab; label: string; href: string; icon: any; badge?: string | number }[] = [
     { id: 'overview', label: 'Dashboard Overview', href: '/', icon: LayoutDashboard },
     { id: 'master-data', label: 'Master Data', href: '/master-data', icon: Building2, badge: (stats?.totalSuppliers || 0) + (stats?.totalProducts || 0) },
-    { id: 'procurement', label: 'Procurement (PO)', href: '/procurement', icon: ShoppingCart, badge: stats?.totalPOs },
+    { id: 'procurement', label: 'Procurement (RM PO)', href: '/procurement', icon: ShoppingCart, badge: stats?.totalPOs },
     { id: 'receiving', label: 'Receiving & Tally', href: '/receiving', icon: Truck, badge: stats?.pipes?.available ? `${stats.pipes.available} Avail` : undefined },
     { id: 'customer-orders', label: "Customer's Orders", href: '/customer-orders', icon: FileSpreadsheet, badge: stats?.customerOrders?.active ? `${stats.customerOrders.active} Open` : undefined },
     { id: 'shop-floor', label: 'Shop Floor & Routing', href: '/shop-floor', icon: Wrench, badge: stats?.workOrders?.active ? `${stats.workOrders.active} Open` : undefined },

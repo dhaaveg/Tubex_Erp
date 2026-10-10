@@ -321,7 +321,7 @@ export default function MasterDataModule() {
                   <th className="px-4 py-3">Company & Contact</th>
                   <th className="px-4 py-3">Mill Details</th>
                   <th className="px-4 py-3">GST / Tax ID</th>
-                  <th className="px-4 py-3">POs Active</th>
+                  <th className="px-4 py-3">RM POs Active</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
@@ -367,7 +367,7 @@ export default function MasterDataModule() {
                       </td>
                       <td className="px-4 py-3 font-mono text-slate-300">
                         <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
-                          {s._count?.purchase_orders ?? 0} POs
+                          {s._count?.purchase_orders ?? 0} RM POs
                         </span>
                       </td>
                       <td className="px-4 py-3">

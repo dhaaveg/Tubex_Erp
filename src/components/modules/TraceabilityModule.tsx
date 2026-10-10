@@ -90,7 +90,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by Heat No (HT-84920), Pipe Tag (TAG-HT84920-001), WO ID (WO-2026-001), PO No..."
+              placeholder="Search by Heat No (HT-84920), Pipe Tag (TAG-HT84920-001), WO ID (WO-2026-001), RM PO No..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -143,7 +143,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
             }}
             className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 font-mono text-[11px] border border-slate-700"
           >
-            Purchase Order: PO-2026-001
+            Raw Material PO: PO-2026-001
           </button>
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                 GRN: {grn?.grn_id || 'GRN-2026-001'}
               </div>
               <div className="text-xs text-slate-300">
-                PO: <span className="font-mono text-blue-400">{po?.po_no || 'PO-2026-001'}</span>
+                RM PO: <span className="font-mono text-blue-400">{po?.po_no || 'PO-2026-001'}</span>
               </div>
               <div className="text-[11px] text-slate-400 font-mono flex justify-between">
                 <span>Weighbridge: {grn?.actual_weighbridge_weight_mt || 42.38} MT</span>

@@ -42,9 +42,9 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
       tab: 'master-data' as NavigationTab,
     },
     {
-      title: 'Purchase Orders',
+      title: 'Raw Material Purchase Orders (RM PO)',
       value: stats?.totalPOs ?? 0,
-      subtext: 'Active Procurement Contracts',
+      subtext: 'Active Raw Material Contracts',
       icon: ShoppingCart,
       color: 'emerald',
       tab: 'procurement' as NavigationTab,
@@ -117,7 +117,7 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
               className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>New PO</span>
+              <span>New RM PO</span>
             </button>
             <button
               onClick={() => onNavigate('receiving')}

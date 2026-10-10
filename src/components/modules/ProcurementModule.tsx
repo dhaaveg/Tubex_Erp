@@ -437,7 +437,7 @@ export default function ProcurementModule() {
   };
 
   const handleDeletePO = async (targetPoNo: string) => {
-    if (!confirm(`Are you sure you want to delete Purchase Order ${targetPoNo}? This action cannot be reversed.`)) {
+    if (!confirm(`Are you sure you want to delete Raw Material Purchase Order ${targetPoNo}? This action cannot be reversed.`)) {
       return;
     }
     try {
@@ -445,7 +445,7 @@ export default function ProcurementModule() {
         method: 'DELETE',
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete PO');
+      if (!res.ok) throw new Error(data.error || 'Failed to delete RM PO');
       fetchData(true);
     } catch (err: any) {
       alert(err.message);
@@ -548,7 +548,7 @@ export default function ProcurementModule() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'create'} PO`);
+      if (!res.ok) throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'create'} RM PO`);
 
       setIsModalOpen(false);
       setPoNo('');
@@ -604,7 +604,7 @@ export default function ProcurementModule() {
           <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/10 transition-colors" />
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
-              Total Active POs
+              Total Active RM POs
             </span>
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-sm">
               <ShoppingCart className="w-4 h-4" />
@@ -711,7 +711,7 @@ export default function ProcurementModule() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search PO #, Supplier, Mill, Grade, OD..."
+              placeholder="Search RM PO #, Supplier, Mill, Grade, OD..."
               className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-8 py-2 text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
             />
             {searchQuery && (
@@ -775,7 +775,7 @@ export default function ProcurementModule() {
                 <option value="date-asc">Oldest First</option>
                 <option value="value-desc">Highest Value</option>
                 <option value="mt-desc">Highest Tonnage</option>
-                <option value="po_no-asc">PO Number (A-Z)</option>
+                <option value="po_no-asc">RM PO Number (A-Z)</option>
               </select>
               <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -785,7 +785,7 @@ export default function ProcurementModule() {
               onClick={() => fetchData(true)}
               disabled={isRefreshing}
               className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-              title="Refresh Purchase Orders"
+              title="Refresh Raw Material Purchase Orders"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
             </button>
@@ -796,7 +796,7 @@ export default function ProcurementModule() {
               className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/25 transition-all transform active:scale-95 cursor-pointer ml-auto"
             >
               <Plus className="w-4 h-4" />
-              <span>Create Purchase Order</span>
+              <span>Create RM Purchase Order</span>
             </button>
           </div>
         </div>
@@ -861,7 +861,7 @@ export default function ProcurementModule() {
             <thead className="bg-slate-950/80 text-slate-400 font-mono text-[10px] uppercase tracking-wider border-b border-slate-800 select-none">
               <tr>
                 <th className="py-3 px-4 w-10"></th>
-                <th className="py-3 px-4">PO & Status</th>
+                <th className="py-3 px-4">RM PO & Status</th>
                 <th className="py-3 px-4">Supplier & Mill</th>
                 <th className="py-3 px-4">Technical Spec Summary</th>
                 <th className="py-3 px-4 text-right">Tonnage & Lines</th>
@@ -895,11 +895,11 @@ export default function ProcurementModule() {
                         <Package className="w-6 h-6 text-slate-500" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-white">No Purchase Orders Found</h4>
+                        <h4 className="text-sm font-bold text-white">No RM Purchase Orders Found</h4>
                         <p className="text-xs text-slate-400">
                           {searchQuery || statusFilter !== 'All' || selectedSupplierFilter !== 'All'
-                            ? 'No purchase orders match your active filter criteria. Try clearing filters.'
-                            : 'No purchase contracts have been recorded in the system yet.'}
+                            ? 'No RM purchase orders match your active filter criteria. Try clearing filters.'
+                            : 'No raw material purchase contracts have been recorded in the system yet.'}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2 pt-2">
@@ -920,7 +920,7 @@ export default function ProcurementModule() {
                           onClick={handleOpenCreate}
                           className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition"
                         >
-                          + Create First Purchase Order
+                          + Create First RM Purchase Order
                         </button>
                       </div>
                     </div>
@@ -1086,7 +1086,7 @@ export default function ProcurementModule() {
                                       className="w-full px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2"
                                     >
                                       <Pencil className="w-3.5 h-3.5 text-blue-400" />
-                                      <span>Edit PO Contract</span>
+                                      <span>Edit RM PO Contract</span>
                                     </button>
 
                                     <button
@@ -1094,7 +1094,7 @@ export default function ProcurementModule() {
                                       className="w-full px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2"
                                     >
                                       <Copy className="w-3.5 h-3.5 text-amber-400" />
-                                      <span>Duplicate as New PO</span>
+                                      <span>Duplicate as New RM PO</span>
                                     </button>
 
                                     <button
@@ -1116,7 +1116,7 @@ export default function ProcurementModule() {
                                         className="w-full px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-950/60 flex items-center space-x-2"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
-                                        <span>Cancel & Delete PO</span>
+                                        <span>Cancel & Delete RM PO</span>
                                       </button>
                                     ) : (
                                       <div className="px-3 py-1 text-[10px] text-slate-500 font-mono">
@@ -1151,7 +1151,7 @@ export default function ProcurementModule() {
                                     className="px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-semibold border border-blue-500/40 flex items-center space-x-1 transition"
                                   >
                                     <Pencil className="w-3 h-3" />
-                                    <span>Edit PO</span>
+                                    <span>Edit RM PO</span>
                                   </button>
                                   <button
                                     onClick={() => setSelectedInvoicePo(po)}
@@ -1263,7 +1263,7 @@ export default function ProcurementModule() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                    <span>{isEditMode ? 'Edit Purchase Order Contract' : 'Create Purchase Order Contract'}</span>
+                    <span>{isEditMode ? 'Edit Raw Material Purchase Order (RM PO) Contract' : 'Create Raw Material Purchase Order (RM PO) Contract'}</span>
                     <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300 text-[10px] font-mono font-bold">
                       {poNo}
                     </span>
@@ -1308,7 +1308,7 @@ export default function ProcurementModule() {
                   {/* PO Number */}
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-300 mb-1">
-                      PO Number {isEditMode && <span className="text-amber-400 font-mono">(Locked)</span>}
+                      RM PO Number {isEditMode && <span className="text-amber-400 font-mono">(Locked)</span>}
                     </label>
                     {isEditMode ? (
                       <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-300 font-mono">
@@ -1328,7 +1328,7 @@ export default function ProcurementModule() {
 
                   {/* PO Date */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">PO Issuance Date</label>
+                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">RM PO Issuance Date</label>
                     <input
                       type="date"
                       value={poDate}
@@ -1748,7 +1748,7 @@ export default function ProcurementModule() {
                   className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center space-x-1.5 transition cursor-pointer"
                 >
                   {isEditMode ? <Pencil className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                  <span>{isEditMode ? 'Update Purchase Order' : 'Save & Release PO'}</span>
+                  <span>{isEditMode ? 'Update RM Purchase Order' : 'Save & Release RM PO'}</span>
                 </button>
               </div>
             </div>

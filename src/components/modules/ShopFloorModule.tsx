@@ -554,7 +554,7 @@ export default function ShopFloorModule() {
     setFormError(null);
     try {
       if (woForm.source_type === 'PO' && !woForm.po_no) {
-        throw new Error('Please select a Purchase Order PO No.');
+        throw new Error('Please select a Raw Material PO (RM PO) No.');
       }
       if (!woForm.size) throw new Error('Please select Size.');
       if (!woForm.grade) throw new Error('Please select Grade.');
@@ -1011,7 +1011,7 @@ export default function ShopFloorModule() {
                       {/* Source, Specs, and Qty Badge */}
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
                         <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
-                          {wo.source_type === 'Stock' ? '📦 Stock' : `🛒 ${wo.po_no || 'PO'}`}
+                          {wo.source_type === 'Stock' ? '📦 Stock' : `🛒 ${wo.po_no || 'RM PO'}`}
                         </span>
                         {(wo.size || wo.grade || wo.target_product?.grade) && (
                           <span className="px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/50 font-mono">
@@ -1524,7 +1524,7 @@ export default function ShopFloorModule() {
                 <div className="flex items-center justify-between">
                   <label className="text-slate-300 font-bold flex items-center space-x-1.5">
                     <span className="w-5 h-5 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">2</span>
-                    <span>Material Sourcing: Purchase Order PO No. or Stock(Inventory)</span>
+                    <span>Material Sourcing: Raw Material PO (RM PO) No. or Stock (Inventory)</span>
                   </label>
                   <span className="text-[10px] text-slate-500 font-mono">Source Type</span>
                 </div>
@@ -1543,7 +1543,7 @@ export default function ShopFloorModule() {
                     }`}
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
-                    <span>Purchase Order (PO)</span>
+                    <span>Raw Material PO (RM PO)</span>
                   </button>
                   <button
                     type="button"
@@ -1565,9 +1565,9 @@ export default function ShopFloorModule() {
                 {woForm.source_type === 'PO' ? (
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-[11px] text-slate-400">
-                      <span>Purchase Order PO No.</span>
+                      <span>Raw Material PO (RM PO) No.</span>
                       <span className="text-[10px] text-slate-500 font-mono">
-                        {woForm.customer_po_no ? 'Filtered by Customer PO Size & Grade' : 'All Open POs'}
+                        {woForm.customer_po_no ? 'Filtered by Customer PO Size & Grade' : 'All Open RM POs'}
                       </span>
                     </div>
                     <select
@@ -1586,7 +1586,7 @@ export default function ShopFloorModule() {
                       required={woForm.source_type === 'PO'}
                       className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 font-mono text-xs focus:border-blue-500"
                     >
-                      <option value="">-- Select Purchase Order PO No. --</option>
+                      <option value="">-- Select Raw Material PO (RM PO) No. --</option>
                       {filteredPurchaseOrders.map((po) => {
                         const poSpecs = po.po_items
                           ?.map(
@@ -1606,7 +1606,7 @@ export default function ShopFloorModule() {
 
                     {filteredPurchaseOrders.length === 0 && (
                       <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/50 text-amber-300 text-[11px]">
-                        ⚠️ No Purchase Orders match the Size and Grade specifications of <strong>{woForm.customer_po_no}</strong>. You can switch to <strong>Stock (Inventory)</strong> above to fulfill from existing warehouse stock.
+                        ⚠️ No Raw Material Purchase Orders (RM PO) match the Size and Grade specifications of <strong>{woForm.customer_po_no}</strong>. You can switch to <strong>Stock (Inventory)</strong> above to fulfill from existing warehouse stock.
                       </div>
                     )}
                   </div>
@@ -1750,7 +1750,7 @@ export default function ShopFloorModule() {
                   </label>
                   {woForm.source_type === 'PO' && woForm.po_no && (
                     <span className="text-[10px] text-blue-400 font-mono">
-                      PO: {woForm.po_no} ({matchingAvailableLots.length} lot{matchingAvailableLots.length !== 1 ? 's' : ''} available)
+                      RM PO: {woForm.po_no} ({matchingAvailableLots.length} lot{matchingAvailableLots.length !== 1 ? 's' : ''} available)
                     </span>
                   )}
                 </div>
@@ -1761,9 +1761,9 @@ export default function ShopFloorModule() {
                 >
                   <option value="">
                     {woForm.source_type === 'PO' && !woForm.po_no
-                      ? '-- Select Purchase Order PO No. First --'
+                      ? '-- Select Raw Material PO (RM PO) No. First --'
                       : matchingAvailableLots.length === 0
-                      ? (woForm.source_type === 'PO' ? `-- No Inwarded Lots Found for PO ${woForm.po_no} --` : '-- No Matching Lots in Stock --')
+                      ? (woForm.source_type === 'PO' ? `-- No Inwarded Lots Found for RM PO ${woForm.po_no} --` : '-- No Matching Lots in Stock --')
                       : '-- Auto / None (Assign On Shop Floor) --'}
                   </option>
                   {woForm.ti_id && !matchingAvailableLots.some((p) => p.ti_id === woForm.ti_id) && (
@@ -1779,12 +1779,12 @@ export default function ShopFloorModule() {
                 </select>
                 {woForm.source_type === 'PO' && woForm.po_no && matchingAvailableLots.length > 0 && (
                   <div className="mt-1 text-[10px] text-emerald-400 font-mono">
-                    ✓ Showing only Heat/Lot inwardings associated with matching PO ({woForm.po_no})
+                    ✓ Showing only Heat/Lot inwardings associated with matching RM PO ({woForm.po_no})
                   </div>
                 )}
                 {woForm.source_type === 'PO' && woForm.po_no && matchingAvailableLots.length === 0 && (
                   <div className="mt-1 text-[10px] text-slate-500">
-                    ℹ️ No dimensional tally lots inwarded yet for PO {woForm.po_no}. You can still release this Work Order and assign lots once inwarded.
+                    ℹ️ No dimensional tally lots inwarded yet for RM PO {woForm.po_no}. You can still release this Work Order and assign lots once inwarded.
                   </div>
                 )}
               </div>

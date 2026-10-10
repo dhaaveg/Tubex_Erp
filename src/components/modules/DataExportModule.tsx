@@ -79,13 +79,13 @@ const DATASETS: DatasetMeta[] = [
   },
   {
     key: 'procurement',
-    name: 'Purchase Orders & Line Items',
+    name: 'Raw Material Purchase Orders (RM PO)',
     category: 'Supply Chain',
-    description: 'Supplier PO details, ordered metric tons, agreed unit rates, delivery milestones, and line fulfillment status.',
+    description: 'Supplier RM PO details, ordered metric tons, agreed unit rates, delivery milestones, and line fulfillment status.',
     icon: ShoppingCart,
     sheetName: 'Purchase_Orders',
     filename: 'Purchase_Orders_Procurement',
-    columns: ['PO Number', 'PO Date', 'Supplier Name', 'Status', 'Product Description', 'Ordered Qty (MT)', 'Unit Rate', 'Line Total'],
+    columns: ['RM PO Number', 'RM PO Date', 'Supplier Name', 'Status', 'Product Description', 'Ordered Qty (MT)', 'Unit Rate', 'Line Total'],
   },
   {
     key: 'grn',
@@ -95,7 +95,7 @@ const DATASETS: DatasetMeta[] = [
     icon: Receipt,
     sheetName: 'Goods_Receipt_Notes',
     filename: 'Goods_Receipt_Notes_GRN',
-    columns: ['GRN ID', 'GRN Date', 'PO Number', 'Supplier Name', 'Invoice Weight (MT)', 'Actual Weighbridge (MT)', 'Weight Variance (MT)', 'Tally Match Status'],
+    columns: ['GRN ID', 'GRN Date', 'RM PO Number', 'Supplier Name', 'Invoice Weight (MT)', 'Actual Weighbridge (MT)', 'Weight Variance (MT)', 'Tally Match Status'],
   },
   {
     key: 'customer-orders',

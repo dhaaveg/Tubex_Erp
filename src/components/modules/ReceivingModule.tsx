@@ -519,7 +519,7 @@ export default function ReceivingModule() {
 
     if (newCumulativeInvoiceMt > poTotalOrderedMt + 0.0001) {
       setFormError(
-        `Validation Error: Sum of all "Qty as per invoice (MT)" (${newCumulativeInvoiceMt.toFixed(3)} MT) associated with PO ${grnForm.po_no} exceeds PO's Total Ordered MT (${poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. This GRN items total: ${autoCalculatedInvoiceWeightMt.toFixed(3)} MT. Maximum allowable remaining is ${remainingAllowableInvoiceMt.toFixed(3)} MT.`
+        `Validation Error: Sum of all "Qty as per invoice (MT)" (${newCumulativeInvoiceMt.toFixed(3)} MT) associated with RM PO ${grnForm.po_no} exceeds RM PO's Total Ordered MT (${poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. This GRN items total: ${autoCalculatedInvoiceWeightMt.toFixed(3)} MT. Maximum allowable remaining is ${remainingAllowableInvoiceMt.toFixed(3)} MT.`
       );
       return;
     }
@@ -534,7 +534,7 @@ export default function ReceivingModule() {
         const poOrderedMt = Number(matchedPoi.ordered_qty_mt);
         if (invMt > poOrderedMt + 0.0001) {
           setFormError(
-            `Validation Error: "Qty as per invoice (MT)" (${invMt.toFixed(3)} MT) cannot exceed PO's Ordered MT (${poOrderedMt.toFixed(3)} MT) for line item #${idx + 1} (${matchedPoi.po_item_id}).`
+            `Validation Error: "Qty as per invoice (MT)" (${invMt.toFixed(3)} MT) cannot exceed RM PO's Ordered MT (${poOrderedMt.toFixed(3)} MT) for line item #${idx + 1} (${matchedPoi.po_item_id}).`
           );
           return;
         }
@@ -558,7 +558,7 @@ export default function ReceivingModule() {
         const remainingPoiMt = Math.max(0, poOrderedMt - prevInvoicedMt - otherRowsInFormMt);
         if (invMt > remainingPoiMt + 0.0001) {
           setFormError(
-            `Validation Error: "Qty as per invoice (MT)" (${invMt.toFixed(3)} MT) exceeds remaining allowable MT (${remainingPoiMt.toFixed(3)} MT) for PO Item ${matchedPoi.po_item_id}.`
+            `Validation Error: "Qty as per invoice (MT)" (${invMt.toFixed(3)} MT) exceeds remaining allowable MT (${remainingPoiMt.toFixed(3)} MT) for RM PO Item ${matchedPoi.po_item_id}.`
           );
           return;
         }
@@ -591,7 +591,7 @@ export default function ReceivingModule() {
     const weightGate = validatePoGrnWeightLimit(poTotalOrderedMt, existingGrnInvoiceMtSum, autoCalculatedInvoiceWeightMt);
     if (weightGate.isExceeded) {
       setFormError(
-        `Validation Error: Cumulative GRN Invoice Weight (${weightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds PO ${grnForm.po_no}'s Total Ordered Weight (${poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. Maximum allowable remaining Invoice Weight is ${weightGate.remainingAllowableMt.toFixed(3)} MT.`
+        `Validation Error: Cumulative GRN Invoice Weight (${weightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds RM PO ${grnForm.po_no}'s Total Ordered Weight (${poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: ${existingGrnInvoiceMtSum.toFixed(3)} MT. Maximum allowable remaining Invoice Weight is ${weightGate.remainingAllowableMt.toFixed(3)} MT.`
       );
       return;
     }
@@ -1043,7 +1043,7 @@ export default function ReceivingModule() {
                   <tr>
                     <th className="w-10 px-3 py-3 text-center"></th>
                     <th className="px-4 py-3">GRN ID</th>
-                    <th className="px-4 py-3">PO & Supplier</th>
+                    <th className="px-4 py-3">RM PO & Supplier</th>
                     <th className="px-4 py-3">Invoice & Transporter</th>
                     <th className="px-4 py-3">Invoice MT</th>
                     <th className="px-4 py-3">Weighbridge MT</th>
@@ -1190,7 +1190,7 @@ export default function ReceivingModule() {
                                         GRN Line Items (GRN_Item) — {g.grn_items?.length || 0} Item{g.grn_items?.length === 1 ? '' : 's'} for {g.grn_id}
                                       </span>
                                       <span className="text-[11px] text-slate-400 font-mono hidden md:inline">
-                                        • PO: <span className="text-blue-300">{g.po_no}</span>
+                                        • RM PO: <span className="text-blue-300">{g.po_no}</span>
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-2 self-start sm:self-auto">
@@ -1424,7 +1424,7 @@ export default function ReceivingModule() {
                             <span>•</span>
                           </>
                         )}
-                        <span>PO: <span className="text-blue-300 font-mono">{ts.grn_item?.grn?.po_no || 'N/A'}</span></span>
+                        <span>RM PO: <span className="text-blue-300 font-mono">{ts.grn_item?.grn?.po_no || 'N/A'}</span></span>
                         <span>•</span>
                         <span>Supplier: <span className="text-slate-200">{ts.grn_item?.grn?.purchase_order?.supplier?.supplier_name || 'N/A'}</span></span>
                         <span>•</span>
@@ -1694,7 +1694,7 @@ export default function ReceivingModule() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Purchase Order Reference</label>
+                  <label className="block text-slate-400 mb-1">Raw Material PO Reference (RM PO)</label>
                   <select
                     value={grnForm.po_no}
                     onChange={(e) => {
@@ -1737,7 +1737,7 @@ export default function ReceivingModule() {
                 </div>
               </div>
 
-              {/* PO Ordered MT Reconciliation Gate Card */}
+              {/* RM PO Ordered MT Reconciliation Gate Card */}
               {activeSelectedPo && (
                 <div
                   className={`p-3.5 rounded-xl border text-xs transition-all ${
@@ -1749,7 +1749,7 @@ export default function ReceivingModule() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-1.5 font-semibold text-slate-200">
                       <Scale className="w-3.5 h-3.5 text-blue-400" />
-                      <span>PO Ordered MT Reconciliation Gate</span>
+                      <span>RM PO Ordered MT Reconciliation Gate</span>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-[11px] font-bold ${
@@ -1761,16 +1761,16 @@ export default function ReceivingModule() {
                       }`}
                     >
                       {isInvoiceMtExceeded
-                        ? `⚠️ Exceeds PO Limit (+${(poWeightGate.newCumulativeInvoiceMt - poTotalOrderedMt).toFixed(3)} MT)`
+                        ? `⚠️ Exceeds RM PO Limit (+${(poWeightGate.newCumulativeInvoiceMt - poTotalOrderedMt).toFixed(3)} MT)`
                         : autoCalculatedInvoiceWeightMt === 0
                         ? `Max Available: ${poWeightGate.remainingAllowableMt.toFixed(3)} MT`
-                        : `✓ Validated (≤ PO Limit)`}
+                        : `✓ Validated (≤ RM PO Limit)`}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 text-center text-[11px] font-mono">
                     <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                      <div className="text-slate-400 text-[10px] font-sans">PO Total Ordered</div>
+                      <div className="text-slate-400 text-[10px] font-sans">RM PO Total Ordered</div>
                       <div className="font-bold text-white mt-0.5">{poTotalOrderedMt.toFixed(3)} MT</div>
                     </div>
                     <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
@@ -1801,7 +1801,7 @@ export default function ReceivingModule() {
                     <div className="mt-2.5 p-2 rounded bg-rose-950/90 border border-rose-700 text-rose-200 font-sans text-[11px] flex items-center space-x-1.5">
                       <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
                       <span>
-                        Total GRN Invoice Weight ({poWeightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds PO {grnForm.po_no}&apos;s
+                        Total GRN Invoice Weight ({poWeightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds RM PO {grnForm.po_no}&apos;s
                         Ordered Weight ({poTotalOrderedMt.toFixed(3)} MT). Remaining allowable MT is{' '}
                         <strong>{poWeightGate.remainingAllowableMt.toFixed(3)} MT</strong>.
                       </span>
@@ -1940,7 +1940,7 @@ export default function ReceivingModule() {
                             : 'bg-slate-900 border border-slate-800 text-slate-300'
                         }`}
                       >
-                        Sum MT: <strong className={isTotalInvoiceMtExceeded ? 'text-rose-400' : 'text-blue-300'}>{currentGrnItemsMtTotal.toFixed(3)}</strong> / {remainingAllowableInvoiceMt.toFixed(3)} Rem (PO: {poTotalOrderedMt.toFixed(3)} MT)
+                        Sum MT: <strong className={isTotalInvoiceMtExceeded ? 'text-rose-400' : 'text-blue-300'}>{currentGrnItemsMtTotal.toFixed(3)}</strong> / {remainingAllowableInvoiceMt.toFixed(3)} Rem (RM PO: {poTotalOrderedMt.toFixed(3)} MT)
                       </span>
                     )}
                     <button
@@ -1958,7 +1958,7 @@ export default function ReceivingModule() {
                   <div className="p-2.5 rounded bg-rose-950/90 border border-rose-700 text-rose-200 text-[11px] flex items-center space-x-1.5 font-sans">
                     <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
                     <span>
-                      ⚠️ Validation Error: Sum of all &quot;Qty as per invoice (MT)&quot; ({(currentGrnItemsMtTotal + existingGrnInvoiceMtSum).toFixed(3)} MT) associated with PO {grnForm.po_no} exceeds PO&apos;s Total Ordered MT ({poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: {existingGrnInvoiceMtSum.toFixed(3)} MT. Remaining allowable across this GRN is <strong>{remainingAllowableInvoiceMt.toFixed(3)} MT</strong>.
+                      ⚠️ Validation Error: Sum of all &quot;Qty as per invoice (MT)&quot; ({(currentGrnItemsMtTotal + existingGrnInvoiceMtSum).toFixed(3)} MT) associated with RM PO {grnForm.po_no} exceeds RM PO&apos;s Total Ordered MT ({poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: {existingGrnInvoiceMtSum.toFixed(3)} MT. Remaining allowable across this GRN is <strong>{remainingAllowableInvoiceMt.toFixed(3)} MT</strong>.
                     </span>
                   </div>
                 )}
@@ -2084,7 +2084,7 @@ export default function ReceivingModule() {
                                     <div className="space-y-1">
                                       {selectedPo?.po_items && selectedPo.po_items.length > 1 && (
                                         <div className="text-[10px] text-slate-400 font-mono flex items-center space-x-1">
-                                          <span>PO Line:</span>
+                                          <span>RM PO Line:</span>
                                           <select
                                             value={item.po_item_id || matchedPoi?.po_item_id || ''}
                                             onChange={(e) => {
@@ -2129,7 +2129,7 @@ export default function ReceivingModule() {
                                       />
                                       {poOrderedMt !== null && (
                                         <div className="text-[10px] font-sans flex items-center justify-between text-slate-400">
-                                          <span>PO Ord: <strong className="text-slate-300 font-mono">{poOrderedMt.toFixed(3)} MT</strong></span>
+                                          <span>RM PO Ord: <strong className="text-slate-300 font-mono">{poOrderedMt.toFixed(3)} MT</strong></span>
                                           <span className={remainingAllowable !== null && remainingAllowable <= 0 ? 'text-rose-400 font-bold' : 'text-emerald-400'}>
                                             Rem: <strong className="font-mono">{remainingAllowable?.toFixed(3)} MT</strong>
                                           </span>
@@ -2138,8 +2138,8 @@ export default function ReceivingModule() {
                                       {hasError && (
                                         <p className="text-[10px] text-rose-400 font-sans font-semibold">
                                           {isOverOrdered
-                                            ? `⚠️ Exceeds PO Item Ordered MT (${poOrderedMt.toFixed(3)} MT)`
-                                            : `⚠️ Exceeds PO remaining allowable (${remainingAllowable?.toFixed(3)} MT)`}
+                                            ? `⚠️ Exceeds RM PO Item Ordered MT (${poOrderedMt.toFixed(3)} MT)`
+                                            : `⚠️ Exceeds RM PO remaining allowable (${remainingAllowable?.toFixed(3)} MT)`}
                                         </p>
                                       )}
                                     </div>

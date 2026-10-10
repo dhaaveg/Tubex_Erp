@@ -37,7 +37,7 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   SUPER_ADMIN: 'Platform Owner / Root IT with unrestricted privilege across all modules and user management.',
   ADMIN: 'System & user administration, password resets, and operational configuration (cannot assign Super Admin).',
   MD: 'Executive enterprise-wide read-only visibility across all operations, financial summaries, and logs.',
-  PROCUREMENT: 'Vendor management, raw material purchasing contracts, purchase orders, and supplier stipulations.',
+  PROCUREMENT: 'Vendor management, raw material purchasing contracts, RM purchase orders, and supplier stipulations.',
   MANUFACTURING: 'Shop floor routing, machine assignments, cut-part yields, and work order operations.',
   SALES: 'Customer purchase orders (CPO), customer master catalog, and dispatch allocations.',
   INVENTORY: 'Raw pipe receiving, weighbridge tickets, heat lot inwarding, pipe logs, and tally verification.',
@@ -131,9 +131,9 @@ export const CANONICAL_MODULES: ERPModuleMeta[] = [
   },
   {
     key: 'procurement',
-    label: 'Procurement (PO)',
+    label: 'Procurement (RM PO)',
     route_path: '/procurement',
-    description: 'Purchase orders, vendor agreements, and delivery schedules.',
+    description: 'Raw material purchase orders (RM PO), vendor agreements, and delivery schedules.',
   },
   {
     key: 'receiving',
