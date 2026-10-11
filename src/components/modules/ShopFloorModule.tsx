@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { PROCESS_STAGES, DEFECT_CATEGORIES, DISPOSITION_ACTIONS, SHIFTS } from '@/lib/types';
 import { validateProductionBalance, validateWorkOrderStageQuantityLimit, formatDate, formatDateTime } from '@/lib/calculations';
+import { apiUrl } from '@/lib/api';
 
 // Specification normalization helpers for seamless matching
 function normalizeSize(s: string | number | null | undefined): string {
@@ -152,11 +153,11 @@ export default function ShopFloorModule() {
     setIsLoading(true);
     try {
       const [woRes, tallyRes, prdRes, custRes, poRes] = await Promise.all([
-        fetch('/api/work-orders'),
-        fetch('/api/tally?status=Available'),
-        fetch('/api/products'),
-        fetch('/api/customer-orders'),
-        fetch('/api/purchase-orders'),
+        fetch(apiUrl('/api/work-orders')),
+        fetch(apiUrl('/api/tally?status=Available')),
+        fetch(apiUrl('/api/products')),
+        fetch(apiUrl('/api/customer-orders')),
+        fetch(apiUrl('/api/purchase-orders')),
       ]);
       const [wos, tallies, prds, custs, pos] = await Promise.all([
         woRes.json(),
@@ -534,7 +535,7 @@ export default function ShopFloorModule() {
       return;
     }
     try {
-      const res = await fetch(`/api/work-orders?wo_id=${encodeURIComponent(woId)}`, {
+      const res = await fetch(apiUrl(`/api/work-orders?wo_id=${encodeURIComponent(woId)}`), {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -573,7 +574,7 @@ export default function ShopFloorModule() {
         ti_id: woForm.ti_id || null,
       };
 
-      const res = await fetch('/api/work-orders', {
+      const res = await fetch(apiUrl('/api/work-orders'), {
         method: isEditWoMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -738,7 +739,7 @@ export default function ShopFloorModule() {
   const handleDeletePosting = async (ppId: string) => {
     if (!confirm(`Are you sure you want to delete routing posting ${ppId}?`)) return;
     try {
-      const res = await fetch(`/api/production-postings?pp_id=${encodeURIComponent(ppId)}`, {
+      const res = await fetch(apiUrl(`/api/production-postings?pp_id=${encodeURIComponent(ppId)}`), {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -890,7 +891,7 @@ export default function ShopFloorModule() {
       };
 
       const method = isEditPostingMode ? 'PUT' : 'POST';
-      const res = await fetch('/api/production-postings', {
+      const res = await fetch(apiUrl('/api/production-postings'), {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

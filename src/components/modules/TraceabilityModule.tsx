@@ -23,6 +23,7 @@ import {
 import TagPrintModal from '../TagPrintModal';
 import MtcViewerModal from '../MtcViewerModal';
 import { formatDate, formatDateTime } from '@/lib/formatters';
+import { apiUrl } from '@/lib/api';
 
 interface TraceabilityModuleProps {
   initialQuery?: string;
@@ -43,7 +44,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/traceability?q=${encodeURIComponent(q)}`);
+      const res = await fetch(apiUrl(`/api/traceability?q=${encodeURIComponent(q)}`));
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Traceability record not found');
       setData(result);

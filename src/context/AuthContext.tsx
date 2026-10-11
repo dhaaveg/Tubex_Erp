@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SafeUser, Role, MODULE_ACCESS_MAP } from '@/lib/auth-types';
 import SessionTimeoutModal from '@/components/SessionTimeoutModal';
+import { apiUrl } from '@/lib/api';
 
 export interface EffectivePermission {
   is_enabled: boolean;
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchCurrentUser = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
+      const res = await fetch(apiUrl('/api/auth/me'));
       if (res.ok) {
         const data = await res.json();
         setUser(data.user || null);
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async (expiredArg?: boolean | any) => {
     const expired = expiredArg === true;
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch(apiUrl('/api/auth/logout'), { method: 'POST' });
     } finally {
       setUser(null);
       setEffectivePermissions(null);
@@ -102,8 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('eot_last_activity');
           sessionStorage.clear();
         } catch {}
-        const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-        window.location.href = `${prefix}/login${expired ? '?expired=true' : ''}`;
+        window.location.href = `/login${expired ? '?expired=true' : ''}`;
       }
     }
   };

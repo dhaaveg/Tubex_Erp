@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import { useAuth } from '@/context/AuthContext';
+import { apiUrl } from '@/lib/api';
 
 export interface LovRecord {
   id: string;
@@ -68,11 +69,11 @@ export default function LovManagementTab() {
     setIsLoading(true);
     try {
       if (isAdmin) {
-        const url =
+        const endpoint =
           selectedCategory && selectedCategory !== 'ALL'
             ? `/api/admin/lov?category=${encodeURIComponent(selectedCategory)}`
             : '/api/admin/lov';
-        const res = await fetch(url);
+        const res = await fetch(apiUrl(endpoint));
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
           throw new Error(errData?.error || 'Failed to fetch LOV items');
@@ -86,11 +87,11 @@ export default function LovManagementTab() {
         }
       } else {
         // Non-admin read-only fallback via /api/lov to allow active dropdown inspection without 403 errors
-        const url =
+        const endpoint =
           selectedCategory && selectedCategory !== 'ALL'
             ? `/api/lov?category=${encodeURIComponent(selectedCategory)}`
             : '/api/lov';
-        const res = await fetch(url);
+        const res = await fetch(apiUrl(endpoint));
         if (!res.ok) {
           throw new Error('Failed to fetch LOV items');
         }
@@ -137,7 +138,7 @@ export default function LovManagementTab() {
         newCurrentOrder = direction === 'up' ? targetItem.sort_order - 1 : targetItem.sort_order + 1;
       }
 
-      const res = await fetch('/api/admin/lov', {
+      const res = await fetch(apiUrl('/api/admin/lov'), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -205,7 +206,7 @@ export default function LovManagementTab() {
     try {
       if (editingItem) {
         // PUT update
-        const res = await fetch(`/api/admin/lov/${editingItem.id}`, {
+        const res = await fetch(apiUrl(`/api/admin/lov/${editingItem.id}`), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -222,7 +223,7 @@ export default function LovManagementTab() {
         success(`LOV item "${formLabel}" updated successfully.`);
       } else {
         // POST create
-        const res = await fetch('/api/admin/lov', {
+        const res = await fetch(apiUrl('/api/admin/lov'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -256,7 +257,7 @@ export default function LovManagementTab() {
       return;
     }
     try {
-      const res = await fetch(`/api/admin/lov/${item.id}`, {
+      const res = await fetch(apiUrl(`/api/admin/lov/${item.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_active: !item.is_active }),
@@ -287,7 +288,7 @@ export default function LovManagementTab() {
     }
 
     try {
-      const res = await fetch(`/api/admin/lov/${item.id}`, {
+      const res = await fetch(apiUrl(`/api/admin/lov/${item.id}`), {
         method: 'DELETE',
       });
       const data = await res.json();

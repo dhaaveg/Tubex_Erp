@@ -9,8 +9,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      const prefix = typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-      window.location.href = `${prefix}/login`;
+      window.location.href = '/login';
     }
   }, [isLoading, user]);
 

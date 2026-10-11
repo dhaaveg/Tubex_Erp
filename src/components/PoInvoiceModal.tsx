@@ -22,6 +22,7 @@ import {
   COMPANY_IEC,
   COMPANY_PLANT_ADDRESS,
 } from '@/lib/companyLogo';
+import { apiUrl } from '@/lib/api';
 
 interface PoInvoiceModalProps {
   po: any;
@@ -200,7 +201,7 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
   const handleSaveStipulations = async () => {
     setIsSavingStipulations(true);
     try {
-      const res = await fetch('/api/purchase-orders', {
+      const res = await fetch(apiUrl('/api/purchase-orders'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

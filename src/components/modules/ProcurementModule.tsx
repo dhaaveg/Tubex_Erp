@@ -40,6 +40,7 @@ import PoInvoiceModal from '@/components/PoInvoiceModal';
 import { formatDate } from '@/lib/formatters';
 import { DEFAULT_QUALITY_STIPULATIONS, CVN_REQUIREMENT_OPTIONS, DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 import { useLov } from '@/hooks/useLov';
+import { apiUrl } from '@/lib/api';
 
 interface POItemRow {
   po_item_id?: string;
@@ -139,9 +140,9 @@ export default function ProcurementModule() {
     else setIsRefreshing(true);
     try {
       const [poRes, supRes, prdRes] = await Promise.all([
-        fetch('/api/purchase-orders'),
-        fetch('/api/suppliers?status=Active'),
-        fetch('/api/products'),
+        fetch(apiUrl('/api/purchase-orders')),
+        fetch(apiUrl('/api/suppliers?status=Active')),
+        fetch(apiUrl('/api/products')),
       ]);
       const [pos, sups, prds] = await Promise.all([
         poRes.json(),
@@ -441,7 +442,7 @@ export default function ProcurementModule() {
       return;
     }
     try {
-      const res = await fetch(`/api/purchase-orders?po_no=${encodeURIComponent(targetPoNo)}`, {
+      const res = await fetch(apiUrl(`/api/purchase-orders?po_no=${encodeURIComponent(targetPoNo)}`), {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -541,7 +542,7 @@ export default function ProcurementModule() {
         })),
       };
 
-      const res = await fetch('/api/purchase-orders', {
+      const res = await fetch(apiUrl('/api/purchase-orders'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

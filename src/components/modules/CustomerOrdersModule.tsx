@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { CustomerOrder, CustomerPOLineItem } from '@/lib/types';
 import { formatDate } from '@/lib/formatters';
+import { apiUrl } from '@/lib/api';
 
 interface LineItemRow {
   cpo_item_id?: string;
@@ -76,7 +77,7 @@ export default function CustomerOrdersModule() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/customer-orders?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(apiUrl(`/api/customer-orders?q=${encodeURIComponent(searchQuery)}`));
       const data = await res.json();
       if (Array.isArray(data)) {
         setCustomerOrders(data);
@@ -262,7 +263,7 @@ export default function CustomerOrdersModule() {
         })),
       };
 
-      const res = await fetch('/api/customer-orders', {
+      const res = await fetch(apiUrl('/api/customer-orders'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

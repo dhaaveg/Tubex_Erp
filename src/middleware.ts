@@ -208,11 +208,13 @@ function resolveModuleKey(pathname: string): string | null {
 
 export async function middleware(request: NextRequest) {
   const rawPathname = request.nextUrl.pathname;
-  // Detect subpath prefix (e.g. /dhaaveg)
+  // Detect subpath prefix (e.g. /eoft for API calls, or legacy /dhaaveg)
+  const isEoftPrefix = rawPathname === '/eoft' || rawPathname.startsWith('/eoft/');
   const isDhaavegPrefix = rawPathname === '/dhaaveg' || rawPathname.startsWith('/dhaaveg/');
-  const prefix = isDhaavegPrefix ? '/dhaaveg' : '';
-  const pathname = isDhaavegPrefix
-    ? (rawPathname.slice('/dhaaveg'.length) || '/')
+  const hasSubpath = isEoftPrefix || isDhaavegPrefix;
+  const subpathPrefix = isEoftPrefix ? '/eoft' : (isDhaavegPrefix ? '/dhaaveg' : '');
+  const pathname = hasSubpath
+    ? (rawPathname.slice(subpathPrefix.length) || '/')
     : rawPathname;
   const method = request.method.toUpperCase();
 
@@ -225,7 +227,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/app-icon.png' ||
     pathname.match(/\.(png|jpg|jpeg|svg|webp|ico)$/i)
   ) {
-    if (isDhaavegPrefix) {
+    if (hasSubpath) {
       return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
@@ -237,7 +239,7 @@ export async function middleware(request: NextRequest) {
       cachedMatrixByRole = null;
       lastCacheFetchTime = 0;
     }
-    if (isDhaavegPrefix) {
+    if (hasSubpath) {
       return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
@@ -257,7 +259,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/admin/lov');
 
   if (isAuthOrLovApiRoute) {
-    if (isDhaavegPrefix) {
+    if (hasSubpath) {
       return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
@@ -299,7 +301,7 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    const loginUrl = new URL(`${prefix}/login`, request.url);
+    const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('expired', 'true');
     loginUrl.searchParams.set('reason', 'timeout');
     if (pathname !== '/' && pathname !== '/login') {
@@ -329,7 +331,7 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       );
     }
-    const loginUrl = new URL(`${prefix}/login`, request.url);
+    const loginUrl = new URL('/login', request.url);
     if (pathname !== '/' && pathname !== '/login') {
       loginUrl.searchParams.set('from', rawPathname);
     }
@@ -354,7 +356,7 @@ export async function middleware(request: NextRequest) {
           { status: 403 }
         );
       }
-      return NextResponse.redirect(new URL(`${prefix}/change-password`, request.url));
+      return NextResponse.redirect(new URL('/change-password', request.url));
     }
   }
 
@@ -368,7 +370,7 @@ export async function middleware(request: NextRequest) {
 
   // 6. Super Admin has unrestricted core root privilege across all routes
   if (roles.includes('SUPER_ADMIN') || payload.role === 'SUPER_ADMIN') {
-    if (isDhaavegPrefix) {
+    if (hasSubpath) {
       return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
@@ -378,7 +380,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === '/admin/lov' || pathname === '/lov') {
     const isAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
     if (!isAdmin) {
-      const homeUrl = new URL(`${prefix}/`, request.url);
+      const homeUrl = new URL('/', request.url);
       homeUrl.searchParams.set('unauthorized', 'lov');
       return NextResponse.redirect(homeUrl);
     }
@@ -386,7 +388,7 @@ export async function middleware(request: NextRequest) {
 
   // 7. Allow self-profile updates
   if (method === 'PUT' && pathname === `/api/users/${payload.userId}`) {
-    if (isDhaavegPrefix) {
+    if (hasSubpath) {
       return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
@@ -436,12 +438,12 @@ export async function middleware(request: NextRequest) {
     }
     // Prevent infinite redirect loops: never redirect to root if already at root or if unauthorized query is present
     if (pathname === '/' || pathname === '/overview' || request.nextUrl.searchParams.has('unauthorized')) {
-      if (isDhaavegPrefix) {
+      if (hasSubpath) {
         return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
       }
       return NextResponse.next();
     }
-    const homeUrl = new URL(`${prefix}/`, request.url);
+    const homeUrl = new URL('/', request.url);
     homeUrl.searchParams.set('unauthorized', targetModule);
     return NextResponse.redirect(homeUrl);
   }
@@ -464,7 +466,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (isDhaavegPrefix) {
+  if (hasSubpath) {
     return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
   }
   return NextResponse.next();

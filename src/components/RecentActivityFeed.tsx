@@ -23,6 +23,7 @@ import {
   Settings,
   Download,
 } from 'lucide-react';
+import { apiUrl } from '@/lib/api';
 
 export interface ActivityItem {
   id: string;
@@ -238,7 +239,7 @@ export default function RecentActivityFeed({
       else setIsRefreshing(true);
       setError(null);
 
-      const res = await fetch(`/api/activity/recent?limit=${limit}`, {
+      const res = await fetch(apiUrl(`/api/activity/recent?limit=${limit}`), {
         cache: 'no-store',
       });
 

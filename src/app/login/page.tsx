@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { COMPANY_NAME } from '@/lib/companyLogo';
 import PasswordInput from '@/components/PasswordInput';
+import { apiUrl } from '@/lib/api';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -19,20 +20,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-
-  // Dynamic prefix detection for subpath deployment (e.g. /dhaaveg)
-  const [prefix, setPrefix] = useState(() => {
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg')) {
-      return '/dhaaveg';
-    }
-    return '';
-  });
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg')) {
-      setPrefix('/dhaaveg');
-    }
-  }, []);
 
   const isTimeout =
     searchParams?.get('expired') === 'true' ||
@@ -54,7 +41,7 @@ function LoginForm() {
 
     try {
       const cleanEmail = email.trim().toLowerCase();
-      const loginEndpoint = `${prefix}/api/auth/login`;
+      const loginEndpoint = apiUrl('/api/auth/login');
       const res = await fetch(loginEndpoint, {
         method: 'POST',
         headers: {
@@ -91,7 +78,7 @@ function LoginForm() {
 
       // Resolve destination URL
       const from = searchParams?.get('from');
-      const defaultTarget = `${prefix}/overview`;
+      const defaultTarget = '/overview';
       const targetUrl =
         from && from.startsWith('/') && !from.includes('/login')
           ? from
@@ -130,8 +117,8 @@ function LoginForm() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 p-0.5 shadow-xl shadow-blue-500/20 flex items-center justify-center">
             <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden relative">
               <Image
-                src={`${prefix}/logo.png`}
-                alt="Dhaaveg ERP Logo"
+                src="/logo.png"
+                alt="EOFT ERP Logo"
                 width={56}
                 height={56}
                 priority

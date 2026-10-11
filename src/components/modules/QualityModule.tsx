@@ -16,6 +16,7 @@ import {
 import { DEFECT_CATEGORIES, DISPOSITION_ACTIONS } from '@/lib/types';
 import { exportToCsv } from '@/lib/export';
 import { formatDateTime } from '@/lib/formatters';
+import { apiUrl } from '@/lib/api';
 
 export default function QualityModule() {
   const [rejections, setRejections] = useState<any[]>([]);
@@ -31,7 +32,7 @@ export default function QualityModule() {
       if (selectedCategory) url += `category=${encodeURIComponent(selectedCategory)}&`;
       if (selectedDisposition) url += `disposition=${encodeURIComponent(selectedDisposition)}&`;
 
-      const res = await fetch(url);
+      const res = await fetch(apiUrl(url));
       const data = await res.json();
       if (data.rejections) setRejections(data.rejections);
       if (data.analytics) setAnalytics(data.analytics);

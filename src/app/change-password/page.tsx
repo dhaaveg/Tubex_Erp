@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ShieldAlert, Lock, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import PasswordInput from '@/components/PasswordInput';
+import { apiUrl } from '@/lib/api';
 
 export default function ChangePasswordPage() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -33,7 +34,7 @@ export default function ChangePasswordPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/change-password', {
+      const res = await fetch(apiUrl('/api/auth/change-password'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

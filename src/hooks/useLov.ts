@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '@/lib/api';
 
 export interface LovItem {
   id: string;
@@ -21,7 +22,7 @@ export function useLov(category: string, fallbackValues: readonly string[] = [])
   const fetchLov = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/lov?category=${encodeURIComponent(category)}`);
+      const res = await fetch(apiUrl(`/api/lov?category=${encodeURIComponent(category)}`));
       if (!res.ok) {
         throw new Error(`Failed to load ${category} options`);
       }

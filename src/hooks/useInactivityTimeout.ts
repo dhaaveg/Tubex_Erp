@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { SafeUser } from '@/lib/auth-types';
+import { apiUrl } from '@/lib/api';
 
 export const DEFAULT_INACTIVITY_TIMEOUT_MS = 120 * 60 * 1000; // 2 hours = 7,200,000 ms
 export const DEFAULT_WARNING_THRESHOLD_MS = 115 * 60 * 1000; // 115 minutes (5 minutes warning)
@@ -78,7 +79,7 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
 
       // Server-side session invalidation & deterministic cookie purge
       try {
-        await fetch('/api/auth/logout', { method: 'POST' });
+        await fetch(apiUrl('/api/auth/logout'), { method: 'POST' });
       } catch {}
 
       if (onLogout) {
@@ -90,8 +91,7 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       // Hard Hydration Navigation to /login?expired=true:
       // Eliminates stale Next.js App Router RSC cache and forces clean hydration
       if (typeof window !== 'undefined') {
-        const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-        window.location.href = `${prefix}/login${reason === 'expired' ? '?expired=true' : ''}`;
+        window.location.href = `/login${reason === 'expired' ? '?expired=true' : ''}`;
       }
     },
     [broadcast, onLogout]
@@ -101,7 +101,7 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
   const staySignedIn = useCallback(async () => {
     try {
       setIsRefreshing(true);
-      const res = await fetch('/api/auth/refresh', { method: 'POST' });
+      const res = await fetch(apiUrl('/api/auth/refresh'), { method: 'POST' });
       if (res.ok) {
         const now = Date.now();
         lastActivityRef.current = now;
@@ -164,7 +164,7 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       // Background sliding refresh: extend token in database if active and > 15 mins since last refresh
       if (now - lastRefreshRef.current > BACKGROUND_REFRESH_INTERVAL_MS) {
         lastRefreshRef.current = now;
-        fetch('/api/auth/refresh', { method: 'POST' }).catch(() => {});
+        fetch(apiUrl('/api/auth/refresh'), { method: 'POST' }).catch(() => {});
       }
     };
 
@@ -187,11 +187,9 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       } else if (e.key === STORAGE_KEY_LOGOUT_EVENT && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
-          const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-          window.location.href = `${prefix}/login${parsed.reason === 'expired' ? '?expired=true' : ''}`;
+          window.location.href = `/login${parsed.reason === 'expired' ? '?expired=true' : ''}`;
         } catch {
-          const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-          window.location.href = `${prefix}/login?expired=true`;
+          window.location.href = '/login?expired=true';
         }
       }
     };
@@ -214,8 +212,7 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
               }
             }
           } else if (event.data?.type === 'LOGOUT') {
-            const prefix = window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-            window.location.href = `${prefix}/login${event.data.reason === 'expired' ? '?expired=true' : ''}`;
+            window.location.href = `/login${event.data.reason === 'expired' ? '?expired=true' : ''}`;
           }
         };
       } catch {}

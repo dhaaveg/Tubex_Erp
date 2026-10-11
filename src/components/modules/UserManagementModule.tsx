@@ -33,6 +33,7 @@ import { useAuth } from '@/context/AuthContext';
 import { SafeUser, Role, ALL_ROLES, CANONICAL_MODULES, ROLE_LABELS, ROLE_DESCRIPTIONS } from '@/lib/auth-types';
 import { formatDate, formatDateTime } from '@/lib/formatters';
 import PasswordInput from '@/components/PasswordInput';
+import { apiUrl } from '@/lib/api';
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
   SUPER_ADMIN: 'bg-rose-500/20 text-rose-300 border-rose-600/40',
@@ -105,7 +106,7 @@ export default function UserManagementModule() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/users');
+      const res = await fetch(apiUrl('/api/users'));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to fetch users');
       setUsers(data.users || []);
@@ -125,7 +126,7 @@ export default function UserManagementModule() {
   const fetchMatrix = async () => {
     setMatrixLoading(true);
     try {
-      const res = await fetch('/api/admin/role-permissions?fresh=true');
+      const res = await fetch(apiUrl('/api/admin/role-permissions?fresh=true'));
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to fetch permissions');
       if (data.matrixByRole) {
@@ -195,7 +196,7 @@ export default function UserManagementModule() {
         };
       });
 
-      const res = await fetch('/api/admin/role-permissions', {
+      const res = await fetch(apiUrl('/api/admin/role-permissions'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ updates }),
@@ -223,7 +224,7 @@ export default function UserManagementModule() {
     setMatrixSaving(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/role-permissions', {
+      const res = await fetch(apiUrl('/api/admin/role-permissions'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resetRole: role }),
@@ -312,7 +313,7 @@ export default function UserManagementModule() {
     setIsCreating(true);
     setError(null);
     try {
-      const res = await fetch('/api/users', {
+      const res = await fetch(apiUrl('/api/users'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -393,7 +394,7 @@ export default function UserManagementModule() {
         updatePayload.temporaryPassword = editTempPassword.trim();
       }
 
-      const res = await fetch(`/api/users/${editingUser.id}`, {
+      const res = await fetch(apiUrl(`/api/users/${editingUser.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatePayload),
@@ -423,7 +424,7 @@ export default function UserManagementModule() {
     }
 
     try {
-      const res = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/users/${userId}`), { method: 'DELETE' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to delete user');
 

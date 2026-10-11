@@ -23,6 +23,7 @@ import LovManagementTab from './LovManagementTab';
 import { formatDate } from '@/lib/formatters';
 import { DEFAULT_CVN_REQUIREMENT } from '@/lib/types';
 import { useAuth } from '@/context/AuthContext';
+import { apiUrl } from '@/lib/api';
 
 export default function MasterDataModule() {
   const { user } = useAuth();
@@ -121,11 +122,11 @@ export default function MasterDataModule() {
     setIsLoading(true);
     try {
       if (activeTab === 'suppliers') {
-        const res = await fetch(`/api/suppliers?q=${encodeURIComponent(searchQuery)}`);
+        const res = await fetch(apiUrl(`/api/suppliers?q=${encodeURIComponent(searchQuery)}`));
         const data = await res.json();
         if (Array.isArray(data)) setSuppliers(data);
       } else {
-        const res = await fetch(`/api/products?q=${encodeURIComponent(searchQuery)}`);
+        const res = await fetch(apiUrl(`/api/products?q=${encodeURIComponent(searchQuery)}`));
         const data = await res.json();
         if (Array.isArray(data)) setProducts(data);
       }
@@ -213,7 +214,7 @@ export default function MasterDataModule() {
     e.preventDefault();
     setFormError(null);
     try {
-      const res = await fetch('/api/suppliers', {
+      const res = await fetch(apiUrl('/api/suppliers'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(supplierForm),
@@ -232,7 +233,7 @@ export default function MasterDataModule() {
     e.preventDefault();
     setFormError(null);
     try {
-      const res = await fetch('/api/products', {
+      const res = await fetch(apiUrl('/api/products'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productForm),

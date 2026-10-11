@@ -25,6 +25,7 @@ import { COUPLING_LENGTH_SPECS, findMatchingCouplingLength } from '@/lib/couplin
 import { exportToCsv } from '@/lib/export';
 import TagPrintModal from '../TagPrintModal';
 import MtcViewerModal from '../MtcViewerModal';
+import { apiUrl } from '@/lib/api';
 
 export interface GrnLineItemEntry {
   grn_item_id?: string;
@@ -133,9 +134,9 @@ export default function ReceivingModule() {
     setIsLoading(true);
     try {
       const [grnRes, tallyRes, poRes] = await Promise.all([
-        fetch('/api/grn'),
-        fetch('/api/tally'),
-        fetch('/api/purchase-orders'),
+        fetch(apiUrl('/api/grn')),
+        fetch(apiUrl('/api/tally')),
+        fetch(apiUrl('/api/purchase-orders')),
       ]);
       const [grnData, tallyData, poData] = await Promise.all([
         grnRes.json(),
@@ -605,7 +606,7 @@ export default function ReceivingModule() {
     };
 
     try {
-      const res = await fetch('/api/grn', {
+      const res = await fetch(apiUrl('/api/grn'), {
         method: isEditGrnMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -746,7 +747,7 @@ export default function ReceivingModule() {
       return;
     }
     try {
-      const res = await fetch(`/api/tally?ts_id=${encodeURIComponent(tsId)}`, {
+      const res = await fetch(apiUrl(`/api/tally?ts_id=${encodeURIComponent(tsId)}`), {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -839,7 +840,7 @@ export default function ReceivingModule() {
         })),
       };
 
-      const res = await fetch('/api/tally', {
+      const res = await fetch(apiUrl('/api/tally'), {
         method: isEditTallyMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -861,7 +862,7 @@ export default function ReceivingModule() {
       return;
     }
     try {
-      const res = await fetch(`/api/grn?grn_id=${encodeURIComponent(grnId)}`, {
+      const res = await fetch(apiUrl(`/api/grn?grn_id=${encodeURIComponent(grnId)}`), {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -883,7 +884,7 @@ export default function ReceivingModule() {
       return;
     }
     try {
-      const res = await fetch(`/api/grn?grn_item_id=${encodeURIComponent(grnItemId)}`, {
+      const res = await fetch(apiUrl(`/api/grn?grn_item_id=${encodeURIComponent(grnItemId)}`), {
         method: 'DELETE',
       });
       const data = await res.json();

@@ -10,6 +10,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/eoft/api/:path*',
+        destination: '/api/:path*',
+      },
+      {
         source: '/dhaaveg',
         destination: '/',
       },

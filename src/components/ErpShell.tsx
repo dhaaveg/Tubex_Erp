@@ -22,6 +22,8 @@ interface ErpShellProps {
   initialTab?: NavigationTab;
 }
 
+import { apiUrl } from '@/lib/api';
+
 function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationTab }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -32,8 +34,7 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
   // Immediately redirect unauthenticated visitors without rendering ERP modules
   useEffect(() => {
     if (!authLoading && !user) {
-      const prefix = typeof window !== 'undefined' && window.location.pathname.startsWith('/dhaaveg') ? '/dhaaveg' : '';
-      window.location.href = `${prefix}/login`;
+      window.location.href = '/login';
     }
   }, [authLoading, user]);
 
@@ -74,7 +75,7 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
   const fetchStats = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/stats');
+      const res = await fetch(apiUrl('/api/stats'));
       const data = await res.json();
       setStats(data);
     } catch (e) {

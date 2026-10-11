@@ -23,6 +23,7 @@ import {
   Info
 } from 'lucide-react';
 import { exportToExcel, exportToCsv, exportSingleSheetToExcel } from '@/lib/export';
+import { apiUrl } from '@/lib/api';
 import { formatDate } from '@/lib/formatters';
 
 interface DatasetMeta {
@@ -141,7 +142,7 @@ export default function DataExportModule() {
   const fetchExportData = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/export');
+      const res = await fetch(apiUrl('/api/export'));
       const json = await res.json();
       if (json.data) {
         setExportData(json.data);

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import RecentActivityFeed from './RecentActivityFeed';
+import { apiUrl } from '@/lib/api';
 
 interface HeaderProps {
   onQuickSearch?: (query: string) => void;
@@ -74,7 +75,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
     setIsSaving(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await fetch(apiUrl(`/api/users/${user.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

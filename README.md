@@ -17,9 +17,10 @@ The system enforces strict mathematical cutting yield calculations, physical wei
 ### Core Technologies
 - **Application Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Actions, Edge/Node Route Handlers, Client Components)
 - **Frontend & UI**: React 18, Tailwind CSS, Lucide React Icons, Dynamic Sticky Action Modals, `<PasswordInput />` Visibility Toggles
+- **API Routing & Reverse Proxy**: Unified `/eoft/api/...` prefix via `NEXT_PUBLIC_API_PREFIX` and Next.js internal rewrite rules, enabling seamless gateway / reverse-proxy integration.
 - **Database ORM**: [Prisma ORM 5.22+](https://www.prisma.io/) with full PostgreSQL dialect support
 - **Production Database**: PostgreSQL 16+ (AWS RDS / Amazon Aurora Serverless)
-- **Authentication & Security**: Pure WebAssembly Argon2id (`hash-wasm`), HTTP-only encrypted session cookies, tamper-evident Audit Logging
+- **Authentication & Security**: Pure WebAssembly Argon2id (`hash-wasm`), HTTP-only encrypted session cookies with strict 2-hour lifecycle, clean `/login` redirects, tamper-evident Audit Logging
 - **CI/CD & DevOps**: GitHub Actions, Docker, AWS RDS, AWS App Runner / Amplify / ECS Fargate
 
 ---
