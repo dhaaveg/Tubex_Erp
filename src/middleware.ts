@@ -25,6 +25,10 @@ function base64UrlToUint8Array(base64Url: string): Uint8Array {
   return bytes;
 }
 
+function rewriteSubpath(url: URL): NextResponse {
+  return (NextResponse as any).rewrite(url);
+}
+
 interface DecryptedToken {
   sessionId: string;
   userId: string;
@@ -228,7 +232,7 @@ export async function middleware(request: NextRequest) {
     pathname.match(/\.(png|jpg|jpeg|svg|webp|ico)$/i)
   ) {
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -240,7 +244,7 @@ export async function middleware(request: NextRequest) {
       lastCacheFetchTime = 0;
     }
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -260,7 +264,7 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthOrLovApiRoute) {
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -367,7 +371,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/api/auth/me'
   ) {
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -383,7 +387,7 @@ export async function middleware(request: NextRequest) {
   // 6. Super Admin has unrestricted core root privilege across all routes
   if (roles.includes('SUPER_ADMIN') || payload.role === 'SUPER_ADMIN') {
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -401,7 +405,7 @@ export async function middleware(request: NextRequest) {
   // 7. Allow self-profile updates
   if (method === 'PUT' && pathname === `/api/users/${payload.userId}`) {
     if (hasSubpath) {
-      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
     }
     return NextResponse.next();
   }
@@ -451,7 +455,7 @@ export async function middleware(request: NextRequest) {
     // Prevent infinite redirect loops: never redirect to root if already at root or if unauthorized query is present
     if (pathname === '/' || pathname === '/overview' || request.nextUrl.searchParams.has('unauthorized')) {
       if (hasSubpath) {
-        return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+        return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
       }
       return NextResponse.next();
     }
@@ -479,7 +483,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (hasSubpath) {
-    return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
   }
   return NextResponse.next();
 }
