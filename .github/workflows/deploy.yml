@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DATABASE_URL: "postgresql://postgres:password@127.0.0.1:5432/pipe_erp?schema=public"
+  DATABASE_URL: "postgresql://postgres:password@127.0.0.1:5433/pipe_erp?schema=public"
   SESSION_SECRET: "ci_cd_placeholder_session_secret_for_automated_builds_and_tests"
   NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
@@ -28,9 +28,9 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: pipe_erp
         ports:
-          - 5432:5432
+          - 5433:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
