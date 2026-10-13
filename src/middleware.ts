@@ -360,6 +360,18 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // 5b. Always allow change-password and self-profile auth routes without module restriction
+  if (
+    pathname === '/change-password' ||
+    pathname === '/api/auth/change-password' ||
+    pathname === '/api/auth/me'
+  ) {
+    if (hasSubpath) {
+      return NextResponse.rewrite(new URL(pathname + request.nextUrl.search, request.url));
+    }
+    return NextResponse.next();
+  }
+
   // Extract all user roles (support multi-role assignment)
   const roles: string[] =
     payload.roles && payload.roles.length > 0
