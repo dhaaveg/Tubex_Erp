@@ -115,9 +115,9 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
-          DATABASE_URL: ${{ secrets.DATABASE_URL || env.DATABASE_URL }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET || env.SESSION_SECRET }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || env.NEXT_PUBLIC_APP_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          SESSION_SECRET: ${{ env.SESSION_SECRET }}
+          NEXT_PUBLIC_APP_URL: ${{ env.NEXT_PUBLIC_APP_URL }}
 
       - name: Upload Production Artifacts
         uses: actions/upload-artifact@v4
@@ -134,20 +134,21 @@ jobs:
     needs: [build-production]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    env:
+      AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DB_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        env:
-          AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         if: env.AWS_KEY != '' && env.AWS_SECRET != ''
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+          aws-region: us-east-1
 
       # ------------------------------------------------------------------------
       # AWS Deployment Strategy Options:
@@ -156,8 +157,6 @@ jobs:
       # Option C: AWS Amplify Web Hosting
       # ------------------------------------------------------------------------
       - name: Run Prisma Database Migrations against AWS RDS
-        env:
-          DB_URL: ${{ secrets.DATABASE_URL }}
         if: env.DB_URL != ''
         run: |
           npm ci
