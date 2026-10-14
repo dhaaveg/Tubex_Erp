@@ -85,7 +85,7 @@ export default function ReceivingModule() {
     items: [],
   });
 
-  // Tally Sheet Form State with Lot-by-Lot Log (Starts with 1 lot row)
+  // Tally Sheet Form State with Lot-by-Lot Log (Starts with clean blank lot row)
   const [tallyForm, setTallyForm] = useState<{
     ts_id: string;
     grn_item_id: string;
@@ -94,7 +94,7 @@ export default function ReceivingModule() {
     mill_test_certificate_no: string;
     tally_sheet_date: string;
     inspector_name: string;
-    bundle_count: number;
+    bundle_count: number | '';
     defaultPartingLength: number;
     lots: {
       ti_id: string;
@@ -102,29 +102,29 @@ export default function ReceivingModule() {
       heat_no: string;
       lot_no: string;
       mill_test_certificate_no: string;
-      tube_count: number;
-      tube_length_mm: number;
+      tube_count: number | '';
+      tube_length_mm: number | '';
       parting_length_mm: number;
     }[];
   }>({
     ts_id: '',
     grn_item_id: '',
-    lot_no: 'LOT-2026-B1',
-    heat_no: 'HT-99142',
-    mill_test_certificate_no: 'MTC-TEN-99142-REV1',
+    lot_no: '',
+    heat_no: '',
+    mill_test_certificate_no: '',
     tally_sheet_date: new Date().toISOString().split('T')[0],
-    inspector_name: 'Marcus Vance (Level III NDT)',
+    inspector_name: '',
     bundle_count: 1,
     defaultPartingLength: 135,
     lots: [
       {
-        ti_id: 'LOT-HT99142-01',
+        ti_id: '',
         tube_sr_no: 1,
-        heat_no: 'HT-99142',
-        lot_no: 'LOT-2026-B1',
-        mill_test_certificate_no: 'MTC-TEN-99142-REV1',
-        tube_count: 10,
-        tube_length_mm: 121500,
+        heat_no: '',
+        lot_no: '',
+        mill_test_certificate_no: '',
+        tube_count: '' as any,
+        tube_length_mm: '' as any,
         parting_length_mm: 135,
       },
     ],
@@ -143,53 +143,9 @@ export default function ReceivingModule() {
         tallyRes.json(),
         poRes.json(),
       ]);
-      if (Array.isArray(grnData)) {
-        setGrns(grnData);
-        // Set default grn_item_id and matching coupling length if available
-        if (grnData.length > 0 && grnData[0].grn_items?.length > 0) {
-          const firstItem = grnData[0].grn_items[0];
-          const matched =
-            findMatchingCouplingLength(
-              firstItem?.product?.size_od || firstItem?.product?.product_description,
-              firstItem?.product?.thread_type
-            ) || 135;
-          setTallyForm((prev) => ({
-            ...prev,
-            grn_item_id: firstItem.grn_item_id,
-            defaultPartingLength: matched,
-            lots: prev.lots.map((l) => ({ ...l, parting_length_mm: matched })),
-          }));
-        }
-      }
+      if (Array.isArray(grnData)) setGrns(grnData);
       if (Array.isArray(tallyData)) setTallySheets(tallyData);
-      if (Array.isArray(poData)) {
-        setPurchaseOrders(poData);
-        if (poData.length > 0 && !grnForm.po_no) {
-          setGrnForm((prev) => ({
-            ...prev,
-            po_no: poData[0].po_no,
-            items: (poData[0].po_items && poData[0].po_items.length > 0)
-              ? poData[0].po_items.map((poi: any) => ({
-                  po_item_id: poi.po_item_id,
-                  product_id: poi.product_id,
-                  size: poi.product?.size_od ? `${poi.product.size_od}mm OD` : '177.8mm OD',
-                  grade: poi.product?.grade || 'L80',
-                  thread: poi.product?.thread_type || 'BTC',
-                  invoice_quantity: '',
-                }))
-              : [
-                  {
-                    po_item_id: '',
-                    product_id: '',
-                    size: '177.8mm OD',
-                    grade: 'L80',
-                    thread: 'BTC',
-                    invoice_quantity: '',
-                  },
-                ],
-          }));
-        }
-      }
+      if (Array.isArray(poData)) setPurchaseOrders(poData);
     } catch (e) {
       console.error(e);
     } finally {
@@ -282,9 +238,9 @@ export default function ReceivingModule() {
   const handleAddLot = () => {
     const defaultParting = tallyForm.defaultPartingLength || 135;
     const nextSr = tallyForm.lots.length + 1;
-    const heat = tallyForm.heat_no || 'HT-99142';
-    const lotSuggest = `${tallyForm.lot_no || 'LOT-2026'}-${nextSr}`;
-    const nextTag = getNextLotTag(heat, lotSuggest, tallyForm.lots, tallySheets);
+    const heat = tallyForm.heat_no || '';
+    const lotSuggest = tallyForm.lot_no ? `${tallyForm.lot_no}-${nextSr}` : '';
+    const nextTag = heat && lotSuggest ? getNextLotTag(heat, lotSuggest, tallyForm.lots, tallySheets) : '';
 
     setTallyForm((prev) => ({
       ...prev,
@@ -296,8 +252,8 @@ export default function ReceivingModule() {
           heat_no: heat,
           lot_no: lotSuggest,
           mill_test_certificate_no: prev.mill_test_certificate_no,
-          tube_count: 10,
-          tube_length_mm: 121500, // Total combined length of tubes in lot
+          tube_count: '' as any,
+          tube_length_mm: '' as any, // Total combined length of tubes in lot
           parting_length_mm: defaultParting,
         },
       ],
@@ -321,9 +277,9 @@ export default function ReceivingModule() {
         {
           po_item_id: '',
           product_id: '',
-          size: '7" (177.8mm)',
-          grade: 'L80',
-          thread: 'BTC',
+          size: '',
+          grade: '',
+          thread: '',
           invoice_quantity_mt: '',
           actual_quantity_mt: '',
         },
@@ -358,38 +314,17 @@ export default function ReceivingModule() {
   const handleOpenCreateGRN = () => {
     setIsEditGrnMode(false);
     setFormError(null);
-    const defaultPo = purchaseOrders[0];
     setGrnForm({
       grn_id: `GRN-${new Date().getFullYear()}-${String(grns.length + 1).padStart(3, '0')}`,
       grn_date: new Date().toISOString().split('T')[0],
-      po_no: defaultPo ? defaultPo.po_no : '',
+      po_no: '',
       invoice_no: '',
       invoice_date: new Date().toISOString().split('T')[0],
       vehicle_transporter_no: '',
       invoice_weight_mt: '',
       actual_weighbridge_weight_mt: '',
       total_tubes_received_actual: '',
-      items: (defaultPo?.po_items && defaultPo.po_items.length > 0)
-        ? defaultPo.po_items.map((poi: any) => ({
-            po_item_id: poi.po_item_id,
-            product_id: poi.product_id,
-            size: poi.product?.size_od ? `${poi.product.size_od}mm OD` : '177.8mm OD',
-            grade: poi.product?.grade || 'L80',
-            thread: (poi.product?.thread_type === 'Premium' ? 'EUE' : poi.product?.thread_type) || 'BTC',
-            invoice_quantity_mt: '', // Blank: requires explicit user entry
-            actual_quantity_mt: '',  // Blank: requires explicit user entry
-          }))
-        : [
-            {
-              po_item_id: '',
-              product_id: '',
-              size: '177.8mm OD',
-              grade: 'L80',
-              thread: 'BTC',
-              invoice_quantity_mt: '',
-              actual_quantity_mt: '',
-            },
-          ],
+      items: [],
     });
     setIsGrnModalOpen(true);
   };
@@ -419,17 +354,7 @@ export default function ReceivingModule() {
             invoice_quantity_mt: gi.invoice_quantity_mt !== undefined && gi.invoice_quantity_mt !== null ? String(gi.invoice_quantity_mt) : (gi.invoice_quantity !== undefined ? String(gi.invoice_quantity) : ''),
             actual_quantity_mt: gi.actual_quantity_mt !== undefined && gi.actual_quantity_mt !== null ? String(gi.actual_quantity_mt) : (gi.received_quantity !== undefined ? String(gi.received_quantity) : ''),
           }))
-        : [
-            {
-              po_item_id: '',
-              product_id: '',
-              size: '177.8mm OD',
-              grade: 'L80',
-              thread: 'BTC',
-              invoice_quantity_mt: '',
-              actual_quantity_mt: '',
-            },
-          ],
+        : [],
     });
     setIsGrnModalOpen(true);
   };
@@ -620,34 +545,14 @@ export default function ReceivingModule() {
       setGrnForm({
         grn_id: '',
         grn_date: new Date().toISOString().split('T')[0],
-        po_no: purchaseOrders[0]?.po_no || '',
+        po_no: '',
         invoice_no: '',
         invoice_date: new Date().toISOString().split('T')[0],
         vehicle_transporter_no: '',
         invoice_weight_mt: '',
         actual_weighbridge_weight_mt: '',
         total_tubes_received_actual: '',
-        items: (purchaseOrders[0]?.po_items && purchaseOrders[0].po_items.length > 0)
-          ? purchaseOrders[0].po_items.map((poi: any) => ({
-              po_item_id: poi.po_item_id,
-              product_id: poi.product_id,
-              size: poi.product?.size_od ? `${poi.product.size_od}mm OD` : '177.8mm OD',
-              grade: poi.product?.grade || 'L80',
-              thread: (poi.product?.thread_type === 'Premium' ? 'EUE' : poi.product?.thread_type) || 'BTC',
-              invoice_quantity_mt: '',
-              actual_quantity_mt: '',
-            }))
-          : [
-              {
-                po_item_id: '',
-                product_id: '',
-                size: '177.8mm OD',
-                grade: 'L80',
-                thread: 'BTC',
-                invoice_quantity_mt: '',
-                actual_quantity_mt: '',
-              },
-            ],
+        items: [],
       });
       fetchData();
     } catch (err: any) {
@@ -659,8 +564,8 @@ export default function ReceivingModule() {
   const handleOpenCreateTally = (defaultGrnItemId?: string) => {
     setIsEditTallyMode(false);
     setFormError(null);
-    const chosenGrnItemId = defaultGrnItemId || grns[0]?.grn_items?.[0]?.grn_item_id || '';
-    const selectedGrnItem = grns.flatMap((g) => g.grn_items || []).find((i) => i.grn_item_id === chosenGrnItemId);
+    const chosenGrnItemId = defaultGrnItemId || '';
+    const selectedGrnItem = chosenGrnItemId ? grns.flatMap((g) => g.grn_items || []).find((i) => i.grn_item_id === chosenGrnItemId) : null;
     const matchedLength =
       findMatchingCouplingLength(
         selectedGrnItem?.product?.size_od || selectedGrnItem?.product?.product_description,
@@ -669,29 +574,26 @@ export default function ReceivingModule() {
 
     setIsCustomPartingLength(false);
     const nextTsId = getNextTallySheetId(tallySheets);
-    const defaultHeat = 'HT-99142';
-    const defaultLot = 'LOT-2026-B1';
-    const initialLotTag = getNextLotTag(defaultHeat, defaultLot, [], tallySheets);
 
     setTallyForm({
       ts_id: nextTsId,
       grn_item_id: chosenGrnItemId,
-      lot_no: defaultLot,
-      heat_no: defaultHeat,
-      mill_test_certificate_no: 'MTC-TEN-99142-REV1',
+      lot_no: '',
+      heat_no: '',
+      mill_test_certificate_no: '',
       tally_sheet_date: new Date().toISOString().split('T')[0],
-      inspector_name: 'Marcus Vance (Level III NDT)',
+      inspector_name: '',
       bundle_count: 1,
       defaultPartingLength: matchedLength,
       lots: [
         {
-          ti_id: initialLotTag,
+          ti_id: '',
           tube_sr_no: 1,
-          heat_no: defaultHeat,
-          lot_no: defaultLot,
-          mill_test_certificate_no: 'MTC-TEN-99142-REV1',
-          tube_count: 10,
-          tube_length_mm: 121500, // Total length of tubes in lot
+          heat_no: '',
+          lot_no: '',
+          mill_test_certificate_no: '',
+          tube_count: '' as any,
+          tube_length_mm: '' as any,
           parting_length_mm: matchedLength,
         },
       ],
@@ -733,8 +635,8 @@ export default function ReceivingModule() {
               heat_no: ts.heat_no || '',
               lot_no: ts.lot_no || '',
               mill_test_certificate_no: ts.mill_test_certificate_no || '',
-              tube_count: 10,
-              tube_length_mm: 121500,
+              tube_count: '' as any,
+              tube_length_mm: '' as any,
               parting_length_mm: defaultParting,
             },
           ],
@@ -1707,28 +1609,19 @@ export default function ReceivingModule() {
                           ? selectedPo.po_items.map((poi: any) => ({
                               po_item_id: poi.po_item_id,
                               product_id: poi.product_id,
-                              size: poi.product?.size_od ? `${poi.product.size_od}mm OD` : '177.8mm OD',
-                              grade: poi.product?.grade || 'L80',
+                              size: poi.product?.size_od ? `${poi.product.size_od}mm OD` : (poi.size_od ? `${poi.size_od}mm OD` : ''),
+                              grade: poi.product?.grade || poi.grade || '',
                               thread: (poi.product?.thread_type === 'Premium' ? 'EUE' : poi.product?.thread_type) || 'BTC',
                               invoice_quantity_mt: '',
                               actual_quantity_mt: '',
                             }))
-                          : [
-                              {
-                                po_item_id: '',
-                                product_id: '',
-                                size: '177.8mm OD',
-                                grade: 'L80',
-                                thread: 'BTC',
-                                invoice_quantity_mt: '',
-                                actual_quantity_mt: '',
-                              },
-                            ],
+                          : [],
                       }));
                     }}
                     required
                     className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono"
                   >
+                    <option value="">-- Select RM Purchase Order --</option>
                     {purchaseOrders.map((p) => (
                       <option key={p.po_no} value={p.po_no}>
                         {p.po_no} ({p.supplier?.supplier_name})
@@ -2012,6 +1905,7 @@ export default function ReceivingModule() {
                                   }
                                   className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500"
                                 >
+                                  <option value="">-- Select Grade --</option>
                                   <option value="J55">J55</option>
                                   <option value="K55">K55</option>
                                   <option value="L80">L80</option>
@@ -2031,6 +1925,7 @@ export default function ReceivingModule() {
                                   }
                                   className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500"
                                 >
+                                  <option value="">-- Select Connection / End --</option>
                                   <option value="BTC">BTC (Buttress)</option>
                                   <option value="LTC">LTC (Long Thread)</option>
                                   <option value="STC">STC (Short Thread)</option>
@@ -2338,7 +2233,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-400 mb-1">Default Heat Number</label>
                   <input
                     type="text"
-                    placeholder="HT-84920"
+                    placeholder="e.g. HT-84920"
                     value={tallyForm.heat_no}
                     onChange={(e) => handleDefaultHeatChange(e.target.value)}
                     required
@@ -2349,7 +2244,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-400 mb-1">Default Lot Number</label>
                   <input
                     type="text"
-                    placeholder="LOT-2026-A1"
+                    placeholder="e.g. LOT-2026-A1"
                     value={tallyForm.lot_no}
                     onChange={(e) => setTallyForm({ ...tallyForm, lot_no: e.target.value })}
                     required
@@ -2360,7 +2255,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-400 mb-1">Default MTC Number</label>
                   <input
                     type="text"
-                    placeholder="MTC-TEN-84920-REV1"
+                    placeholder="e.g. MTC-TEN-84920-REV1"
                     value={tallyForm.mill_test_certificate_no}
                     onChange={(e) => setTallyForm({ ...tallyForm, mill_test_certificate_no: e.target.value })}
                     required
@@ -2374,6 +2269,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-400 mb-1">Inspector Name</label>
                   <input
                     type="text"
+                    placeholder="e.g. Marcus Vance (Level III NDT)"
                     value={tallyForm.inspector_name}
                     onChange={(e) => setTallyForm({ ...tallyForm, inspector_name: e.target.value })}
                     required
@@ -2384,6 +2280,8 @@ export default function ReceivingModule() {
                   <label className="block text-slate-400 mb-1">Bundle Count</label>
                   <input
                     type="number"
+                    min="1"
+                    placeholder="1"
                     value={tallyForm.bundle_count}
                     onChange={(e) => setTallyForm({ ...tallyForm, bundle_count: parseInt(e.target.value) || 1 })}
                     required
@@ -2525,7 +2423,7 @@ export default function ReceivingModule() {
 
                 <div className="space-y-3">
                   {tallyForm.lots.map((lot, idx) => {
-                    const calc = calculateCuttingYield(lot.tube_length_mm, lot.parting_length_mm);
+                    const calc = calculateCuttingYield(Number(lot.tube_length_mm) || 0, Number(lot.parting_length_mm) || 135);
                     const cleanTag = (lot.ti_id || '').trim().toUpperCase();
                     const isDuplicateInForm = cleanTag !== '' && tallyForm.lots.some(
                       (l, i) => i !== idx && (l.ti_id || '').trim().toUpperCase() === cleanTag
@@ -2606,9 +2504,10 @@ export default function ReceivingModule() {
                               type="number"
                               min="1"
                               step="1"
-                              value={lot.tube_count}
-                              onChange={(e) => handleLotChange(idx, 'tube_count', parseInt(e.target.value) || 1)}
+                              value={lot.tube_count ?? ''}
+                              onChange={(e) => handleLotChange(idx, 'tube_count', e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                               required
+                              placeholder="e.g. 1"
                               className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono font-bold text-emerald-400"
                             />
                           </div>
@@ -2623,8 +2522,8 @@ export default function ReceivingModule() {
                                 type="number"
                                 step="1"
                                 min="1"
-                                value={lot.tube_length_mm}
-                                onChange={(e) => handleLotChange(idx, 'tube_length_mm', parseFloat(e.target.value) || 0)}
+                                value={lot.tube_length_mm ?? ''}
+                                onChange={(e) => handleLotChange(idx, 'tube_length_mm', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                                 required
                                 placeholder="Total lot mm..."
                                 className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono font-bold pr-7"
@@ -2640,11 +2539,12 @@ export default function ReceivingModule() {
                                 type="number"
                                 step="1"
                                 min="1"
-                                value={lot.parting_length_mm}
+                                value={lot.parting_length_mm ?? ''}
                                 onChange={(e) =>
-                                  handleLotChange(idx, 'parting_length_mm', parseFloat(e.target.value) || 0)
+                                  handleLotChange(idx, 'parting_length_mm', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
                                 }
                                 required
+                                placeholder="e.g. 135"
                                 className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono pr-7"
                               />
                               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-mono">mm</span>
@@ -2666,6 +2566,7 @@ export default function ReceivingModule() {
                               value={lot.ti_id}
                               onChange={(e) => handleLotChange(idx, 'ti_id', e.target.value)}
                               required
+                              placeholder="Auto or Tag ID..."
                               className={`w-full bg-slate-900 border rounded px-2 py-1 font-mono font-bold ${
                                 isDuplicateInForm || existingSheetCollision
                                   ? 'border-rose-500 text-rose-300 focus:ring-1 focus:ring-rose-500'
@@ -2702,7 +2603,7 @@ export default function ReceivingModule() {
                             <div>
                               <span className="text-slate-500 text-[9px] block uppercase font-sans">Avg Length / Tube</span>
                               <span className="text-slate-300 font-bold">
-                                {(lot.tube_length_mm / (lot.tube_count || 1)).toFixed(0)} mm
+                                {(((Number(lot.tube_length_mm) || 0) / (Number(lot.tube_count) || 1))).toFixed(0)} mm
                               </span>
                             </div>
                           </div>

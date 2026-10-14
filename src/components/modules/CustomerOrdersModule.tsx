@@ -33,8 +33,8 @@ interface LineItemRow {
   size: string;
   grade: string;
   thread: string;
-  quantity: number;
-  price_per_unit: number;
+  quantity: number | '';
+  price_per_unit: number | '';
   line_total: number;
   line_status?: 'Open' | 'In Production' | 'Fulfilled';
 }
@@ -50,26 +50,24 @@ export default function CustomerOrdersModule() {
   const [formError, setFormError] = useState<string | null>(null);
   const [previewTagOrder, setPreviewTagOrder] = useState<CustomerOrder | null>(null);
 
-  // Form State
+  // Form State (Clean Blank State)
   const [customerPoNo, setCustomerPoNo] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [paymentTerms, setPaymentTerms] = useState('Net 30 Days');
-  const [deliveryTerms, setDeliveryTerms] = useState('FOB Port Houston');
-  const [deliveryDueDate, setDeliveryDueDate] = useState(
-    new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-  );
+  const [paymentTerms, setPaymentTerms] = useState('');
+  const [deliveryTerms, setDeliveryTerms] = useState('');
+  const [deliveryDueDate, setDeliveryDueDate] = useState('');
   const [remarks, setRemarks] = useState('');
   const [orderStatus, setOrderStatus] = useState<any>('Open');
 
   // Dynamic Line Items State
   const [lineItems, setLineItems] = useState<LineItemRow[]>([
     {
-      size: '7 in (177.8 mm)',
-      grade: 'L80',
-      thread: 'BTC',
-      quantity: 500,
-      price_per_unit: 145.0,
-      line_total: 72500.0,
+      size: '',
+      grade: '',
+      thread: '',
+      quantity: '' as any,
+      price_per_unit: '' as any,
+      line_total: 0,
       line_status: 'Open',
     },
   ]);
@@ -102,8 +100,10 @@ export default function CustomerOrdersModule() {
     const item = { ...updated[index], [field]: value };
 
     // Auto recalculate line total
-    const qty = field === 'quantity' ? parseFloat(value) || 0 : item.quantity;
-    const price = field === 'price_per_unit' ? parseFloat(value) || 0 : item.price_per_unit;
+    const rawQty = field === 'quantity' ? value : item.quantity;
+    const rawPrice = field === 'price_per_unit' ? value : item.price_per_unit;
+    const qty = rawQty === '' ? 0 : parseFloat(rawQty) || 0;
+    const price = rawPrice === '' ? 0 : parseFloat(rawPrice) || 0;
     item.line_total = Number((qty * price).toFixed(2));
 
     updated[index] = item;
@@ -114,12 +114,12 @@ export default function CustomerOrdersModule() {
     setLineItems([
       ...lineItems,
       {
-        size: '9-5/8 in (244.5 mm)',
-        grade: 'P110',
-        thread: 'Premium',
-        quantity: 250,
-        price_per_unit: 195.0,
-        line_total: 48750.0,
+        size: '',
+        grade: '',
+        thread: '',
+        quantity: '' as any,
+        price_per_unit: '' as any,
+        line_total: 0,
         line_status: 'Open',
       },
     ]);
@@ -143,19 +143,19 @@ export default function CustomerOrdersModule() {
     setFormError(null);
     setCustomerPoNo(`CPO-${new Date().getFullYear()}-${String(customerOrders.length + 1).padStart(3, '0')}`);
     setCustomerName('');
-    setPaymentTerms('Net 30 Days');
-    setDeliveryTerms('FOB Port Houston');
-    setDeliveryDueDate(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    setPaymentTerms('');
+    setDeliveryTerms('');
+    setDeliveryDueDate('');
     setRemarks('');
     setOrderStatus('Open');
     setLineItems([
       {
-        size: '7 in (177.8 mm)',
-        grade: 'L80',
-        thread: 'BTC',
-        quantity: 500,
-        price_per_unit: 145.0,
-        line_total: 72500.0,
+        size: '',
+        grade: '',
+        thread: '',
+        quantity: '' as any,
+        price_per_unit: '' as any,
+        line_total: 0,
         line_status: 'Open',
       },
     ]);
@@ -168,8 +168,8 @@ export default function CustomerOrdersModule() {
     setFormError(null);
     setCustomerPoNo(order.customer_po_no);
     setCustomerName(order.customer_name);
-    setPaymentTerms(order.payment_terms);
-    setDeliveryTerms(order.delivery_terms);
+    setPaymentTerms(order.payment_terms || '');
+    setDeliveryTerms(order.delivery_terms || '');
     setDeliveryDueDate(
       order.delivery_due_date
         ? new Date(order.delivery_due_date).toISOString().split('T')[0]
@@ -194,12 +194,12 @@ export default function CustomerOrdersModule() {
     } else {
       setLineItems([
         {
-          size: '7 in (177.8 mm)',
-          grade: 'L80',
-          thread: 'BTC',
-          quantity: 100,
-          price_per_unit: 100,
-          line_total: 10000,
+          size: '',
+          grade: '',
+          thread: '',
+          quantity: '' as any,
+          price_per_unit: '' as any,
+          line_total: 0,
           line_status: 'Open',
         },
       ]);
@@ -222,22 +222,30 @@ export default function CustomerOrdersModule() {
       setFormError("Customer's Name is required");
       return;
     }
+    if (!deliveryDueDate) {
+      setFormError("Delivery Due Date is required");
+      return;
+    }
     for (let i = 0; i < lineItems.length; i++) {
       const it = lineItems[i];
-      if (!it.size.trim()) {
+      if (!it.size || !it.size.trim()) {
         setFormError(`Line #${i + 1}: Size is required`);
         return;
       }
-      if (!it.grade.trim()) {
+      if (!it.grade || !it.grade.trim()) {
         setFormError(`Line #${i + 1}: Grade is required`);
         return;
       }
-      if (!it.thread.trim()) {
+      if (!it.thread || !it.thread.trim()) {
         setFormError(`Line #${i + 1}: Thread is required`);
         return;
       }
-      if (!it.quantity || it.quantity <= 0) {
+      if (!it.quantity || Number(it.quantity) <= 0) {
         setFormError(`Line #${i + 1}: Quantity must be greater than 0`);
+        return;
+      }
+      if (it.price_per_unit === '' || isNaN(Number(it.price_per_unit)) || Number(it.price_per_unit) < 0) {
+        setFormError(`Line #${i + 1}: Price per unit must be a valid number >= 0`);
         return;
       }
     }
@@ -814,8 +822,10 @@ export default function CustomerOrdersModule() {
                             <select
                               value={item.grade}
                               onChange={(e) => handleItemChange(idx, 'grade', e.target.value)}
+                              required
                               className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono focus:border-blue-500"
                             >
+                              <option value="">-- Select Grade --</option>
                               <option value="J55">J55</option>
                               <option value="K55">K55</option>
                               <option value="L80">L80</option>
@@ -836,8 +846,10 @@ export default function CustomerOrdersModule() {
                                   : item.thread
                               }
                               onChange={(e) => handleItemChange(idx, 'thread', e.target.value)}
+                              required
                               className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono focus:border-blue-500"
                             >
+                              <option value="">-- Select Thread --</option>
                               <option value="BTC">BTC (Buttress)</option>
                               <option value="LTC">LTC (Long Thread)</option>
                               <option value="STC">STC (Short Thread)</option>
@@ -853,9 +865,9 @@ export default function CustomerOrdersModule() {
                               type="number"
                               step="1"
                               min="1"
-                              placeholder="Qty"
-                              value={item.quantity}
-                              onChange={(e) => handleItemChange(idx, 'quantity', parseFloat(e.target.value) || 0)}
+                              placeholder="Qty (pcs)"
+                              value={item.quantity ?? ''}
+                              onChange={(e) => handleItemChange(idx, 'quantity', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               required
                               className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-right focus:border-blue-500"
                             />
@@ -865,10 +877,10 @@ export default function CustomerOrdersModule() {
                               type="number"
                               step="0.01"
                               min="0"
-                              placeholder="Price"
-                              value={item.price_per_unit}
+                              placeholder="0.00"
+                              value={item.price_per_unit ?? ''}
                               onChange={(e) =>
-                                handleItemChange(idx, 'price_per_unit', parseFloat(e.target.value) || 0)
+                                handleItemChange(idx, 'price_per_unit', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
                               }
                               required
                               className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-right focus:border-blue-500"

@@ -120,33 +120,42 @@ export default function ShopFloorModule() {
     size: '',
     grade: '',
     thread: '',
-    order_quantity: 100,
+    order_quantity: '' as any,
     ti_id: '',
     target_product_id: '',
-    machine_line_no: 'CNC-CELL-01',
-    shift: 'Shift A',
+    machine_line_no: '',
+    shift: '',
     wo_status: 'Released',
   });
 
   // Production Posting Form State with Defect Logging Sub-form
-  const [postingForm, setPostingForm] = useState({
+  const [postingForm, setPostingForm] = useState<{
+    pp_id: string;
+    wo_id: string;
+    process_stage_name: any;
+    operation_seq_no: number;
+    operator_machine_id: string;
+    input_quantity: number | '';
+    accepted_quantity: number | '';
+    rejected_quantity: number;
+    rework_quantity: number;
+    rejections: {
+      defect_category: any;
+      defect_quantity: number;
+      disposition_action: any;
+      inspector_remarks: string;
+    }[];
+  }>({
     pp_id: '',
     wo_id: '',
     process_stage_name: 'Cutting' as any,
     operation_seq_no: 10,
-    operator_machine_id: 'CNC-CELL-01 / Op: J.Smith',
-    input_quantity: 8,
-    accepted_quantity: 8,
+    operator_machine_id: '',
+    input_quantity: '' as any,
+    accepted_quantity: '' as any,
     rejected_quantity: 0,
     rework_quantity: 0,
-    rejections: [
-      {
-        defect_category: 'Thread Flat' as any,
-        defect_quantity: 1,
-        disposition_action: 'Rework Thread' as any,
-        inspector_remarks: '',
-      },
-    ],
+    rejections: [],
   });
 
   const fetchData = async () => {
@@ -497,11 +506,11 @@ export default function ShopFloorModule() {
       size: '',
       grade: '',
       thread: '',
-      order_quantity: 100,
+      order_quantity: '' as any,
       ti_id: '',
       target_product_id: '',
-      machine_line_no: 'CNC-CELL-01',
-      shift: 'Shift A',
+      machine_line_no: '',
+      shift: '',
       wo_status: 'Released',
     });
     setIsWoModalOpen(true);
@@ -520,11 +529,11 @@ export default function ShopFloorModule() {
       size: wo.size || normalizeSize(wo.target_product?.size_od || wo.target_product?.product_description) || '',
       grade: wo.grade || normalizeGrade(wo.target_product?.grade) || '',
       thread: wo.thread || normalizeThread(wo.target_product?.thread_type) || '',
-      order_quantity: wo.order_quantity || wo.planned_parts_to_produce || 100,
+      order_quantity: wo.order_quantity || wo.planned_parts_to_produce || '',
       ti_id: wo.ti_id || '',
       target_product_id: wo.target_product_id || '',
-      machine_line_no: wo.machine_line_no || 'CNC-CELL-01',
-      shift: wo.shift || 'Shift A',
+      machine_line_no: wo.machine_line_no || '',
+      shift: wo.shift || '',
       wo_status: wo.wo_status || 'Released',
     });
     setIsWoModalOpen(true);
@@ -594,10 +603,10 @@ export default function ShopFloorModule() {
 
   // Live balance check for production postings
   const balanceCheck = validateProductionBalance(
-    postingForm.input_quantity,
-    postingForm.accepted_quantity,
-    postingForm.rejected_quantity,
-    postingForm.rework_quantity
+    Number(postingForm.input_quantity) || 0,
+    Number(postingForm.accepted_quantity) || 0,
+    Number(postingForm.rejected_quantity) || 0,
+    Number(postingForm.rework_quantity) || 0
   );
 
   // Work Order Target Quantity to Produce (User Entry)
@@ -621,8 +630,8 @@ export default function ShopFloorModule() {
     woTargetQty,
     existingStageAcc,
     existingStageRej,
-    postingForm.accepted_quantity,
-    postingForm.rejected_quantity,
+    Number(postingForm.accepted_quantity) || 0,
+    Number(postingForm.rejected_quantity) || 0,
     postingForm.process_stage_name,
     postingForm.operation_seq_no
   );
@@ -684,19 +693,12 @@ export default function ShopFloorModule() {
       wo_id: selectedWo.wo_id,
       process_stage_name: stageToLog.name,
       operation_seq_no: stageToLog.seq,
-      operator_machine_id: `${selectedWo.machine_line_no || 'CNC-CELL-01'} / Op: Lead`,
-      input_quantity: initialQty,
-      accepted_quantity: initialQty,
+      operator_machine_id: '',
+      input_quantity: '' as any,
+      accepted_quantity: '' as any,
       rejected_quantity: 0,
       rework_quantity: 0,
-      rejections: [
-        {
-          defect_category: 'Thread Flat',
-          defect_quantity: 1,
-          disposition_action: 'Rework Thread',
-          inspector_remarks: '',
-        },
-      ],
+      rejections: [],
     });
     setIsPostingModalOpen(true);
   };
@@ -712,7 +714,7 @@ export default function ShopFloorModule() {
       wo_id: selectedWo.wo_id,
       process_stage_name: posting.process_stage_name,
       operation_seq_no: posting.operation_seq_no,
-      operator_machine_id: posting.operator_machine_id || `${selectedWo.machine_line_no || 'CNC-CELL-01'} / Op: Lead`,
+      operator_machine_id: posting.operator_machine_id || selectedWo.machine_line_no || '',
       input_quantity: posting.input_quantity,
       accepted_quantity: posting.accepted_quantity,
       rejected_quantity: posting.rejected_quantity,
@@ -724,14 +726,7 @@ export default function ShopFloorModule() {
             disposition_action: r.disposition_action,
             inspector_remarks: r.inspector_remarks || '',
           }))
-        : [
-            {
-              defect_category: 'Thread Flat',
-              defect_quantity: posting.rejected_quantity || 1,
-              disposition_action: 'Rework Thread',
-              inspector_remarks: '',
-            },
-          ],
+        : [],
     });
     setIsPostingModalOpen(true);
   };
@@ -753,50 +748,29 @@ export default function ShopFloorModule() {
   const handleStageSelect = (stageName: any, seq: number) => {
     if (!selectedWo) return;
     const existingPostings = selectedWo.production_postings || [];
-    const woQty = selectedWo.planned_parts_to_produce || selectedWo.order_quantity || 100;
-    const stagePostings = existingPostings.filter((p: any) => p.operation_seq_no === seq && (!isEditPostingMode || p.pp_id !== editingPostingId));
-    const priorStageQty = stagePostings.reduce(
-      (sum: number, p: any) => sum + (p.accepted_quantity || 0) + (p.rejected_quantity || 0),
-      0
-    );
-    const maxRemaining = Math.max(0, woQty - priorStageQty);
-
-    let initialQty = woQty;
-    if (seq > 10) {
-      const completedPreviousStages = existingPostings
-        .filter((p: any) => p.operation_seq_no < seq)
-        .sort((a: any, b: any) => b.operation_seq_no - a.operation_seq_no);
-      if (completedPreviousStages.length > 0) {
-        initialQty = completedPreviousStages[0].accepted_quantity;
-      }
-    }
-    initialQty = Math.min(initialQty, maxRemaining);
-
     const newPpId = isEditPostingMode && editingPostingId ? editingPostingId : generatePostingId(selectedWo.wo_id, seq, existingPostings);
 
-    setPostingForm((prev) => {
-      const inp = isEditPostingMode ? prev.input_quantity : initialQty;
-      const rej = isEditPostingMode ? prev.rejected_quantity : 0;
-      const rew = isEditPostingMode ? prev.rework_quantity : 0;
-      const acc = isEditPostingMode ? prev.accepted_quantity : Math.max(0, inp - rej - rew);
-      return {
-        ...prev,
-        pp_id: newPpId,
-        process_stage_name: stageName,
-        operation_seq_no: seq,
-        input_quantity: inp,
-        accepted_quantity: acc,
-        rejected_quantity: rej,
-        rework_quantity: rew,
-      };
-    });
+    setPostingForm((prev) => ({
+      ...prev,
+      pp_id: newPpId,
+      process_stage_name: stageName,
+      operation_seq_no: seq,
+    }));
   };
 
   // Handler for Input Qty change: automatically calculates Accepted Qty = Input Qty - Rejected Qty
-  const handlePostingInputQtyChange = (newVal: number) => {
+  const handlePostingInputQtyChange = (newVal: number | '') => {
+    if (newVal === '') {
+      setPostingForm((prev) => ({
+        ...prev,
+        input_quantity: '',
+        accepted_quantity: '',
+      }));
+      return;
+    }
     const inputQty = Math.max(0, newVal);
-    const rejQty = postingForm.rejected_quantity;
-    const rewQty = postingForm.rework_quantity;
+    const rejQty = Number(postingForm.rejected_quantity) || 0;
+    const rewQty = Number(postingForm.rework_quantity) || 0;
     const accQty = Math.max(0, inputQty - rejQty - rewQty);
     setPostingForm((prev) => ({
       ...prev,
@@ -808,8 +782,8 @@ export default function ShopFloorModule() {
   // Handler for Rejected Qty change: automatically calculates Accepted Qty = Input Qty - Rejected Qty
   const handlePostingRejectedQtyChange = (newVal: number) => {
     const rejQty = Math.max(0, newVal);
-    const inputQty = postingForm.input_quantity;
-    const rewQty = postingForm.rework_quantity;
+    const inputQty = Number(postingForm.input_quantity) || 0;
+    const rewQty = Number(postingForm.rework_quantity) || 0;
     const accQty = Math.max(0, inputQty - rejQty - rewQty);
 
     const updatedRejections = rejQty > 0
@@ -817,9 +791,9 @@ export default function ShopFloorModule() {
           ? postingForm.rejections.map((r, idx) => (idx === 0 ? { ...r, defect_quantity: rejQty } : r))
           : [
               {
-                defect_category: 'Thread Flat',
+                defect_category: '' as any,
                 defect_quantity: rejQty,
-                disposition_action: 'Rework Thread',
+                disposition_action: '' as any,
                 inspector_remarks: '',
               },
             ])
@@ -834,10 +808,17 @@ export default function ShopFloorModule() {
   };
 
   // Handler for Accepted Qty change: automatically balances Rejected Qty = Input Qty - Accepted Qty
-  const handlePostingAcceptedQtyChange = (newVal: number) => {
+  const handlePostingAcceptedQtyChange = (newVal: number | '') => {
+    if (newVal === '') {
+      setPostingForm((prev) => ({
+        ...prev,
+        accepted_quantity: '',
+      }));
+      return;
+    }
     const accQty = Math.max(0, newVal);
-    const inputQty = postingForm.input_quantity;
-    const rewQty = postingForm.rework_quantity;
+    const inputQty = Number(postingForm.input_quantity) || 0;
+    const rewQty = Number(postingForm.rework_quantity) || 0;
     const rejQty = Math.max(0, inputQty - accQty - rewQty);
 
     const updatedRejections = rejQty > 0
@@ -845,9 +826,9 @@ export default function ShopFloorModule() {
           ? postingForm.rejections.map((r, idx) => (idx === 0 ? { ...r, defect_quantity: rejQty } : r))
           : [
               {
-                defect_category: 'Thread Flat',
+                defect_category: '' as any,
                 defect_quantity: rejQty,
-                disposition_action: 'Rework Thread',
+                disposition_action: '' as any,
                 inspector_remarks: '',
               },
             ])
@@ -864,8 +845,8 @@ export default function ShopFloorModule() {
   // Handler for Rework Qty change: balances Accepted Qty = Input Qty - Rejected Qty - Rework Qty
   const handlePostingReworkQtyChange = (newVal: number) => {
     const rewQty = Math.max(0, newVal);
-    const inputQty = postingForm.input_quantity;
-    const rejQty = postingForm.rejected_quantity;
+    const inputQty = Number(postingForm.input_quantity) || 0;
+    const rejQty = Number(postingForm.rejected_quantity) || 0;
     const accQty = Math.max(0, inputQty - rejQty - rewQty);
     setPostingForm((prev) => ({
       ...prev,
@@ -878,15 +859,36 @@ export default function ShopFloorModule() {
     e.preventDefault();
     setFormError(null);
     try {
+      if (!postingForm.operator_machine_id || !postingForm.operator_machine_id.trim()) {
+        throw new Error('Please enter Operator & Machine Station.');
+      }
+      if (postingForm.input_quantity === '' || Number(postingForm.input_quantity) <= 0) {
+        throw new Error('Please enter a valid Input Quantity greater than 0.');
+      }
       if (!balanceCheck.isBalanced) {
         throw new Error(balanceCheck.errorMessage);
       }
       if (woQuantityGate.isExceeded) {
         throw new Error(woQuantityGate.errorMessage || 'Sum of Accepted and Rejected quantities exceeds Work Order Quantity to Produce');
       }
+      if (postingForm.rejected_quantity > 0) {
+        for (let i = 0; i < postingForm.rejections.length; i++) {
+          const r = postingForm.rejections[i];
+          if (!r.defect_category) {
+            throw new Error(`Please select Defect Category for rejection #${i + 1}.`);
+          }
+          if (!r.disposition_action) {
+            throw new Error(`Please select Disposition Action for rejection #${i + 1}.`);
+          }
+        }
+      }
 
       const payload = {
         ...postingForm,
+        input_quantity: Number(postingForm.input_quantity) || 0,
+        accepted_quantity: Number(postingForm.accepted_quantity) || 0,
+        rejected_quantity: Number(postingForm.rejected_quantity) || 0,
+        rework_quantity: Number(postingForm.rework_quantity) || 0,
         rejections: postingForm.rejected_quantity > 0 ? postingForm.rejections : [],
       };
 
@@ -1724,10 +1726,10 @@ export default function ShopFloorModule() {
                     min="1"
                     step="1"
                     required
-                    placeholder="e.g. 100"
+                    placeholder="Enter quantity in pieces (e.g. 100)"
                     value={woForm.order_quantity}
                     onChange={(e) =>
-                      setWoForm({ ...woForm, order_quantity: parseInt(e.target.value) || 0 })
+                      setWoForm({ ...woForm, order_quantity: e.target.value === '' ? '' : parseInt(e.target.value) || 0 })
                     }
                     className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 font-mono text-sm font-bold focus:border-blue-500 pr-14"
                   />
@@ -1741,6 +1743,33 @@ export default function ShopFloorModule() {
                     <span className="font-mono text-blue-300">{woForm.customer_po_no}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Machine & Shift Selection */}
+              <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+                <div>
+                  <label className="block text-slate-400 mb-1 font-semibold">Assigned Machine / Cell</label>
+                  <input
+                    type="text"
+                    value={woForm.machine_line_no}
+                    placeholder="e.g. CNC-CELL-01"
+                    onChange={(e) => setWoForm({ ...woForm, machine_line_no: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono text-xs focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1 font-semibold">Production Shift</label>
+                  <select
+                    value={woForm.shift}
+                    onChange={(e) => setWoForm({ ...woForm, shift: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-slate-200 text-xs focus:border-blue-500"
+                  >
+                    <option value="">-- Select Shift --</option>
+                    <option value="Shift A">Shift A (Morning 06:00 - 14:00)</option>
+                    <option value="Shift B">Shift B (Evening 14:00 - 22:00)</option>
+                    <option value="Shift C">Shift C (Night 22:00 - 06:00)</option>
+                  </select>
+                </div>
               </div>
 
               {/* Matched Available Lot / Pipe Tag in Stock (Optional) - Filtered to matching PO */}
@@ -1890,9 +1919,10 @@ export default function ShopFloorModule() {
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Operator & Machine Station</label>
+                <label className="block text-slate-400 mb-1">Operator & Machine Station *</label>
                 <input
                   type="text"
+                  placeholder="e.g. CNC-CELL-01 / Op: J.Smith"
                   value={postingForm.operator_machine_id}
                   onChange={(e) => setPostingForm({ ...postingForm, operator_machine_id: e.target.value })}
                   required
@@ -1915,7 +1945,7 @@ export default function ShopFloorModule() {
                     }`}
                   >
                     {balanceCheck.isBalanced
-                      ? `✔ Equation Balanced: ${postingForm.input_quantity} - ${postingForm.rejected_quantity} = ${postingForm.accepted_quantity}`
+                      ? `✔ Equation Balanced: ${postingForm.input_quantity || 0} - ${postingForm.rejected_quantity} = ${postingForm.accepted_quantity || 0}`
                       : `Violation: Delta ${balanceCheck.delta > 0 ? '+' : ''}${balanceCheck.delta}`}
                   </span>
                 </div>
@@ -1927,7 +1957,8 @@ export default function ShopFloorModule() {
                       type="number"
                       min="0"
                       value={postingForm.input_quantity}
-                      onChange={(e) => handlePostingInputQtyChange(parseInt(e.target.value) || 0)}
+                      placeholder="0"
+                      onChange={(e) => handlePostingInputQtyChange(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                       required
                       className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-blue-400 font-bold focus:border-blue-500"
                     />
@@ -1941,7 +1972,8 @@ export default function ShopFloorModule() {
                       type="number"
                       min="0"
                       value={postingForm.accepted_quantity}
-                      onChange={(e) => handlePostingAcceptedQtyChange(parseInt(e.target.value) || 0)}
+                      placeholder="0"
+                      onChange={(e) => handlePostingAcceptedQtyChange(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                       required
                       className="w-full bg-slate-900 border border-emerald-600/60 rounded px-2 py-1 text-emerald-400 font-bold focus:border-emerald-500"
                     />
@@ -2020,7 +2052,7 @@ export default function ShopFloorModule() {
                   <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
                     <div className="text-slate-400 text-[10px] font-sans">This Posting (Acc+Rej)</div>
                     <div className="font-bold text-blue-300 mt-0.5">
-                      {postingForm.accepted_quantity + postingForm.rejected_quantity} Pcs
+                      {(Number(postingForm.accepted_quantity) || 0) + postingForm.rejected_quantity} Pcs
                     </div>
                   </div>
                   <div
@@ -2064,8 +2096,10 @@ export default function ShopFloorModule() {
                               updated[idx].defect_category = e.target.value as any;
                               setPostingForm({ ...postingForm, rejections: updated });
                             }}
+                            required
                             className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-slate-200"
                           >
+                            <option value="">-- Select Defect Category --</option>
                             {DEFECT_CATEGORIES.map((cat) => (
                               <option key={cat} value={cat}>
                                 {cat}
@@ -2075,7 +2109,7 @@ export default function ShopFloorModule() {
                         </div>
 
                         <div>
-                          <label className="block text-slate-400 mb-1">Disposition Action</label>
+                          <label className="block text-slate-400 mb-1">Disposition Action *</label>
                           <select
                             value={rej.disposition_action}
                             onChange={(e) => {
@@ -2083,8 +2117,10 @@ export default function ShopFloorModule() {
                               updated[idx].disposition_action = e.target.value as any;
                               setPostingForm({ ...postingForm, rejections: updated });
                             }}
+                            required
                             className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-slate-200"
                           >
+                            <option value="">-- Select Disposition Action --</option>
                             {DISPOSITION_ACTIONS.map((action) => (
                               <option key={action} value={action}>
                                 {action}

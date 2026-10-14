@@ -71,13 +71,13 @@ export default function UserManagementModule() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState<string>('ALL');
 
-  // Add User Modal State
+  // Add User Modal State (Clean Blank State)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
-  const [newRoles, setNewRoles] = useState<Role[]>(['PROCUREMENT']);
+  const [newRoles, setNewRoles] = useState<Role[]>([]);
   const [newDepartment, setNewDepartment] = useState('');
-  const [newTempPassword, setNewTempPassword] = useState('EotErp@2026!');
+  const [newTempPassword, setNewTempPassword] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
   // Edit User Modal State
@@ -263,14 +263,20 @@ export default function UserManagementModule() {
 
   const toggleNewRole = (roleToToggle: Role) => {
     if (newRoles.includes(roleToToggle)) {
-      if (newRoles.length === 1) {
-        setError('User must have at least one assigned role.');
-        return;
-      }
       setNewRoles(newRoles.filter((r) => r !== roleToToggle));
     } else {
       setNewRoles([...newRoles, roleToToggle]);
     }
+  };
+
+  const handleOpenAddModal = () => {
+    setNewEmail('');
+    setNewName('');
+    setNewRoles([]);
+    setNewDepartment('');
+    setNewTempPassword('');
+    setError(null);
+    setIsAddModalOpen(true);
   };
 
   const generateSecurePassword = () => {
@@ -305,8 +311,23 @@ export default function UserManagementModule() {
       return;
     }
 
+    if (!newEmail.trim()) {
+      setError('Please enter corporate email address.');
+      return;
+    }
+
+    if (!newName.trim()) {
+      setError('Please enter user full name.');
+      return;
+    }
+
     if (newRoles.length === 0) {
       setError('Please select at least one role for this user.');
+      return;
+    }
+
+    if (!newTempPassword.trim()) {
+      setError('Please provide an initial temporary password.');
       return;
     }
 
@@ -317,12 +338,12 @@ export default function UserManagementModule() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: newEmail,
-          name: newName,
+          email: newEmail.trim(),
+          name: newName.trim(),
           roles: newRoles,
           role: newRoles[0] || 'PROCUREMENT',
-          department: newDepartment,
-          temporaryPassword: newTempPassword,
+          department: newDepartment.trim(),
+          temporaryPassword: newTempPassword.trim(),
         }),
       });
       const data = await res.json();
@@ -333,9 +354,9 @@ export default function UserManagementModule() {
       setIsAddModalOpen(false);
       setNewEmail('');
       setNewName('');
-      setNewRoles(['PROCUREMENT']);
+      setNewRoles([]);
       setNewDepartment('');
-      setNewTempPassword('EotErp@2026!');
+      setNewTempPassword('');
       fetchUsers();
     } catch (err: any) {
       setError(err.message);
@@ -495,7 +516,7 @@ export default function UserManagementModule() {
           {/* "Add User" button: Visible for SUPER_ADMIN (unrestricted) & ADMIN (conditioned on count <= 5) */}
           {isSuperAdmin && (
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={handleOpenAddModal}
               className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
               title="Super Administrator: Unrestricted account provisioning"
             >
@@ -506,7 +527,7 @@ export default function UserManagementModule() {
 
           {isAdmin && canAdminProvision && (
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={handleOpenAddModal}
               className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
               title={`Admin Provisioning Quota: ${nonSuperAdminCount}/5 non-Super-Admin accounts active`}
             >

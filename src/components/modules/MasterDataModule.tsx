@@ -69,26 +69,26 @@ export default function MasterDataModule() {
     status: 'Active',
   });
 
-  // Product Form State
+  // Product Form State (Clean Blank State)
   const [productForm, setProductForm] = useState<{
     product_id: string;
     product_description: string;
-    size_od: number;
-    wall_thickness: number;
+    size_od: number | '';
+    wall_thickness: number | '';
     grade: string;
     thread_type: string;
     cvn_requirement: string;
-    nominal_weight_kg_m: number;
+    nominal_weight_kg_m: number | '';
     uom: string;
   }>({
     product_id: '',
     product_description: '',
-    size_od: 177.8,
-    wall_thickness: 10.36,
-    grade: 'L80',
-    thread_type: 'BTC',
-    cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-    nominal_weight_kg_m: 43.15,
+    size_od: '' as any,
+    wall_thickness: '' as any,
+    grade: '',
+    thread_type: '',
+    cvn_requirement: '',
+    nominal_weight_kg_m: '' as any,
     uom: 'Meters',
   });
 
@@ -162,12 +162,12 @@ export default function MasterDataModule() {
       setProductForm({
         product_id: getNextProductId(),
         product_description: '',
-        size_od: 177.8,
-        wall_thickness: 10.36,
-        grade: 'L80',
-        thread_type: 'BTC',
-        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-        nominal_weight_kg_m: 43.15,
+        size_od: '' as any,
+        wall_thickness: '' as any,
+        grade: '',
+        thread_type: '',
+        cvn_requirement: '',
+        nominal_weight_kg_m: '' as any,
         uom: 'Meters',
       });
     }
@@ -199,12 +199,12 @@ export default function MasterDataModule() {
     setProductForm({
       product_id: p.product_id,
       product_description: p.product_description || '',
-      size_od: p.size_od || 177.8,
-      wall_thickness: p.wall_thickness || 10.36,
-      grade: p.grade || 'L80',
-      thread_type: p.thread_type || 'BTC',
+      size_od: p.size_od !== undefined && p.size_od !== null ? p.size_od : '',
+      wall_thickness: p.wall_thickness !== undefined && p.wall_thickness !== null ? p.wall_thickness : '',
+      grade: p.grade || '',
+      thread_type: p.thread_type || '',
       cvn_requirement: p.cvn_requirement || DEFAULT_CVN_REQUIREMENT,
-      nominal_weight_kg_m: p.nominal_weight_kg_m || 43.15,
+      nominal_weight_kg_m: p.nominal_weight_kg_m !== undefined && p.nominal_weight_kg_m !== null ? p.nominal_weight_kg_m : '',
       uom: p.uom || 'Meters',
     });
     setIsModalOpen(true);
@@ -214,6 +214,9 @@ export default function MasterDataModule() {
     e.preventDefault();
     setFormError(null);
     try {
+      if (!supplierForm.supplier_name?.trim()) {
+        throw new Error('Supplier Name is required.');
+      }
       const res = await fetch(apiUrl('/api/suppliers'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -233,10 +236,37 @@ export default function MasterDataModule() {
     e.preventDefault();
     setFormError(null);
     try {
+      if (!productForm.size_od || Number(productForm.size_od) <= 0) {
+        throw new Error('Valid Outer Diameter (OD) is required.');
+      }
+      if (!productForm.wall_thickness || Number(productForm.wall_thickness) <= 0) {
+        throw new Error('Valid Wall Thickness (WT) is required.');
+      }
+      if (Number(productForm.wall_thickness) >= Number(productForm.size_od)) {
+        throw new Error('Wall Thickness must be less than Outer Diameter.');
+      }
+      if (!productForm.grade) {
+        throw new Error('Please select a Steel Grade.');
+      }
+      if (!productForm.thread_type) {
+        throw new Error('Please select a Thread Type.');
+      }
+
+      const generatedDesc = productForm.product_description.trim() ||
+        `${productForm.size_od}mm OD x ${productForm.wall_thickness}mm WT API 5CT ${productForm.grade} ${productForm.thread_type}`;
+
+      const payload = {
+        ...productForm,
+        size_od: Number(productForm.size_od),
+        wall_thickness: Number(productForm.wall_thickness),
+        nominal_weight_kg_m: Number(productForm.nominal_weight_kg_m) || 0,
+        product_description: generatedDesc,
+      };
+
       const res = await fetch(apiUrl('/api/products'), {
         method: isEditMode ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productForm),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'create'} product`);
@@ -708,12 +738,14 @@ export default function MasterDataModule() {
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Steel Grade</label>
+                      <label className="block text-slate-400 mb-1">Steel Grade *</label>
                       <select
                         value={productForm.grade}
                         onChange={(e) => setProductForm({ ...productForm, grade: e.target.value })}
+                        required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
                       >
+                        <option value="">-- Select Grade --</option>
                         <option value="J55">J55</option>
                         <option value="K55">K55</option>
                         <option value="L80">L80</option>
@@ -733,41 +765,44 @@ export default function MasterDataModule() {
                       placeholder="e.g. 7 in OD x 0.408 in WT L80 BTC Casing Pipe"
                       value={productForm.product_description}
                       onChange={(e) => setProductForm({ ...productForm, product_description: e.target.value })}
-                      required
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-slate-400 mb-1">Outer Dia (OD mm)</label>
+                      <label className="block text-slate-400 mb-1">Outer Dia (OD mm) *</label>
                       <input
                         type="number"
                         step="0.01"
-                        value={productForm.size_od}
-                        onChange={(e) => setProductForm({ ...productForm, size_od: parseFloat(e.target.value) || 0 })}
+                        placeholder="e.g. 177.8"
+                        value={productForm.size_od ?? ''}
+                        onChange={(e) => setProductForm({ ...productForm, size_od: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Wall Thickness (mm)</label>
+                      <label className="block text-slate-400 mb-1">Wall Thickness (mm) *</label>
                       <input
                         type="number"
                         step="0.01"
-                        value={productForm.wall_thickness}
-                        onChange={(e) => setProductForm({ ...productForm, wall_thickness: parseFloat(e.target.value) || 0 })}
+                        placeholder="e.g. 10.36"
+                        value={productForm.wall_thickness ?? ''}
+                        onChange={(e) => setProductForm({ ...productForm, wall_thickness: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Thread Type</label>
+                      <label className="block text-slate-400 mb-1">Thread Type *</label>
                       <select
                         value={productForm.thread_type}
                         onChange={(e) => setProductForm({ ...productForm, thread_type: e.target.value })}
+                        required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
                       >
+                        <option value="">-- Select Thread Type --</option>
                         <option value="BTC">BTC (Buttress)</option>
                         <option value="LTC">LTC (Long Thread)</option>
                         <option value="STC">STC (Short Thread)</option>
@@ -783,20 +818,20 @@ export default function MasterDataModule() {
                       <label className="block text-slate-400 mb-1">CVN Requirement</label>
                       <input
                         type="text"
-                        placeholder="e.g. 27J @ -10°C"
+                        placeholder="e.g. 27J @ -10°C (Optional)"
                         value={productForm.cvn_requirement}
                         onChange={(e) => setProductForm({ ...productForm, cvn_requirement: e.target.value })}
-                        required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Nominal Weight (kg/m)</label>
+                      <label className="block text-slate-400 mb-1">Nominal Weight (kg/m) *</label>
                       <input
                         type="number"
                         step="0.01"
-                        value={productForm.nominal_weight_kg_m}
-                        onChange={(e) => setProductForm({ ...productForm, nominal_weight_kg_m: parseFloat(e.target.value) || 0 })}
+                        placeholder="e.g. 43.15"
+                        value={productForm.nominal_weight_kg_m ?? ''}
+                        onChange={(e) => setProductForm({ ...productForm, nominal_weight_kg_m: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
                         className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
                       />

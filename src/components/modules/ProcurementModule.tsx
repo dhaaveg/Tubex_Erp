@@ -45,14 +45,14 @@ import { apiUrl } from '@/lib/api';
 interface POItemRow {
   po_item_id?: string;
   product_id: string;
-  size_od: number;
+  size_od: number | '';
   grade: string;
-  wall_thickness: number;
+  wall_thickness: number | '';
   schedule?: string;
   cvn_requirement: string;
-  ordered_qty: number;
-  ordered_qty_mt: number;
-  unit_rate: number;
+  ordered_qty: number | '';
+  ordered_qty_mt: number | '';
+  unit_rate: number | '';
   tolerable_variance_pct: number;
 }
 
@@ -88,40 +88,42 @@ export default function ProcurementModule() {
   const [poNo, setPoNo] = useState('');
   const [poDate, setPoDate] = useState(new Date().toISOString().split('T')[0]);
   const [supplierId, setSupplierId] = useState('');
-  const [shippingAddress, setShippingAddress] = useState('Dock 4, Tubular Inwarding Yard, Precision Hub');
-  const [deliveryDate, setDeliveryDate] = useState(
-    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-  );
-  const [paymentTerms, setPaymentTerms] = useState('30% Advance, Net 60 Days');
-  const [deliveryTerms, setDeliveryTerms] = useState('FOB Mill Yard');
-  const [advanceAmount, setAdvanceAmount] = useState<number>(0);
+  const [shippingAddress, setShippingAddress] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
+  const [deliveryTerms, setDeliveryTerms] = useState('');
+  const [advanceAmount, setAdvanceAmount] = useState<number | ''>('');
   const [qualityStipulations, setQualityStipulations] = useState<string>(DEFAULT_QUALITY_STIPULATIONS);
   const [poStatus, setPoStatus] = useState<'Draft' | 'Approved' | 'Open' | 'Closed'>('Draft');
 
   const [items, setItems] = useState<POItemRow[]>([
     {
       product_id: '',
-      size_od: 177.8,
-      grade: 'L80',
-      wall_thickness: 10.36,
-      schedule: 'Sch 80',
-      cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-      ordered_qty: 1000,
-      ordered_qty_mt: 43.15,
-      unit_rate: 45,
+      size_od: '',
+      grade: '',
+      wall_thickness: '',
+      schedule: '',
+      cvn_requirement: '',
+      ordered_qty: '',
+      ordered_qty_mt: '',
+      unit_rate: '',
       tolerable_variance_pct: 5,
     },
   ]);
 
   // Nominal weight formula: (OD - WT) * WT * 0.0246615
-  const calcNominalWeight = (od: number, wt: number) => {
-    if (!od || !wt || od <= wt) return 30;
-    return Number(((od - wt) * wt * 0.0246615).toFixed(2));
+  const calcNominalWeight = (od: number | '', wt: number | '') => {
+    const numOd = Number(od) || 0;
+    const numWt = Number(wt) || 0;
+    if (!numOd || !numWt || numOd <= numWt) return 0;
+    return Number(((numOd - numWt) * numWt * 0.0246615).toFixed(2));
   };
 
-  const calcEstMt = (meters: number, od: number, wt: number) => {
+  const calcEstMt = (meters: number | '', od: number | '', wt: number | '') => {
+    const numMeters = Number(meters) || 0;
     const nomWeight = calcNominalWeight(od, wt);
-    return Number(((meters * nomWeight) / 1000).toFixed(3));
+    if (nomWeight === 0 || numMeters === 0) return 0;
+    return Number(((numMeters * nomWeight) / 1000).toFixed(3));
   };
 
   // Close overflow menu on outside click
@@ -168,15 +170,6 @@ export default function ProcurementModule() {
     fetchData();
   }, []);
 
-  // Auto-sync supplier selection whenever suppliers load
-  useEffect(() => {
-    if (suppliers.length > 0 && !supplierId) {
-      const activeSup = suppliers.find((s) => s.status === 'Active') || suppliers[0];
-      if (activeSup) {
-        setSupplierId(activeSup.supplier_id);
-      }
-    }
-  }, [suppliers, supplierId]);
 
   // Compute Unique Grades for Filter Dropdown
   const availableGrades = useMemo(() => {
@@ -336,8 +329,7 @@ export default function ProcurementModule() {
     setFormError(null);
     setPoNo(`PO-${new Date().getFullYear()}-${String(purchaseOrders.length + 1).padStart(3, '0')}`);
     setPoDate(new Date().toISOString().split('T')[0]);
-    const defaultSup = suppliers.find((s) => s.status === 'Active')?.supplier_id || suppliers[0]?.supplier_id || '';
-    setSupplierId(defaultSup);
+    setSupplierId('');
 
     // If suppliers haven't finished loading yet, trigger eager fetch
     if (suppliers.length === 0) {
@@ -346,31 +338,30 @@ export default function ProcurementModule() {
         .then((sups) => {
           if (Array.isArray(sups) && sups.length > 0) {
             setSuppliers(sups);
-            setSupplierId((prev) => prev || sups[0].supplier_id);
           }
         })
         .catch(() => {});
     }
 
-    setShippingAddress('Dock 4, Tubular Inwarding Yard, Precision Hub');
-    setDeliveryDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-    setPaymentTerms('30% Advance, Net 60 Days');
-    setDeliveryTerms('FOB Mill Yard');
-    setAdvanceAmount(0);
+    setShippingAddress('');
+    setDeliveryDate('');
+    setPaymentTerms('');
+    setDeliveryTerms('');
+    setAdvanceAmount('');
     setQualityStipulations(DEFAULT_QUALITY_STIPULATIONS);
     setPoStatus('Draft');
 
     setItems([
       {
         product_id: '',
-        size_od: 177.8,
-        grade: 'L80',
-        wall_thickness: 10.36,
-        schedule: 'Sch 80',
-        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-        ordered_qty: 1000,
-        ordered_qty_mt: calcEstMt(1000, 177.8, 10.36),
-        unit_rate: 45,
+        size_od: '',
+        grade: '',
+        wall_thickness: '',
+        schedule: '',
+        cvn_requirement: '',
+        ordered_qty: '',
+        ordered_qty_mt: '',
+        unit_rate: '',
         tolerable_variance_pct: 5,
       },
     ]);
@@ -484,14 +475,14 @@ export default function ProcurementModule() {
       ...items,
       {
         product_id: '',
-        size_od: 177.8,
-        grade: 'L80',
-        wall_thickness: 10.36,
-        schedule: 'Sch 80',
-        cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-        ordered_qty: 500,
-        ordered_qty_mt: calcEstMt(500, 177.8, 10.36),
-        unit_rate: 50,
+        size_od: '',
+        grade: '',
+        wall_thickness: '',
+        schedule: '',
+        cvn_requirement: '',
+        ordered_qty: '',
+        ordered_qty_mt: '',
+        unit_rate: '',
         tolerable_variance_pct: 5,
       },
     ]);
@@ -507,10 +498,10 @@ export default function ProcurementModule() {
     const item = { ...newItems[index], [field]: value };
 
     if (field === 'size_od' || field === 'wall_thickness') {
-      const od = field === 'size_od' ? Number(value) : item.size_od;
-      const wt = field === 'wall_thickness' ? Number(value) : item.wall_thickness;
-      if (od > 0 && wt > 0) {
-        item.ordered_qty_mt = calcEstMt(item.ordered_qty || 0, od, wt);
+      const od = field === 'size_od' ? (value === '' ? '' : Number(value)) : item.size_od;
+      const wt = field === 'wall_thickness' ? (value === '' ? '' : Number(value)) : item.wall_thickness;
+      if (Number(od) > 0 && Number(wt) > 0 && Number(item.ordered_qty) > 0) {
+        item.ordered_qty_mt = calcEstMt(item.ordered_qty, od, wt);
       }
     }
 
@@ -527,14 +518,14 @@ export default function ProcurementModule() {
 
   // Live Calculations in Modal
   const totalPOValue = useMemo(() => {
-    return items.reduce((sum, item) => sum + (item.ordered_qty_mt || 0) * (item.unit_rate || 0), 0);
+    return items.reduce((sum, item) => sum + (Number(item.ordered_qty_mt) || 0) * (Number(item.unit_rate) || 0), 0);
   }, [items]);
 
   const totalPOMt = useMemo(() => {
-    return items.reduce((sum, item) => sum + (item.ordered_qty_mt || 0), 0);
+    return items.reduce((sum, item) => sum + (Number(item.ordered_qty_mt) || 0), 0);
   }, [items]);
 
-  const remainingAmount = Math.max(0, totalPOValue - advanceAmount);
+  const remainingAmount = Math.max(0, totalPOValue - (Number(advanceAmount) || 0));
 
   const handleSubmitPO = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -557,9 +548,53 @@ export default function ProcurementModule() {
       setFormError('Delivery Due Target date is required.');
       return;
     }
+    if (!shippingAddress.trim()) {
+      setFormError('Destination Receiving Yard is required.');
+      return;
+    }
+    if (!deliveryTerms.trim()) {
+      setFormError('IncoTerms / Delivery Terms are required.');
+      return;
+    }
+    if (!paymentTerms.trim()) {
+      setFormError('Payment Commercial Terms are required.');
+      return;
+    }
     if (!items || items.length === 0) {
       setFormError('Please add at least one pipe specification line item.');
       return;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i];
+      if (!it.size_od || Number(it.size_od) <= 0) {
+        setFormError(`Line #${i + 1}: Size OD (mm) is required and must be greater than 0.`);
+        return;
+      }
+      if (!it.grade || !it.grade.trim()) {
+        setFormError(`Line #${i + 1}: Steel Grade selection is required.`);
+        return;
+      }
+      if (!it.wall_thickness || Number(it.wall_thickness) <= 0) {
+        setFormError(`Line #${i + 1}: Wall Thickness (mm) is required and must be greater than 0.`);
+        return;
+      }
+      if (Number(it.wall_thickness) >= Number(it.size_od)) {
+        setFormError(`Line #${i + 1}: Wall Thickness must be less than Size OD.`);
+        return;
+      }
+      if (!it.cvn_requirement || !it.cvn_requirement.trim()) {
+        setFormError(`Line #${i + 1}: CVN requirement specification is required.`);
+        return;
+      }
+      if (it.ordered_qty_mt === '' || Number(it.ordered_qty_mt) <= 0) {
+        setFormError(`Line #${i + 1}: Ordered MT (Tonnage) is required and must be greater than 0.`);
+        return;
+      }
+      if (it.unit_rate === '' || Number(it.unit_rate) <= 0) {
+        setFormError(`Line #${i + 1}: Contract Rate ($/MT) is required and must be greater than 0.`);
+        return;
+      }
     }
 
     try {
@@ -1495,6 +1530,7 @@ export default function ProcurementModule() {
                       type="text"
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
+                      placeholder="e.g. Dock 4, Tubular Inwarding Yard, Precision Hub"
                       required
                       className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
                     />
@@ -1551,13 +1587,13 @@ export default function ProcurementModule() {
                               Line #{idx + 1}
                             </span>
                             <span className="text-[10px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-mono">
-                              {item.size_od || 0}mm OD • {item.grade || 'L80'} • {item.wall_thickness || 0}mm WT
+                              {item.size_od ? `${item.size_od}mm OD` : 'Pending OD'} • {item.grade || 'Select Grade'} • {item.wall_thickness ? `${item.wall_thickness}mm WT` : 'Pending WT'}
                             </span>
                           </div>
 
                           <div className="flex items-center space-x-3">
                             <span className="text-[10px] text-slate-500 font-mono">
-                              Nominal: <strong className="text-blue-400">{nomWt} kg/m</strong>
+                              Nominal: <strong className="text-blue-400">{nomWt > 0 ? `${nomWt} kg/m` : '-'}</strong>
                             </span>
                             <button
                               type="button"
@@ -1586,8 +1622,8 @@ export default function ProcurementModule() {
                               type="number"
                               step="0.01"
                               required
-                              value={item.size_od || ''}
-                              onChange={(e) => handleItemSpecChange(idx, 'size_od', parseFloat(e.target.value) || 0)}
+                              value={item.size_od ?? ''}
+                              onChange={(e) => handleItemSpecChange(idx, 'size_od', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
                               placeholder="e.g. 177.8"
                             />
@@ -1604,7 +1640,7 @@ export default function ProcurementModule() {
                                   type="button"
                                   onClick={() => handleItemSpecChange(idx, 'size_od', s.val)}
                                   className={`text-[9px] px-1.5 py-0.5 rounded border transition ${
-                                    Math.abs((item.size_od || 0) - s.val) < 0.1
+                                    Math.abs((Number(item.size_od) || 0) - s.val) < 0.1
                                       ? 'bg-blue-900 text-blue-200 border-blue-600 font-bold'
                                       : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
                                   }`}
@@ -1621,10 +1657,12 @@ export default function ProcurementModule() {
                               2. Steel Grade
                             </label>
                             <select
-                              value={item.grade || 'L80'}
+                              value={item.grade}
                               onChange={(e) => handleItemSpecChange(idx, 'grade', e.target.value)}
                               className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              required
                             >
+                              <option value="">-- Select Grade --</option>
                               <option value="J55">J55 (API 5CT)</option>
                               <option value="K55">K55 (API 5CT)</option>
                               <option value="L80">L80 (Sour Service / 80 ksi)</option>
@@ -1660,8 +1698,8 @@ export default function ProcurementModule() {
                               type="number"
                               step="0.01"
                               required
-                              value={item.wall_thickness || ''}
-                              onChange={(e) => handleItemSpecChange(idx, 'wall_thickness', parseFloat(e.target.value) || 0)}
+                              value={item.wall_thickness ?? ''}
+                              onChange={(e) => handleItemSpecChange(idx, 'wall_thickness', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
                               placeholder="e.g. 10.36"
                             />
@@ -1678,7 +1716,7 @@ export default function ProcurementModule() {
                                   type="button"
                                   onClick={() => handleItemSpecChange(idx, 'wall_thickness', wt.val)}
                                   className={`text-[9px] px-1.5 py-0.5 rounded border transition ${
-                                    Math.abs((item.wall_thickness || 0) - wt.val) < 0.1
+                                    Math.abs((Number(item.wall_thickness) || 0) - wt.val) < 0.1
                                       ? 'bg-blue-900 text-blue-200 border-blue-600 font-bold'
                                       : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
                                   }`}
@@ -1695,10 +1733,12 @@ export default function ProcurementModule() {
                               4. CVN (Charpy V-Notch)
                             </label>
                             <select
-                              value={item.cvn_requirement || DEFAULT_CVN_REQUIREMENT}
+                              value={item.cvn_requirement}
                               onChange={(e) => handleItemSpecChange(idx, 'cvn_requirement', e.target.value)}
                               className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:border-blue-500 outline-none"
+                              required
                             >
+                              <option value="">-- Select CVN Spec --</option>
                               {item.cvn_requirement && !cvnOptions.includes(item.cvn_requirement as any) && (
                                 <option value={item.cvn_requirement}>{item.cvn_requirement} (Custom/Legacy)</option>
                               )}
@@ -1722,8 +1762,9 @@ export default function ProcurementModule() {
                               type="number"
                               step="0.001"
                               required
-                              value={item.ordered_qty_mt}
-                              onChange={(e) => handleItemChange(idx, 'ordered_qty_mt', parseFloat(e.target.value) || 0)}
+                              value={item.ordered_qty_mt ?? ''}
+                              onChange={(e) => handleItemChange(idx, 'ordered_qty_mt', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
+                              placeholder="0.000"
                               className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
                             />
                           </div>
@@ -1734,8 +1775,9 @@ export default function ProcurementModule() {
                               type="number"
                               step="0.01"
                               required
-                              value={item.unit_rate}
-                              onChange={(e) => handleItemChange(idx, 'unit_rate', parseFloat(e.target.value) || 0)}
+                              value={item.unit_rate ?? ''}
+                              onChange={(e) => handleItemChange(idx, 'unit_rate', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
+                              placeholder="0.00"
                               className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
                             />
                           </div>
