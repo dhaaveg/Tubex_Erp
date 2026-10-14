@@ -1257,7 +1257,9 @@ export default function ProcurementModule() {
                                             #{idx + 1}
                                           </td>
                                           <td className="py-2 px-3 font-sans font-medium text-slate-200">
-                                            {item.product?.product_description || `Tubular Pipe ${item.size_od}mm`}
+                                            {item.product?.product_description
+                                              ? item.product.product_description.replace(/\bPlain\s*End\s*Pipe\b/gi, 'Raw Pipe').replace(/\bPlain\s*End\b/gi, 'Raw Pipe').trim()
+                                              : `${item.size_od}mm OD x ${item.wall_thickness}mm WT API 5CT ${item.grade} Raw Pipe`}
                                           </td>
                                           <td className="py-2 px-3 text-slate-300">
                                             {item.size_od}mm × {item.wall_thickness}mm • Grade {item.grade}

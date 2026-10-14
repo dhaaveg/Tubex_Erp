@@ -373,15 +373,18 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
                 </h5>
                 <div className="overflow-x-auto border border-slate-300 rounded-lg print:overflow-visible">
                   <table className="w-full text-left text-xs border-collapse">
-                    <thead className="bg-slate-100 text-slate-700 font-mono text-[11px] border-b border-slate-300">
+                    <thead className="bg-slate-100 text-slate-700 font-mono text-[10px] uppercase border-b border-slate-300">
                       <tr>
-                        <th className="p-2.5">#</th>
-                        <th className="p-2.5">Line ID</th>
-                        <th className="p-2.5">Product Description</th>
-                        <th className="p-2.5">Technical Specs (OD • WT • Grade • CVN)</th>
-                        <th className="p-2.5 text-right">Ordered MT</th>
-                        <th className="p-2.5 text-right">Rate ($)</th>
-                        <th className="p-2.5 text-right">Total ($)</th>
+                        <th className="p-2 text-center w-8">#</th>
+                        <th className="p-2">Line ID</th>
+                        <th className="p-2">Description / Grade</th>
+                        <th className="p-2 text-right">Size OD</th>
+                        <th className="p-2 text-right">WT</th>
+                        <th className="p-2">CVN Spec</th>
+                        <th className="p-2 text-right">Quantity</th>
+                        <th className="p-2 text-right">MT</th>
+                        <th className="p-2 text-right">Rate ($)</th>
+                        <th className="p-2 text-right">Total Amount ($)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 font-mono text-[11px]">
@@ -392,21 +395,31 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
                         const wt = prd.wall_thickness || item.wall_thickness;
                         const grade = prd.grade || item.grade;
                         const cvn = prd.cvn_requirement || item.cvn_requirement || 'API 5CT Standard';
+                        const orderedMtrs = item.ordered_qty || 0;
+                        const orderedMt = item.ordered_qty_mt || 0;
+
+                        // Clean up product description to omit "Plain End" and format as Raw Pipe
+                        const cleanDesc = (prd.product_description || `${sizeOd}mm OD x ${wt}mm WT API 5CT ${grade} Raw Pipe`)
+                          .replace(/\bPlain\s*End\s*Pipe\b/gi, 'Raw Pipe')
+                          .replace(/\bPlain\s*End\b/gi, 'Raw Pipe')
+                          .replace(/\s+/g, ' ')
+                          .trim();
 
                         return (
                           <tr key={item.po_item_id || idx} className="hover:bg-slate-50 avoid-break print:break-inside-avoid">
-                            <td className="p-2.5 text-slate-500">{idx + 1}</td>
-                            <td className="p-2.5 font-bold text-blue-900">{item.po_item_id}</td>
-                            <td className="p-2.5 font-sans font-medium text-slate-800">
-                              {prd.product_description || `${sizeOd}mm OD x ${wt}mm WT Grade ${grade} Pipe`}
+                            <td className="p-2 text-center text-slate-500">{idx + 1}</td>
+                            <td className="p-2 font-bold text-blue-900">{item.po_item_id}</td>
+                            <td className="p-2 font-sans font-medium text-slate-800">
+                              <div className="font-semibold text-slate-900">{cleanDesc}</div>
+                              <div className="text-[10px] text-slate-500 font-mono">API 5CT • Grade {grade}</div>
                             </td>
-                            <td className="p-2.5 text-slate-700">
-                              <div><strong>{sizeOd}mm OD</strong> • {wt}mm WT • <strong>Grade {grade}</strong></div>
-                              <div className="text-[10px] text-slate-500 font-sans">CVN: {cvn}</div>
-                            </td>
-                            <td className="p-2.5 text-right font-bold text-slate-900">{item.ordered_qty_mt?.toFixed(3)} MT</td>
-                            <td className="p-2.5 text-right text-slate-700">${item.unit_rate}</td>
-                            <td className="p-2.5 text-right font-bold text-slate-900">${lineTot.toLocaleString()}</td>
+                            <td className="p-2 text-right font-mono font-bold text-slate-900">{sizeOd} mm</td>
+                            <td className="p-2 text-right font-mono text-slate-800">{wt} mm</td>
+                            <td className="p-2 font-sans text-slate-700 text-[10px]">{cvn}</td>
+                            <td className="p-2 text-right font-mono text-slate-700">{orderedMtrs.toLocaleString()} m</td>
+                            <td className="p-2 text-right font-mono font-bold text-slate-900">{orderedMt.toFixed(3)} MT</td>
+                            <td className="p-2 text-right font-mono text-slate-700">${item.unit_rate}</td>
+                            <td className="p-2 text-right font-mono font-bold text-slate-900">${lineTot.toLocaleString()}</td>
                           </tr>
                         );
                       })}

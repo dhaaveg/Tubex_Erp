@@ -64,10 +64,9 @@ async function resolveProductId(item: {
   size_od?: number;
   wall_thickness?: number;
   grade?: string;
-  thread_type?: string;
   cvn_requirement?: string;
 }): Promise<string> {
-  // 1. If explicit product_id provided, reuse it directly without discriminating on thread
+  // 1. If explicit product_id provided, reuse it directly
   if (item.product_id) {
     const existing = await prisma.product.findUnique({
       where: { product_id: item.product_id },
@@ -81,19 +80,7 @@ async function resolveProductId(item: {
   if (item.size_od && item.grade && item.wall_thickness) {
     const targetCvn = item.cvn_requirement || DEFAULT_CVN_REQUIREMENT;
 
-    // Prefer Plain End raw pipe if one already exists matching CVN
-    const matchedPlain = await prisma.product.findFirst({
-      where: {
-        size_od: Number(item.size_od),
-        wall_thickness: Number(item.wall_thickness),
-        grade: item.grade,
-        thread_type: 'Plain End',
-        cvn_requirement: targetCvn,
-      },
-    });
-    if (matchedPlain) return matchedPlain.product_id;
-
-    // Otherwise link to any existing catalog item matching size, WT, grade, and CVN
+    // Match existing raw tubular stock matching dimensional spec and CVN
     const matchedWithCvn = await prisma.product.findFirst({
       where: {
         size_od: Number(item.size_od),
@@ -101,16 +88,28 @@ async function resolveProductId(item: {
         grade: item.grade,
         cvn_requirement: targetCvn,
       },
+      orderBy: { created_at: 'asc' },
     });
     if (matchedWithCvn) return matchedWithCvn.product_id;
 
-    // 3. Auto-create a Plain End raw pipe catalog product for procurement
+    // Fallback match on dimensions & grade
+    const matchedSpec = await prisma.product.findFirst({
+      where: {
+        size_od: Number(item.size_od),
+        wall_thickness: Number(item.wall_thickness),
+        grade: item.grade,
+      },
+      orderBy: { created_at: 'asc' },
+    });
+    if (matchedSpec) return matchedSpec.product_id;
+
+    // 3. Auto-create a raw pipe catalog product for procurement
     const count = await prisma.product.count();
     const newId = `PRD-${String(count + 1).padStart(3, '0')}`;
     const nomWeight = Number(
       ((Number(item.size_od) - Number(item.wall_thickness)) * Number(item.wall_thickness) * 0.0246615).toFixed(2)
     );
-    const desc = `${item.size_od}mm OD x ${item.wall_thickness}mm WT API 5CT ${item.grade} Plain End Pipe`;
+    const desc = `${item.size_od}mm OD x ${item.wall_thickness}mm WT API 5CT ${item.grade} Raw Pipe`;
 
     const created = await prisma.product.create({
       data: {
@@ -119,7 +118,7 @@ async function resolveProductId(item: {
         size_od: Number(item.size_od),
         wall_thickness: Number(item.wall_thickness),
         grade: item.grade,
-        thread_type: 'Plain End',
+        thread_type: 'Plain End', // Satisfies internal DB schema default without exposing to UI
         cvn_requirement: targetCvn,
         nominal_weight_kg_m: nomWeight > 0 ? nomWeight : 30.0,
         uom: 'Meters',
