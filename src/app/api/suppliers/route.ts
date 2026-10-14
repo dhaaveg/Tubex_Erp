@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { SupplierSchema } from '@/lib/validations';
 import { withApiHandler } from '@/lib/api-handler';
+import { ZodError } from 'zod';
+
+function formatZodError(error: any): string {
+  if (error instanceof ZodError || (error?.errors && Array.isArray(error.errors))) {
+    return (error.errors || []).map((e: any) => e.message).filter(Boolean).join('; ') || 'Validation error';
+  }
+  return error?.message || 'Validation error';
+}
 
 export const GET = withApiHandler(async (request: Request) => {
   try {
@@ -79,7 +87,7 @@ export const POST = withApiHandler(async (request: Request) => {
   } catch (error: any) {
     console.error('Error creating supplier:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: formatZodError(error), details: error.errors },
       { status: 400 }
     );
   }
@@ -127,7 +135,7 @@ export const PUT = withApiHandler(async (request: Request) => {
   } catch (error: any) {
     console.error('Error updating supplier:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Validation error', details: error.errors },
+      { success: false, error: formatZodError(error), details: error.errors },
       { status: 400 }
     );
   }

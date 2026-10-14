@@ -145,14 +145,13 @@ export default function ProcurementModule() {
         fetch(apiUrl('/api/products')),
       ]);
       const [pos, sups, prds] = await Promise.all([
-        poRes.json(),
-        supRes.json(),
-        prdRes.json(),
+        poRes.ok ? poRes.json().catch(() => []) : [],
+        supRes.ok ? supRes.json().catch(() => []) : [],
+        prdRes.ok ? prdRes.json().catch(() => []) : [],
       ]);
       if (Array.isArray(pos)) setPurchaseOrders(pos);
       if (Array.isArray(sups)) {
         setSuppliers(sups);
-        if (sups.length > 0 && !supplierId) setSupplierId(sups[0].supplier_id);
       }
       if (Array.isArray(prds)) {
         setProducts(prds);
@@ -168,6 +167,16 @@ export default function ProcurementModule() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Auto-sync supplier selection whenever suppliers load
+  useEffect(() => {
+    if (suppliers.length > 0 && !supplierId) {
+      const activeSup = suppliers.find((s) => s.status === 'Active') || suppliers[0];
+      if (activeSup) {
+        setSupplierId(activeSup.supplier_id);
+      }
+    }
+  }, [suppliers, supplierId]);
 
   // Compute Unique Grades for Filter Dropdown
   const availableGrades = useMemo(() => {
@@ -327,7 +336,22 @@ export default function ProcurementModule() {
     setFormError(null);
     setPoNo(`PO-${new Date().getFullYear()}-${String(purchaseOrders.length + 1).padStart(3, '0')}`);
     setPoDate(new Date().toISOString().split('T')[0]);
-    setSupplierId(suppliers[0]?.supplier_id || '');
+    const defaultSup = suppliers.find((s) => s.status === 'Active')?.supplier_id || suppliers[0]?.supplier_id || '';
+    setSupplierId(defaultSup);
+
+    // If suppliers haven't finished loading yet, trigger eager fetch
+    if (suppliers.length === 0) {
+      fetch(apiUrl('/api/suppliers?status=Active'))
+        .then((res) => (res.ok ? res.json() : []))
+        .then((sups) => {
+          if (Array.isArray(sups) && sups.length > 0) {
+            setSuppliers(sups);
+            setSupplierId((prev) => prev || sups[0].supplier_id);
+          }
+        })
+        .catch(() => {});
+    }
+
     setShippingAddress('Dock 4, Tubular Inwarding Yard, Precision Hub');
     setDeliveryDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     setPaymentTerms('30% Advance, Net 60 Days');
@@ -515,11 +539,34 @@ export default function ProcurementModule() {
   const handleSubmitPO = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
+
+    const cleanSupplierId = (supplierId || '').trim();
+    if (!cleanSupplierId) {
+      setFormError('Vendor / Mill Supplier is required. Please select a supplier from the dropdown.');
+      return;
+    }
+    if (!poNo || !poNo.trim()) {
+      setFormError('RM PO Number is required.');
+      return;
+    }
+    if (!poDate) {
+      setFormError('RM PO Issuance Date is required.');
+      return;
+    }
+    if (!deliveryDate) {
+      setFormError('Delivery Due Target date is required.');
+      return;
+    }
+    if (!items || items.length === 0) {
+      setFormError('Please add at least one pipe specification line item.');
+      return;
+    }
+
     try {
       const payload = {
-        po_no: poNo,
+        po_no: poNo.trim(),
         po_date: poDate,
-        supplier_id: supplierId,
+        supplier_id: cleanSupplierId,
         shipping_address: shippingAddress,
         delivery_date: deliveryDate,
         payment_terms: paymentTerms,
@@ -548,14 +595,34 @@ export default function ProcurementModule() {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'create'} RM PO`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        let msg = data.error || `Failed to ${isEditMode ? 'update' : 'create'} RM PO`;
+        if (typeof msg === 'string' && msg.trim().startsWith('[') && msg.includes('"message"')) {
+          try {
+            const parsed = JSON.parse(msg);
+            if (Array.isArray(parsed)) {
+              msg = parsed.map((p: any) => p.message).filter(Boolean).join('; ') || msg;
+            }
+          } catch {}
+        }
+        throw new Error(msg);
+      }
 
       setIsModalOpen(false);
       setPoNo('');
       fetchData(true);
     } catch (err: any) {
-      setFormError(err.message);
+      let errMsg = err?.message || 'Failed to save RM PO contract.';
+      if (typeof errMsg === 'string' && errMsg.trim().startsWith('[') && errMsg.includes('"message"')) {
+        try {
+          const parsed = JSON.parse(errMsg);
+          if (Array.isArray(parsed)) {
+            errMsg = parsed.map((p: any) => p.message).filter(Boolean).join('; ') || errMsg;
+          }
+        } catch {}
+      }
+      setFormError(errMsg);
     }
   };
 
@@ -1292,7 +1359,7 @@ export default function ProcurementModule() {
             )}
 
             {/* Modal Body: Scrollable Content with Sections */}
-            <form onSubmit={handleSubmitPO} className="flex-1 overflow-y-auto p-6 space-y-6 text-xs">
+            <form id="rm-po-form" onSubmit={handleSubmitPO} className="flex-1 overflow-y-auto p-6 space-y-6 text-xs">
               {/* SECTION 1: General Details & Logistics */}
               <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
@@ -1341,19 +1408,36 @@ export default function ProcurementModule() {
 
                   {/* Supplier Selection */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Vendor / Mill Supplier</label>
+                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+                      Vendor / Mill Supplier <span className="text-rose-400">*</span>
+                    </label>
                     <select
                       value={supplierId}
-                      onChange={(e) => setSupplierId(e.target.value)}
+                      onChange={(e) => {
+                        setSupplierId(e.target.value);
+                        if (formError) setFormError(null);
+                      }}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none font-medium"
+                      className={`w-full bg-slate-900 border ${
+                        !supplierId && formError
+                          ? 'border-rose-500 ring-1 ring-rose-500 text-rose-200'
+                          : 'border-slate-700 text-slate-200'
+                      } rounded-lg px-3 py-2 focus:border-blue-500 outline-none font-medium transition`}
                     >
+                      <option value="" disabled={suppliers.length > 0}>
+                        {suppliers.length === 0 ? '-- Loading Suppliers... --' : '-- Select Vendor / Mill Supplier --'}
+                      </option>
                       {suppliers.map((s) => (
                         <option key={s.supplier_id} value={s.supplier_id}>
                           {s.supplier_name} ({s.mill_name})
                         </option>
                       ))}
                     </select>
+                    {!supplierId && formError && (
+                      <p className="mt-1 text-[10px] text-rose-400 font-medium">
+                        Please select a vendor / mill supplier
+                      </p>
+                    )}
                   </div>
 
                   {/* Delivery Due Date */}
@@ -1744,8 +1828,8 @@ export default function ProcurementModule() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleSubmitPO}
-                  type="button"
+                  form="rm-po-form"
+                  type="submit"
                   className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center space-x-1.5 transition cursor-pointer"
                 >
                   {isEditMode ? <Pencil className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}

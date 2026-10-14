@@ -123,9 +123,19 @@ const FALLBACK_DEFAULT_ROLES: Record<string, Record<string, { is_enabled: boolea
   OPERATOR: { ...ALL_MODULES_ACTIVE_RW },
 };
 
-function resolveModuleKey(pathname: string): string | null {
+function resolveModuleKey(pathname: string, method?: string): string | null {
   if (pathname === '/' || pathname === '/home') return null; // Root / is neutral landing page
   if (pathname === '/overview' || pathname === '/dashboard') return 'overview';
+
+  // Read-only catalog lookups: GET /api/suppliers and GET /api/products are shared operational references
+  // required across Procurement, Receiving, Shop Floor, Quality, and Orders
+  if (
+    method === 'GET' &&
+    (pathname.startsWith('/api/suppliers') || pathname.startsWith('/api/products'))
+  ) {
+    return null;
+  }
+
   if (
     pathname === '/master-data' ||
     pathname === '/master' ||
@@ -507,7 +517,7 @@ export async function middleware(request: NextRequest) {
   const matrix = cachedMatrixByRole || FALLBACK_DEFAULT_ROLES;
 
   // 9. Resolve target module
-  const moduleKey = resolveModuleKey(pathname);
+  const moduleKey = resolveModuleKey(pathname, method);
 
   // Root landing page '/' is a neutral, safe landing hub accessible to all authenticated users
   if (!moduleKey || pathname === '/') {
