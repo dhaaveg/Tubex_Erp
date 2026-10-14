@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Download,
   FileSpreadsheet,
@@ -20,7 +20,13 @@ import {
   ChevronUp,
   Database,
   Sparkles,
-  Info
+  Info,
+  Search,
+  Calendar,
+  RotateCcw,
+  Filter,
+  X,
+  AlertCircle,
 } from 'lucide-react';
 import { exportToExcel, exportToCsv, exportSingleSheetToExcel } from '@/lib/export';
 import { apiUrl } from '@/lib/api';
@@ -130,6 +136,127 @@ const DATASETS: DatasetMeta[] = [
   },
 ];
 
+const CATEGORIES = [
+  'ALL',
+  'Inventory & Receiving',
+  'Manufacturing Operations',
+  'Production Planning',
+  'QA & Compliance',
+  'Supply Chain',
+  'Sales & Commercial',
+  'Master Data',
+] as const;
+
+/**
+ * Parses any date format present in ERP export records (DD-MM-YYYY, DD-MM-YYYY HH:mm, or ISO)
+ */
+function parseRowDate(row: Record<string, any>): Date | null {
+  const dateVal =
+    row['Date'] ||
+    row['Tally Date'] ||
+    row['Completion Date'] ||
+    row['Logged Date'] ||
+    row['PO Date'] ||
+    row['GRN Date'] ||
+    row['Order Date'] ||
+    row['Onboarding Date'] ||
+    row['Invoice Date'];
+
+  if (!dateVal || typeof dateVal !== 'string') return null;
+
+  // DD-MM-YYYY or DD-MM-YYYY HH:mm
+  const match = dateVal.trim().match(/^(\d{2})-(\d{2})-(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+  if (match) {
+    const [, d, m, y, h, min] = match;
+    const date = new Date(
+      Number(y),
+      Number(m) - 1,
+      Number(d),
+      h ? Number(h) : 0,
+      min ? Number(min) : 0
+    );
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  const fallbackDate = new Date(dateVal);
+  return isNaN(fallbackDate.getTime()) ? null : fallbackDate;
+}
+
+interface ExportButtonProps {
+  onClick: () => void;
+  disabled?: boolean;
+  isLoading?: boolean;
+  hasRows: boolean;
+  icon: React.ReactNode;
+  label: string;
+  variant: 'excel' | 'csv' | 'master-excel' | 'master-csv';
+  count?: number;
+  className?: string;
+}
+
+function ExportButton({
+  onClick,
+  disabled,
+  isLoading,
+  hasRows,
+  icon,
+  label,
+  variant,
+  count,
+  className = '',
+}: ExportButtonProps) {
+  const isDisabled = !hasRows || Boolean(isLoading) || Boolean(disabled);
+  const tooltipText = !hasRows
+    ? 'No records found to export for the selected filter criteria.'
+    : count !== undefined
+    ? `Export ${count} ${count === 1 ? 'record' : 'records'} as ${label}`
+    : `Export as ${label}`;
+
+  let variantStyles = '';
+  if (variant === 'excel') {
+    variantStyles = isDisabled
+      ? 'bg-emerald-950/20 text-emerald-500/40 border-emerald-900/30'
+      : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-800/60 hover:shadow-md hover:shadow-emerald-950/40 active:scale-[0.98] cursor-pointer';
+  } else if (variant === 'csv') {
+    variantStyles = isDisabled
+      ? 'bg-blue-950/20 text-blue-500/40 border-blue-900/30'
+      : 'bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border-blue-800/60 hover:shadow-md hover:shadow-blue-950/40 active:scale-[0.98] cursor-pointer';
+  } else if (variant === 'master-excel') {
+    variantStyles = isDisabled
+      ? 'bg-slate-800 text-slate-500 border-slate-700'
+      : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold shadow-lg shadow-emerald-950/50 border-emerald-500/30 active:scale-[0.98] cursor-pointer';
+  } else if (variant === 'master-csv') {
+    variantStyles = isDisabled
+      ? 'bg-slate-800/40 text-slate-600 border-slate-800'
+      : 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-medium border-slate-700 hover:shadow-md active:scale-[0.98] cursor-pointer';
+  }
+
+  const disabledStyles = isDisabled
+    ? 'opacity-40 cursor-not-allowed pointer-events-none grayscale-[40%] shadow-none hover:bg-transparent hover:shadow-none active:scale-100'
+    : '';
+
+  return (
+    <div className="relative group w-full" title={tooltipText}>
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={isDisabled}
+        aria-disabled={isDisabled ? 'true' : 'false'}
+        className={`w-full flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg border text-xs transition-all duration-200 ease-in-out ${variantStyles} ${disabledStyles} ${className}`}
+      >
+        {icon}
+        <span>{label}</span>
+      </button>
+
+      {/* Floating Hover Tooltip */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center px-2.5 py-1 text-[11px] font-medium rounded-lg shadow-2xl whitespace-nowrap z-30 pointer-events-none backdrop-blur-md border animate-in fade-in duration-150 bg-slate-900 text-slate-200 border-slate-700">
+        {!hasRows && <AlertCircle className="w-3 h-3 text-amber-400 mr-1.5 shrink-0" />}
+        <span>{tooltipText}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function DataExportModule() {
   const [exportData, setExportData] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
@@ -138,6 +265,13 @@ export default function DataExportModule() {
   const [activeExportingKey, setActiveExportingKey] = useState<string | null>(null);
   const [previewKey, setPreviewKey] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'info' } | null>(null);
+
+  // Filter & Search Controls
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [datePreset, setDatePreset] = useState<'all' | 'today' | '7d' | '30d' | 'this_month' | 'custom'>('all');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   const fetchExportData = async () => {
     setIsLoading(true);
@@ -164,85 +298,134 @@ export default function DataExportModule() {
     setTimeout(() => setStatusMessage(null), 4000);
   };
 
-  // 1-Click Master Excel Export (All 9 Tables in one workbook)
-  const handleExportMasterExcel = () => {
-    if (!exportData) return;
-    setIsExportingMaster(true);
+  // Compute effective date filter window
+  const { startDate, endDate } = useMemo(() => {
+    if (datePreset === 'all') return { startDate: null, endDate: null };
 
-    try {
-      const dateStr = formatDate(new Date());
-      const sheets = [
-        { sheetName: 'Pipe Inventory', rows: exportData['Pipe Inventory'] || [] },
-        { sheetName: 'Routing Logs', rows: exportData['Shop Routing Logs'] || [] },
-        { sheetName: 'Work Orders', rows: exportData['Work Orders'] || [] },
-        { sheetName: 'Quality Postings', rows: exportData['Quality & Defect Postings'] || [] },
-        { sheetName: 'Purchase Orders', rows: exportData['Purchase Orders'] || [] },
-        { sheetName: 'Goods Receipts', rows: exportData['Goods Receipt (GRN)'] || [] },
-        { sheetName: 'Customer Orders', rows: exportData['Customer Sales Orders'] || [] },
-        { sheetName: 'Product Catalog', rows: exportData['Product Catalog'] || [] },
-        { sheetName: 'Supplier Master', rows: exportData['Supplier Master'] || [] },
-      ];
-
-      exportToExcel(`TUBEX_ERP_Full_Database_Export_${dateStr}`, sheets);
-      showStatus(`Master Excel Workbook (9 sheets) downloaded successfully!`);
-    } catch (err: any) {
-      console.error('Error generating master Excel export:', err);
-    } finally {
-      setIsExportingMaster(false);
+    if (datePreset === 'custom') {
+      const s = customStartDate ? new Date(`${customStartDate}T00:00:00`) : null;
+      const e = customEndDate ? new Date(`${customEndDate}T23:59:59.999`) : null;
+      return { startDate: s, endDate: e };
     }
-  };
 
-  // Export All as Individual CSVs
-  const handleExportAllCsv = () => {
-    if (!exportData) return;
-    const dateStr = formatDate(new Date());
-    
-    DATASETS.forEach((ds) => {
-      const rows = getDatasetRows(ds.key);
-      if (rows && rows.length > 0) {
-        exportToCsv(`${ds.filename}_${dateStr}`, rows);
+    const now = new Date();
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    if (datePreset === 'today') {
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      return { startDate: start, endDate: end };
+    }
+
+    if (datePreset === '7d') {
+      const start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      start.setHours(0, 0, 0, 0);
+      return { startDate: start, endDate: end };
+    }
+
+    if (datePreset === '30d') {
+      const start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      start.setHours(0, 0, 0, 0);
+      return { startDate: start, endDate: end };
+    }
+
+    if (datePreset === 'this_month') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      return { startDate: start, endDate: end };
+    }
+
+    return { startDate: null, endDate: null };
+  }, [datePreset, customStartDate, customEndDate]);
+
+  // Helper to get raw rows by dataset key
+  const getDatasetRows = useCallback(
+    (key: string): Record<string, any>[] => {
+      if (!exportData) return [];
+      switch (key) {
+        case 'pipes': return exportData['Pipe Inventory'] || [];
+        case 'routing': return exportData['Shop Routing Logs'] || [];
+        case 'work-orders': return exportData['Work Orders'] || [];
+        case 'quality': return exportData['Quality & Defect Postings'] || [];
+        case 'procurement': return exportData['Purchase Orders'] || [];
+        case 'grn': return exportData['Goods Receipt (GRN)'] || [];
+        case 'customer-orders': return exportData['Customer Sales Orders'] || [];
+        case 'products': return exportData['Product Catalog'] || [];
+        case 'suppliers': return exportData['Supplier Master'] || [];
+        default: return [];
       }
-    });
+    },
+    [exportData]
+  );
 
-    showStatus(`Exported all 9 tables as individual CSV files!`);
+  // Helper to get filtered rows by dataset key (respects date window & search term)
+  const getFilteredRows = useCallback(
+    (key: string): Record<string, any>[] => {
+      const rawRows = getDatasetRows(key);
+      if (!rawRows || rawRows.length === 0) return [];
+
+      return rawRows.filter((row) => {
+        // 1. Date Range Filter
+        if (startDate || endDate) {
+          const rowDate = parseRowDate(row);
+          if (rowDate) {
+            if (startDate && rowDate < startDate) return false;
+            if (endDate && rowDate > endDate) return false;
+          } else if (key !== 'products') {
+            // For transactional tables with dates, if row has no date during a date filter, exclude
+            return false;
+          }
+        }
+
+        // 2. Search Query Filter
+        if (searchQuery.trim()) {
+          const q = searchQuery.trim().toLowerCase();
+          const meta = DATASETS.find((d) => d.key === key);
+          const metaMatches =
+            meta &&
+            (meta.name.toLowerCase().includes(q) ||
+              meta.description.toLowerCase().includes(q) ||
+              meta.category.toLowerCase().includes(q) ||
+              meta.columns.some((c) => c.toLowerCase().includes(q)));
+
+          if (!metaMatches) {
+            const rowMatches = Object.values(row).some((val) =>
+              val !== null && val !== undefined && String(val).toLowerCase().includes(q)
+            );
+            if (!rowMatches) return false;
+          }
+        }
+
+        return true;
+      });
+    },
+    [getDatasetRows, startDate, endDate, searchQuery]
+  );
+
+  // Active filter checks
+  const isFilterActive =
+    datePreset !== 'all' ||
+    searchQuery.trim().length > 0 ||
+    selectedCategory !== 'ALL' ||
+    customStartDate !== '' ||
+    customEndDate !== '';
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('ALL');
+    setDatePreset('all');
+    setCustomStartDate('');
+    setCustomEndDate('');
   };
 
-  // Helper to get rows by dataset key
-  const getDatasetRows = (key: string): Record<string, any>[] => {
-    if (!exportData) return [];
-    switch (key) {
-      case 'pipes': return exportData['Pipe Inventory'] || [];
-      case 'routing': return exportData['Shop Routing Logs'] || [];
-      case 'work-orders': return exportData['Work Orders'] || [];
-      case 'quality': return exportData['Quality & Defect Postings'] || [];
-      case 'procurement': return exportData['Purchase Orders'] || [];
-      case 'grn': return exportData['Goods Receipt (GRN)'] || [];
-      case 'customer-orders': return exportData['Customer Sales Orders'] || [];
-      case 'products': return exportData['Product Catalog'] || [];
-      case 'suppliers': return exportData['Supplier Master'] || [];
-      default: return [];
-    }
-  };
+  // Visible dataset cards based on category selection
+  const visibleDatasets = useMemo(() => {
+    if (selectedCategory === 'ALL') return DATASETS;
+    return DATASETS.filter((d) => d.category === selectedCategory);
+  }, [selectedCategory]);
 
-  // Individual Excel Export
-  const handleExportSingleExcel = (meta: DatasetMeta) => {
-    setActiveExportingKey(`${meta.key}-excel`);
-    const rows = getDatasetRows(meta.key);
-    const dateStr = formatDate(new Date());
-    exportSingleSheetToExcel(`${meta.filename}_${dateStr}`, meta.sheetName, rows);
-    showStatus(`Exported ${meta.name} as Excel (.xlsx)`);
-    setActiveExportingKey(null);
-  };
-
-  // Individual CSV Export
-  const handleExportSingleCsv = (meta: DatasetMeta) => {
-    setActiveExportingKey(`${meta.key}-csv`);
-    const rows = getDatasetRows(meta.key);
-    const dateStr = formatDate(new Date());
-    exportToCsv(`${meta.filename}_${dateStr}`, rows);
-    showStatus(`Exported ${meta.name} as CSV (.csv)`);
-    setActiveExportingKey(null);
-  };
+  // Aggregate counts
+  const totalFilteredCount = useMemo(() => {
+    return visibleDatasets.reduce((sum, ds) => sum + getFilteredRows(ds.key).length, 0);
+  }, [visibleDatasets, getFilteredRows]);
 
   const totalRecordCount = summary
     ? summary.totalPipes +
@@ -255,6 +438,75 @@ export default function DataExportModule() {
       summary.totalProducts +
       summary.totalSuppliers
     : 0;
+
+  const hasMasterRows = totalFilteredCount > 0;
+
+  // 1-Click Master Excel Export (All filtered tables into one workbook)
+  const handleExportMasterExcel = () => {
+    if (!hasMasterRows) return;
+    setIsExportingMaster(true);
+
+    try {
+      const dateStr = formatDate(new Date());
+      const sheets = DATASETS.map((ds) => ({
+        sheetName: ds.sheetName.replace(/_/g, ' '),
+        rows: getFilteredRows(ds.key),
+      })).filter((s) => s.rows.length > 0);
+
+      if (sheets.length === 0) {
+        setIsExportingMaster(false);
+        return;
+      }
+
+      exportToExcel(`TUBEX_ERP_Export_${dateStr}`, sheets);
+      showStatus(`Master Excel Workbook (${sheets.length} sheets, ${totalFilteredCount} records) downloaded successfully!`);
+    } catch (err: any) {
+      console.error('Error generating master Excel export:', err);
+    } finally {
+      setIsExportingMaster(false);
+    }
+  };
+
+  // Export All as Individual CSVs
+  const handleExportAllCsv = () => {
+    if (!hasMasterRows) return;
+    const dateStr = formatDate(new Date());
+
+    let exportedCount = 0;
+    DATASETS.forEach((ds) => {
+      const rows = getFilteredRows(ds.key);
+      if (rows && rows.length > 0) {
+        exportToCsv(`${ds.filename}_${dateStr}`, rows);
+        exportedCount++;
+      }
+    });
+
+    showStatus(`Exported ${exportedCount} tables as individual CSV files!`);
+  };
+
+  // Individual Excel Export
+  const handleExportSingleExcel = (meta: DatasetMeta) => {
+    const rows = getFilteredRows(meta.key);
+    if (!rows || rows.length === 0) return;
+
+    setActiveExportingKey(`${meta.key}-excel`);
+    const dateStr = formatDate(new Date());
+    exportSingleSheetToExcel(`${meta.filename}_${dateStr}`, meta.sheetName, rows);
+    showStatus(`Exported ${meta.name} (${rows.length} records) as Excel (.xlsx)`);
+    setActiveExportingKey(null);
+  };
+
+  // Individual CSV Export
+  const handleExportSingleCsv = (meta: DatasetMeta) => {
+    const rows = getFilteredRows(meta.key);
+    if (!rows || rows.length === 0) return;
+
+    setActiveExportingKey(`${meta.key}-csv`);
+    const dateStr = formatDate(new Date());
+    exportToCsv(`${meta.filename}_${dateStr}`, rows);
+    showStatus(`Exported ${meta.name} (${rows.length} records) as CSV (.csv)`);
+    setActiveExportingKey(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -285,6 +537,7 @@ export default function DataExportModule() {
 
         <div className="flex items-center space-x-3">
           <button
+            type="button"
             onClick={fetchExportData}
             disabled={isLoading}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
@@ -309,40 +562,167 @@ export default function DataExportModule() {
               Download Complete ERP Database Workbook (.xlsx)
             </h2>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Export all 9 system tables into a single formatted Microsoft Excel file. Each table is arranged in a dedicated worksheet with headers, optimal column widths, and proper number formatting.
+              Export all system tables into a single formatted Microsoft Excel file. Each table is arranged in a dedicated worksheet with headers, optimal column widths, and proper formatting.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono text-slate-400">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <strong>{totalRecordCount}</strong> total records active
+                <span className={`w-2 h-2 rounded-full ${hasMasterRows ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>
+                <strong className={hasMasterRows ? 'text-white' : 'text-amber-300'}>
+                  {totalFilteredCount} {totalFilteredCount === 1 ? 'record' : 'records'} selected
+                </strong>
+                {isFilterActive && (
+                  <span className="text-slate-500">({totalRecordCount} total database records)</span>
+                )}
               </span>
               <span>•</span>
-              <span>9 Worksheets Included</span>
+              <span>{visibleDatasets.length} Worksheets</span>
               <span>•</span>
               <span>UTF-8 / Excel 2016+ Compatible</span>
             </div>
+
+            {!hasMasterRows && !isLoading && (
+              <div className="text-xs text-amber-300/90 flex items-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>No records found to export for the selected filter criteria.</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0">
-            <button
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 min-w-[260px]">
+            <ExportButton
               onClick={handleExportMasterExcel}
-              disabled={isLoading || isExportingMaster}
-              className="flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/50 transition-all border border-emerald-500/30 active:scale-[0.98]"
-            >
-              <FileSpreadsheet className="w-4 h-4" />
-              <span>{isExportingMaster ? 'Generating Workbook...' : 'Download Master Excel (.xlsx)'}</span>
-            </button>
+              hasRows={hasMasterRows}
+              isLoading={isLoading || isExportingMaster}
+              variant="master-excel"
+              count={totalFilteredCount}
+              icon={<FileSpreadsheet className="w-4 h-4" />}
+              label={isExportingMaster ? 'Generating Workbook...' : 'Download Master Excel (.xlsx)'}
+            />
 
-            <button
+            <ExportButton
               onClick={handleExportAllCsv}
-              disabled={isLoading}
-              className="flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition-colors"
-            >
-              <FileText className="w-4 h-4 text-blue-400" />
-              <span>Download All Tables as CSVs</span>
-            </button>
+              hasRows={hasMasterRows}
+              isLoading={isLoading}
+              variant="master-csv"
+              count={totalFilteredCount}
+              icon={<FileText className="w-4 h-4 text-blue-400" />}
+              label="Download All Tables as CSVs"
+            />
           </div>
+        </div>
+      </div>
+
+      {/* Interactive Filter & Date Range Bar */}
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          {/* Search Box */}
+          <div className="relative flex-1 min-w-[240px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="text"
+              placeholder="Filter by table name, heat #, PO #, serial #, or keyword..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-9 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-colors"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Date Range Presets */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mr-1">
+              <Calendar className="w-3.5 h-3.5 text-blue-400" />
+              <span>Date:</span>
+            </span>
+            {(
+              [
+                { id: 'all', label: 'All Time' },
+                { id: 'today', label: 'Today' },
+                { id: '7d', label: 'Last 7 Days' },
+                { id: '30d', label: 'Last 30 Days' },
+                { id: 'this_month', label: 'This Month' },
+                { id: 'custom', label: 'Custom Range' },
+              ] as const
+            ).map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => setDatePreset(preset.id)}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  datePreset === preset.id
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-900/50'
+                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+
+            {isFilterActive && (
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-colors ml-2"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Filters</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Custom Date Range Inputs (Shown when custom is selected) */}
+        {datePreset === 'custom' && (
+          <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-3 animate-in fade-in duration-150">
+            <span className="text-xs text-slate-400 font-medium">From Date:</span>
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-600"
+            />
+            <span className="text-xs text-slate-400 font-medium">To Date:</span>
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-600"
+            />
+            <span className="text-[11px] text-slate-500 italic">
+              Tip: Pick a future or past date range to observe disabled states when 0 records match.
+            </span>
+          </div>
+        )}
+
+        {/* Category Filter Pills */}
+        <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mr-1">
+            <Filter className="w-3.5 h-3.5 text-slate-400" />
+            <span>Category:</span>
+          </span>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-slate-700 text-white font-semibold border border-slate-600'
+                  : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800/80'
+              }`}
+            >
+              {cat === 'ALL' ? 'All Modules' : cat}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -351,7 +731,7 @@ export default function DataExportModule() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
             <Download className="w-4 h-4 text-blue-400" />
-            Module-by-Module Data Exports
+            Module-by-Module Data Exports ({visibleDatasets.length})
           </h3>
           <span className="text-xs text-slate-400">
             Download individual operational records in Excel (.xlsx) or CSV
@@ -359,16 +739,19 @@ export default function DataExportModule() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {DATASETS.map((meta) => {
+          {visibleDatasets.map((meta) => {
             const Icon = meta.icon;
-            const rows = getDatasetRows(meta.key);
+            const rows = getFilteredRows(meta.key);
             const count = rows ? rows.length : 0;
+            const hasRows = Array.isArray(rows) && rows.length > 0;
             const isPreviewOpen = previewKey === meta.key;
 
             return (
               <div
                 key={meta.key}
-                className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all shadow-sm"
+                className={`bg-slate-900 border rounded-xl p-4 flex flex-col justify-between transition-all shadow-sm ${
+                  hasRows ? 'border-slate-800 hover:border-slate-700' : 'border-slate-800/60 bg-slate-900/60'
+                }`}
               >
                 <div>
                   {/* Card Header */}
@@ -382,8 +765,16 @@ export default function DataExportModule() {
                         <span className="text-[10px] text-slate-500 font-mono">{meta.category}</span>
                       </div>
                     </div>
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-slate-300 font-semibold shrink-0">
-                      {count} rows
+
+                    {/* Row Counter Badge */}
+                    <span
+                      className={`text-[11px] font-mono px-2 py-0.5 rounded-md font-semibold shrink-0 transition-colors ${
+                        count === 0
+                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-300'
+                          : 'bg-slate-800 border border-slate-700 text-slate-300'
+                      }`}
+                    >
+                      {count} records selected
                     </span>
                   </div>
 
@@ -414,34 +805,45 @@ export default function DataExportModule() {
                   </div>
                 </div>
 
-                {/* Card Action Buttons */}
+                {/* Card Action Buttons & Feedback */}
                 <div className="pt-3 border-t border-slate-800/80 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
-                    <button
+                    <ExportButton
                       onClick={() => handleExportSingleExcel(meta)}
-                      disabled={isLoading || count === 0}
-                      className="flex items-center justify-center space-x-1 px-2.5 py-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 text-xs font-medium border border-emerald-800/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Excel (.xlsx)</span>
-                    </button>
+                      hasRows={hasRows}
+                      isLoading={isLoading || activeExportingKey === `${meta.key}-excel`}
+                      variant="excel"
+                      count={count}
+                      icon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                      label="Excel (.xlsx)"
+                    />
 
-                    <button
+                    <ExportButton
                       onClick={() => handleExportSingleCsv(meta)}
-                      disabled={isLoading || count === 0}
-                      className="flex items-center justify-center space-x-1 px-2.5 py-2 rounded-lg bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 text-xs font-medium border border-blue-800/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-blue-400" />
-                      <span>CSV (.csv)</span>
-                    </button>
+                      hasRows={hasRows}
+                      isLoading={isLoading || activeExportingKey === `${meta.key}-csv`}
+                      variant="csv"
+                      count={count}
+                      icon={<FileText className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
+                      label="CSV (.csv)"
+                    />
                   </div>
 
+                  {/* Subtitle Hint when Empty / Filtered out */}
+                  {!hasRows && (
+                    <div className="text-[10.5px] text-amber-400/90 flex items-center justify-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200 text-center">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>No records found to export for the selected filter criteria.</span>
+                    </div>
+                  )}
+
                   <button
+                    type="button"
                     onClick={() => setPreviewKey(isPreviewOpen ? null : meta.key)}
                     className="w-full flex items-center justify-center space-x-1 py-1 text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
                   >
                     <Eye className="w-3 h-3 text-slate-500" />
-                    <span>{isPreviewOpen ? 'Hide Preview' : 'Preview First 5 Rows'}</span>
+                    <span>{isPreviewOpen ? 'Hide Preview' : `Preview First 5 Rows (${count})`}</span>
                     {isPreviewOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
                 </div>
@@ -450,11 +852,14 @@ export default function DataExportModule() {
                 {isPreviewOpen && (
                   <div className="mt-3 pt-3 border-t border-slate-800 overflow-x-auto">
                     <div className="text-[10px] text-slate-400 font-mono mb-2 flex items-center justify-between">
-                      <span>Showing first {Math.min(rows.length, 5)} of {rows.length} records:</span>
+                      <span>
+                        Showing {Math.min(rows.length, 5)} of {rows.length} {rows.length === 1 ? 'record' : 'records'}:
+                      </span>
                     </div>
                     {rows.length === 0 ? (
-                      <div className="text-[11px] text-slate-500 py-3 text-center">
-                        No records found in this table.
+                      <div className="text-[11px] text-amber-300/80 py-4 text-center bg-slate-950/40 rounded-lg border border-slate-800/80 flex items-center justify-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>No records found to export for the selected filter criteria.</span>
                       </div>
                     ) : (
                       <table className="w-full text-left text-[10px] font-mono border-collapse">
@@ -495,6 +900,8 @@ export default function DataExportModule() {
             • <strong>Excel (.xlsx)</strong>: Native Microsoft Excel format. Numbers are formatted as numeric fields, dates are standardized, and column widths are auto-fitted.
             <br />
             • <strong>CSV (.csv)</strong>: Universal UTF-8 encoded text with Byte Order Mark (BOM). Fully compatible with Google Sheets, LibreOffice Calc, Python Pandas, and database import tools.
+            <br />
+            • <strong>Dynamic Filtered Exports</strong>: Selecting date ranges or filtering by keyword directly scopes all exported workbooks and CSV files to the filtered records. When 0 records match, export buttons are disabled with assistive accessibility tags.
             <br />
             • All timestamps are localized to Indian Standard Time (IST / en-IN).
           </div>
