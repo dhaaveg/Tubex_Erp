@@ -23,6 +23,7 @@ interface AuthContextType {
   effectivePermissions: Record<string, EffectivePermission> | null;
   unauthorizedNotice: string | null;
   clearUnauthorizedNotice: () => void;
+  setUnauthorizedNotice: (notice: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -35,6 +36,7 @@ const AuthContext = createContext<AuthContextType>({
   effectivePermissions: null,
   unauthorizedNotice: null,
   clearUnauthorizedNotice: () => {},
+  setUnauthorizedNotice: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -74,7 +76,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unauthMod = searchParams?.get('unauthorized');
     if (unauthMod) {
-      setUnauthorizedNotice(`Access Denied: Your role does not have authorization to view the "${unauthMod}" module.`);
+      if (unauthMod === 'overview') {
+        setUnauthorizedNotice('You do not have permission to access the Executive Overview Dashboard.');
+      } else {
+        setUnauthorizedNotice(`Access Denied: Your role does not have authorization to view the "${unauthMod}" module.`);
+      }
       // Clean URL after reading
       const url = new URL(window.location.href);
       url.searchParams.delete('unauthorized');
@@ -110,16 +116,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const canAccess = (moduleName: string): boolean => {
     if (!user) return false;
+    if (moduleName === 'home') return true;
     const userRoles = user.roles && user.roles.length > 0 ? user.roles : (user.role ? [user.role] : []);
     if (userRoles.includes('SUPER_ADMIN')) return true;
 
     if (effectivePermissions && effectivePermissions[moduleName]) {
-      return effectivePermissions[moduleName].is_enabled !== false;
+      return (
+        effectivePermissions[moduleName].is_enabled !== false &&
+        effectivePermissions[moduleName].can_read !== false
+      );
     }
 
     const rule = MODULE_ACCESS_MAP[moduleName];
     if (!rule) return true;
-    return userRoles.some((r) => rule.allowedRoles.includes(r)) || true;
+    return userRoles.some((r) => rule.allowedRoles.includes(r));
   };
 
   const isReadOnly = (moduleName: string): boolean => {
@@ -153,6 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         effectivePermissions,
         unauthorizedNotice,
         clearUnauthorizedNotice: () => setUnauthorizedNotice(null),
+        setUnauthorizedNotice,
       }}
     >
       {children}

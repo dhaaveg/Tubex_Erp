@@ -241,7 +241,8 @@ export async function getUserEffectivePermissions(
  * Resolves module key from requested pathname
  */
 export function resolveModuleKeyFromPath(pathname: string): string | null {
-  if (pathname === '/' || pathname === '/overview') return 'overview';
+  if (pathname === '/' || pathname === '/home') return null;
+  if (pathname === '/overview' || pathname === '/dashboard') return 'overview';
   if (pathname === '/master-data' || pathname.startsWith('/api/suppliers') || pathname.startsWith('/api/products')) {
     return 'master-data';
   }

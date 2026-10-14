@@ -16,11 +16,13 @@ import {
   LogOut,
   ShieldCheck,
   Eye,
+  Home,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 export type NavigationTab = 
+  | 'home'
   | 'overview'
   | 'master-data'
   | 'procurement'
@@ -33,7 +35,8 @@ export type NavigationTab =
   | 'user-management';
 
 export const TAB_ROUTES: Record<NavigationTab, string> = {
-  'overview': '/',
+  'home': '/',
+  'overview': '/overview',
   'master-data': '/master-data',
   'procurement': '/procurement',
   'receiving': '/receiving',
@@ -66,7 +69,8 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
   const { user, logout, canAccess } = useAuth();
 
   const allNavItems: { id: NavigationTab; label: string; href: string; icon: any; badge?: string | number }[] = [
-    { id: 'overview', label: 'Dashboard Overview', href: '/', icon: LayoutDashboard },
+    { id: 'home', label: 'Home Landing Hub', href: '/', icon: Home },
+    { id: 'overview', label: 'Dashboard Overview', href: '/overview', icon: LayoutDashboard },
     { id: 'master-data', label: 'Master Data', href: '/master-data', icon: Building2, badge: (stats?.totalSuppliers || 0) + (stats?.totalProducts || 0) },
     { id: 'procurement', label: 'Procurement (RM PO)', href: '/procurement', icon: ShoppingCart, badge: stats?.totalPOs },
     { id: 'receiving', label: 'Receiving & Tally', href: '/receiving', icon: Truck, badge: stats?.pipes?.available ? `${stats.pipes.available} Avail` : undefined },

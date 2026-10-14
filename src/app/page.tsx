@@ -35,5 +35,5 @@ export default function Home() {
     );
   }
 
-  return <ErpShell initialTab="overview" />;
+  return <ErpShell initialTab="home" />;
 }

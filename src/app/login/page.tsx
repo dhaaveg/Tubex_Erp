@@ -78,7 +78,7 @@ function LoginForm() {
 
       // Resolve destination URL
       const from = searchParams?.get('from');
-      const defaultTarget = '/overview';
+      const defaultTarget = '/';
       const targetUrl =
         from && from.startsWith('/') && !from.includes('/login')
           ? from

@@ -1,4 +1,5 @@
 export type NavigationTab = 
+  | 'home'
   | 'overview'
   | 'master-data'
   | 'procurement'
@@ -11,6 +12,7 @@ export type NavigationTab =
   | 'user-management';
 
 export const VALID_MODULES: Record<string, NavigationTab> = {
+  'home': 'home',
   'overview': 'overview',
   'master-data': 'master-data',
   'procurement': 'procurement',
@@ -23,7 +25,6 @@ export const VALID_MODULES: Record<string, NavigationTab> = {
   'user-management': 'user-management',
   // Short URL aliases & alternate paths
   'dashboard': 'overview',
-  'home': 'overview',
   'master': 'master-data',
   'suppliers': 'master-data',
   'products': 'master-data',
@@ -59,7 +60,8 @@ export const VALID_MODULES: Record<string, NavigationTab> = {
 };
 
 export const TAB_ROUTES: Record<NavigationTab, string> = {
-  'overview': '/',
+  'home': '/',
+  'overview': '/overview',
   'master-data': '/master-data',
   'procurement': '/procurement',
   'receiving': '/receiving',

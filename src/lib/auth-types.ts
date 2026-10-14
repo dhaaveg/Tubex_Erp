@@ -120,7 +120,7 @@ export const CANONICAL_MODULES: ERPModuleMeta[] = [
   {
     key: 'overview',
     label: 'Dashboard Overview',
-    route_path: '/',
+    route_path: '/overview',
     description: 'High-level operational overview, plant KPIs, and shift status.',
   },
   {

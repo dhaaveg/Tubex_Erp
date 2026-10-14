@@ -124,7 +124,8 @@ const FALLBACK_DEFAULT_ROLES: Record<string, Record<string, { is_enabled: boolea
 };
 
 function resolveModuleKey(pathname: string): string | null {
-  if (pathname === '/' || pathname === '/overview' || pathname === '/dashboard' || pathname === '/home') return 'overview';
+  if (pathname === '/' || pathname === '/home') return null; // Root / is neutral landing page
+  if (pathname === '/overview' || pathname === '/dashboard') return 'overview';
   if (
     pathname === '/master-data' ||
     pathname === '/master' ||
@@ -434,12 +435,22 @@ export async function middleware(request: NextRequest) {
 
   // 9. Resolve target module
   const moduleKey = resolveModuleKey(pathname);
-  const targetModule = moduleKey || 'overview';
 
-  // 10. Multi-Role Union Evaluation: Is module enabled for ANY assigned role?
+  // Root landing page '/' is a neutral, safe landing hub accessible to all authenticated users
+  if (!moduleKey || pathname === '/') {
+    if (hasSubpath) {
+      return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
+    }
+    return NextResponse.next();
+  }
+
+  const targetModule = moduleKey;
+
+  // 10. Multi-Role Union Evaluation: Is module enabled & readable for ANY assigned role?
   const isEnabled = roles.length === 0 || roles.includes('SUPER_ADMIN') || roles.some((r) => {
     const roleMatrix = matrix[r] || ALL_MODULES_ACTIVE_RW;
-    return roleMatrix[targetModule]?.is_enabled !== false;
+    const perm = roleMatrix[targetModule];
+    return perm?.is_enabled !== false && perm?.can_read !== false;
   });
 
   if (!isEnabled) {
@@ -452,8 +463,8 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     }
-    // Prevent infinite redirect loops: never redirect to root if already at root or if unauthorized query is present
-    if (pathname === '/' || pathname === '/overview' || request.nextUrl.searchParams.has('unauthorized')) {
+    // Prevent redirect loops: never redirect to root if already at root
+    if (pathname === '/') {
       if (hasSubpath) {
         return rewriteSubpath(new URL(pathname + request.nextUrl.search, request.url));
       }

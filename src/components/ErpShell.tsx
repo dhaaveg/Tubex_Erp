@@ -6,6 +6,7 @@ import { ShieldAlert, X, Eye } from 'lucide-react';
 import Sidebar, { NavigationTab } from '@/components/Sidebar';
 import Header from '@/components/Header';
 import OverviewDashboard from '@/components/modules/OverviewDashboard';
+import HomeLandingModule from '@/components/modules/HomeLandingModule';
 import MasterDataModule from '@/components/modules/MasterDataModule';
 import ProcurementModule from '@/components/modules/ProcurementModule';
 import ReceivingModule from '@/components/modules/ReceivingModule';
@@ -16,7 +17,7 @@ import TraceabilityModule from '@/components/modules/TraceabilityModule';
 import DataExportModule from '@/components/modules/DataExportModule';
 import UserManagementModule from '@/components/modules/UserManagementModule';
 import { useAuth } from '@/context/AuthContext';
-import { VALID_MODULES } from '@/lib/routes';
+import { VALID_MODULES, TAB_ROUTES } from '@/lib/routes';
 
 interface ErpShellProps {
   initialTab?: NavigationTab;
@@ -24,11 +25,11 @@ interface ErpShellProps {
 
 import { apiUrl } from '@/lib/api';
 
-function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationTab }) {
+function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isLoading: authLoading, unauthorizedNotice, clearUnauthorizedNotice } = useAuth();
+  const { user, isLoading: authLoading, unauthorizedNotice, clearUnauthorizedNotice, setUnauthorizedNotice, canAccess } = useAuth();
 
   // Client-Side Authentication Guard:
   // Immediately redirect unauthenticated visitors without rendering ERP modules
@@ -52,6 +53,11 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
       return VALID_MODULES[segment];
     }
 
+    // 3. Root / or empty segment defaults to neutral home
+    if (!segment || pathname === '/') {
+      return 'home';
+    }
+
     return initialTab;
   };
 
@@ -61,6 +67,16 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
   const [quickSearchQuery, setQuickSearchQuery] = useState<string>(() => {
     return searchParams.get('search') || searchParams.get('q') || 'TAG-HT84920-001';
   });
+
+  // Client-Side RBAC Guard for /overview:
+  // If user is on 'overview' but lacks read permission, redirect cleanly to '/' with dismissible notice
+  useEffect(() => {
+    if (!authLoading && user && currentTab === 'overview' && !canAccess('overview')) {
+      setUnauthorizedNotice('You do not have permission to access the Executive Overview Dashboard.');
+      setCurrentTab('home');
+      router.replace('/');
+    }
+  }, [currentTab, authLoading, user, canAccess, router, setUnauthorizedNotice]);
 
   // Keep state in sync with URL changes (browser back/forward or Link clicks)
   useEffect(() => {
@@ -90,8 +106,15 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
   }, [currentTab]);
 
   const handleTabChange = (tab: NavigationTab) => {
+    if (tab === 'overview' && !canAccess('overview')) {
+      setUnauthorizedNotice('You do not have permission to access the Executive Overview Dashboard.');
+      setCurrentTab('home');
+      router.push('/');
+      return;
+    }
+
     setCurrentTab(tab);
-    const targetUrl = tab === 'overview' ? '/' : `/${tab}`;
+    const targetUrl = TAB_ROUTES[tab] || (tab === 'home' ? '/' : `/${tab}`);
     if (pathname !== targetUrl) {
       router.push(targetUrl);
     }
@@ -180,11 +203,24 @@ function ErpShellContent({ initialTab = 'overview' }: { initialTab?: NavigationT
             )}
 
             {/* Active Module View */}
-            {currentTab === 'overview' && (
-              <OverviewDashboard
+            {currentTab === 'home' && (
+              <HomeLandingModule
                 stats={stats}
                 onNavigate={handleTabChange}
               />
+            )}
+            {currentTab === 'overview' && (
+              canAccess('overview') ? (
+                <OverviewDashboard
+                  stats={stats}
+                  onNavigate={handleTabChange}
+                />
+              ) : (
+                <HomeLandingModule
+                  stats={stats}
+                  onNavigate={handleTabChange}
+                />
+              )
             )}
             {currentTab === 'master-data' && <MasterDataModule />}
             {currentTab === 'procurement' && <ProcurementModule />}
