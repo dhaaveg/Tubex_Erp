@@ -12,7 +12,34 @@ export const GET = withApiHandler(async (request: Request) => {
 
     const current = await getCurrentSession();
     if (!current) {
-      const res = NextResponse.json({ success: false, authenticated: false, user: null }, { status: 401 });
+      // Check if session was superseded by concurrent login
+      const { cookies } = await import('next/headers');
+      const { decryptSessionToken, validateSessionInDb, SESSION_COOKIE_NAME } = await import('@/lib/auth');
+      const cookieStore = cookies();
+      const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+      let isSuperseded = false;
+      if (token) {
+        const payload = await decryptSessionToken(token, { ignoreExpiry: true });
+        if (payload) {
+          const val = await validateSessionInDb(payload.sessionId, payload.userId);
+          if (val.status === 'SUPERSEDED') {
+            isSuperseded = true;
+          }
+        }
+      }
+
+      const res = NextResponse.json(
+        {
+          success: false,
+          authenticated: false,
+          user: null,
+          code: isSuperseded ? 'SESSION_SUPERSEDED' : 'UNAUTHORIZED',
+          error: isSuperseded
+            ? 'Your account was logged in from another device or browser. This session has been terminated.'
+            : 'Unauthorized: Valid session required.',
+        },
+        { status: 401 }
+      );
       const { AUTH_COOKIES_TO_PURGE } = await import('@/lib/auth-types');
       for (const cookieName of AUTH_COOKIES_TO_PURGE) {
         res.cookies.set({

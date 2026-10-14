@@ -31,7 +31,35 @@ export function apiUrl(endpoint: string): string {
 
 /**
  * Convenience fetch wrapper that automatically prefixes API paths with /eoft
+ * and intercepts concurrent login termination (SESSION_SUPERSEDED).
  */
-export function apiFetch(input: string, init?: RequestInit): Promise<Response> {
-  return fetch(apiUrl(input), init);
+export async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
+  const res = await fetch(apiUrl(input), init);
+
+  if (res.status === 401 && typeof window !== 'undefined') {
+    try {
+      const clone = res.clone();
+      const data = await clone.json();
+      if (data?.code === 'SESSION_SUPERSEDED') {
+        if ('BroadcastChannel' in window) {
+          try {
+            const bc = new BroadcastChannel('eot_auth_inactivity_channel');
+            bc.postMessage({ type: 'LOGOUT', reason: 'concurrent_session' });
+            bc.close();
+          } catch {}
+        }
+        try {
+          localStorage.setItem(
+            'eot_logout_event',
+            JSON.stringify({ timestamp: Date.now(), reason: 'concurrent_session' })
+          );
+          localStorage.removeItem('eot_last_activity');
+          sessionStorage.clear();
+        } catch {}
+        window.location.href = '/login?reason=concurrent_session';
+      }
+    } catch {}
+  }
+
+  return res;
 }

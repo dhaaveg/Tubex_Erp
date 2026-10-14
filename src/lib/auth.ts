@@ -123,12 +123,69 @@ export function sanitizeUser(user: any): SafeUser {
 }
 
 // -------------------------------------------------------------
-// 4. Server-Side Guard Helpers
+// 4. Server-Side Guard Helpers & Concurrency Control
 // -------------------------------------------------------------
+
+export type SessionValidationStatus = 'VALID' | 'EXPIRED' | 'SUPERSEDED' | 'INVALID';
+
+/**
+ * Validates a session token directly against the database, distinguishing between
+ * an active session, an expired session, and a superseded session (due to concurrent login).
+ */
+export async function validateSessionInDb(
+  sessionId: string,
+  userId?: string
+): Promise<{
+  status: SessionValidationStatus;
+  session?: any;
+  user?: any;
+}> {
+  if (!sessionId) return { status: 'INVALID' };
+
+  const dbSession = await prisma.session.findUnique({
+    where: { session_token: sessionId },
+    include: { user: true },
+  });
+
+  if (dbSession) {
+    if (new Date() > dbSession.expires_at) {
+      await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
+      return { status: 'EXPIRED' };
+    }
+    if (!dbSession.user || !dbSession.user.is_active) {
+      return { status: 'INVALID' };
+    }
+    return { status: 'VALID', session: dbSession, user: dbSession.user };
+  }
+
+  // If session is NOT in active Session table, check if it was terminated due to a concurrent login
+  const terminatedLog = await prisma.auditLog.findFirst({
+    where: {
+      action: 'CONCURRENT_LOGIN_TERMINATION',
+      entity_id: sessionId,
+    },
+  });
+
+  if (terminatedLog) {
+    return { status: 'SUPERSEDED' };
+  }
+
+  // Also check if another active session exists for this user_id
+  if (userId) {
+    const activeUserSession = await prisma.session.findFirst({
+      where: { user_id: userId },
+    });
+    if (activeUserSession) {
+      return { status: 'SUPERSEDED' };
+    }
+  }
+
+  return { status: 'INVALID' };
+}
 
 /**
  * Retrieves and validates the current active session and user from database.
- * Returns null if unauthenticated, expired, or user is deactivated.
+ * Returns null if unauthenticated, expired, superseded, or user is deactivated.
  */
 export async function getCurrentSession(): Promise<{ user: SafeUser; session: any } | null> {
   const cookieStore = cookies();
@@ -141,79 +198,55 @@ export async function getCurrentSession(): Promise<{ user: SafeUser; session: an
   const expMs = payload.exp < 100000000000 ? payload.exp * 1000 : payload.exp;
   const isTokenExpired = Date.now() > expMs;
 
-  const dbSession = await prisma.session.findUnique({
-    where: { session_token: payload.sessionId },
-    include: { user: true },
-  });
+  const validation = await validateSessionInDb(payload.sessionId, payload.userId);
 
-  if (!dbSession) return null;
-
-  const isSessionExpired = isTokenExpired || new Date() > dbSession.expires_at;
-
-  if (isSessionExpired) {
-    // Delete session from DB
-    await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
-    // Record AuditLog entry for SESSION_TIMEOUT
-    await prisma.auditLog.create({
-      data: {
-        user_id: dbSession.user_id,
-        action: 'SESSION_TIMEOUT',
-        entity_type: 'Session',
-        entity_id: dbSession.session_token,
-        ip_address: dbSession.ip_address || null,
-        details: JSON.stringify({ reason: 'Session expired due to 2 hours of inactivity' }),
-      },
-    }).catch(() => {});
-
-    try {
-      let isSecure = false;
-      try {
-        const headerStore = headers();
-        const proto = (headerStore.get('x-forwarded-proto') || '').toLowerCase();
-        isSecure = proto === 'https';
-      } catch {}
-      for (const cookieName of AUTH_COOKIES_TO_PURGE) {
-        cookieStore.set({
-          name: cookieName,
-          value: '',
-          maxAge: 0,
-          expires: new Date(0),
-          path: '/',
-          httpOnly: true,
-          secure: isSecure,
-          sameSite: 'lax',
-        });
-      }
-    } catch {
-      // In Server Components cookie mutation may be restricted; handled by middleware/client
-    }
-
-    return null;
+  if (validation.status === 'VALID' && !isTokenExpired) {
+    return {
+      user: sanitizeUser(validation.user),
+      session: validation.session,
+    };
   }
 
-  if (!dbSession.user || !dbSession.user.is_active) {
-    // If user is deactivated, immediately purge session
-    await prisma.session.delete({ where: { id: dbSession.id } }).catch(() => {});
-    return null;
-  }
-
-  return {
-    user: sanitizeUser(dbSession.user),
-    session: dbSession,
-  };
+  return null;
 }
 
 /**
- * Requires an active user session. Throws error with HTTP 401 code if missing.
+ * Requires an active user session. Throws error with HTTP 401 code if missing or superseded.
  */
 export async function requireAuth(): Promise<{ user: SafeUser; session: any }> {
-  const current = await getCurrentSession();
-  if (!current) {
+  const cookieStore = cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!token) {
     const err: any = new Error('Unauthorized: Authentication required');
     err.status = 401;
     throw err;
   }
-  return current;
+
+  const payload = await decryptSessionToken(token, { ignoreExpiry: true });
+  if (!payload) {
+    const err: any = new Error('Unauthorized: Invalid session token');
+    err.status = 401;
+    throw err;
+  }
+
+  const validation = await validateSessionInDb(payload.sessionId, payload.userId);
+  if (validation.status === 'SUPERSEDED') {
+    const err: any = new Error('Your account was logged in from another device or browser. This session has been terminated.');
+    err.status = 401;
+    err.code = 'SESSION_SUPERSEDED';
+    throw err;
+  }
+
+  if (validation.status !== 'VALID' || !validation.session || !validation.user) {
+    const err: any = new Error('Unauthorized: Authentication required');
+    err.status = 401;
+    throw err;
+  }
+
+  return {
+    user: sanitizeUser(validation.user),
+    session: validation.session,
+  };
 }
 
 /**

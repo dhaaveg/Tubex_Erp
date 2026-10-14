@@ -260,6 +260,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/login' ||
     pathname === '/api/auth/login' ||
     pathname === '/api/auth/logout' ||
+    pathname === '/api/auth/session-status' ||
     pathname === '/api/lov' ||
     pathname.startsWith('/api/admin/lov');
 
@@ -341,6 +342,78 @@ export async function middleware(request: NextRequest) {
       loginUrl.searchParams.set('from', rawPathname);
     }
     return NextResponse.redirect(loginUrl);
+  }
+
+  // 4b. Strict Single-Session Concurrency & Database Session Verification
+  const statusCheckUrl = new URL('/api/auth/session-status', request.url);
+  statusCheckUrl.searchParams.set('sessionId', payload.sessionId);
+  if (payload.userId) {
+    statusCheckUrl.searchParams.set('userId', payload.userId);
+  }
+
+  try {
+    const statusRes = await fetch(statusCheckUrl.toString(), {
+      headers: { 'Cache-Control': 'no-cache, no-store' },
+    });
+
+    if (!statusRes.ok) {
+      const statusData = await statusRes.json().catch(() => ({}));
+      const isSuperseded = statusData.code === 'SESSION_SUPERSEDED' || statusData.status === 'SUPERSEDED';
+
+      const proto = (request.headers.get('x-forwarded-proto') || '').toLowerCase();
+      const isSecure = proto === 'https' || request.url.startsWith('https:');
+
+      // For API routes (/api/* or /eoft/api/*):
+      if (pathname.startsWith('/api/') || pathname.startsWith('/eoft/api/')) {
+        const response = NextResponse.json(
+          {
+            success: false,
+            code: isSuperseded ? 'SESSION_SUPERSEDED' : 'UNAUTHORIZED',
+            error: isSuperseded
+              ? 'Your account was logged in from another device or browser. This session has been terminated.'
+              : 'Unauthorized: Valid session required.',
+          },
+          { status: 401 }
+        );
+        for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+          response.cookies.set({
+            name: cookieName,
+            value: '',
+            httpOnly: true,
+            secure: isSecure,
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 0,
+            expires: new Date(0),
+          });
+        }
+        return response;
+      }
+
+      // For Page Navigation:
+      const loginUrl = new URL('/login', request.url);
+      if (isSuperseded) {
+        loginUrl.searchParams.set('reason', 'concurrent_session');
+      } else {
+        loginUrl.searchParams.set('reason', 'invalid_session');
+      }
+      const response = NextResponse.redirect(loginUrl);
+      for (const cookieName of AUTH_COOKIES_TO_PURGE) {
+        response.cookies.set({
+          name: cookieName,
+          value: '',
+          httpOnly: true,
+          secure: isSecure,
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 0,
+          expires: new Date(0),
+        });
+      }
+      return response;
+    }
+  } catch (err) {
+    console.error('Session verification fetch failed in middleware:', err);
   }
 
   // 5. Force Password Change Enforcement

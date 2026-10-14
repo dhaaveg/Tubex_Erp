@@ -187,7 +187,13 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
       } else if (e.key === STORAGE_KEY_LOGOUT_EVENT && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
-          window.location.href = `/login${parsed.reason === 'expired' ? '?expired=true' : ''}`;
+          const reasonParam =
+            parsed.reason === 'concurrent_session'
+              ? '?reason=concurrent_session'
+              : parsed.reason === 'expired'
+              ? '?expired=true'
+              : '';
+          window.location.href = `/login${reasonParam}`;
         } catch {
           window.location.href = '/login?expired=true';
         }
@@ -212,7 +218,13 @@ export function useInactivityTimeout({ user, onLogout }: UseInactivityTimeoutOpt
               }
             }
           } else if (event.data?.type === 'LOGOUT') {
-            window.location.href = `/login${event.data.reason === 'expired' ? '?expired=true' : ''}`;
+            const reasonParam =
+              event.data.reason === 'concurrent_session'
+                ? '?reason=concurrent_session'
+                : event.data.reason === 'expired'
+                ? '?expired=true'
+                : '';
+            window.location.href = `/login${reasonParam}`;
           }
         };
       } catch {}

@@ -58,7 +58,40 @@ export const POST = withApiHandler(async (request: Request) => {
     const clientIp = request.headers.get('x-forwarded-for') || 'local';
     const userAgent = request.headers.get('user-agent') || 'browser';
 
-    // Store session in DB
+    // Strict Single-Session Concurrency Control:
+    // Revoke and delete all existing active session records in database for this user_id
+    const existingSessions = await prisma.session.findMany({
+      where: { user_id: user.id },
+    });
+
+    if (existingSessions.length > 0) {
+      for (const oldSession of existingSessions) {
+        await prisma.auditLog.create({
+          data: {
+            user_id: user.id,
+            action: 'CONCURRENT_LOGIN_TERMINATION',
+            entity_type: 'Session',
+            entity_id: oldSession.session_token,
+            ip_address: oldSession.ip_address || clientIp,
+            details: JSON.stringify({
+              terminated_session_id: oldSession.session_token,
+              previous_ip_address: oldSession.ip_address,
+              previous_user_agent: oldSession.user_agent,
+              new_login_ip: clientIp,
+              new_user_agent: userAgent,
+              timestamp: new Date().toISOString(),
+              reason: 'Terminated due to single-session concurrency control on new login from another device/browser',
+            }),
+          },
+        }).catch((err) => console.error('Failed to log concurrent session termination:', err));
+      }
+
+      await prisma.session.deleteMany({
+        where: { user_id: user.id },
+      });
+    }
+
+    // Store new active session in DB
     await prisma.session.create({
       data: {
         session_token: sessionId,
