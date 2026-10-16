@@ -130,9 +130,9 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
   if (authLoading) {
     return (
-      <div className="h-screen w-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 font-sans">
+      <div className="h-screen w-screen bg-[#F4F6F8] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
         <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+        <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">
           Authenticating TUBEX ERP...
         </p>
       </div>
@@ -141,9 +141,9 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
   if (!user) {
     return (
-      <div className="h-screen w-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 font-sans">
+      <div className="h-screen w-screen bg-[#F4F6F8] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
         <div className="w-10 h-10 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+        <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">
           Redirecting to Login...
         </p>
       </div>
@@ -151,7 +151,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
   }
 
   return (
-    <div className="flex h-screen bg-slate-950 overflow-hidden select-none">
+    <div className="flex h-screen bg-[#F4F6F8] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-150">
       {/* Sidebar Navigation with Active Links */}
       <Sidebar
         currentTab={currentTab}
@@ -168,13 +168,13 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
           isLoading={isLoading}
         />
 
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-950/80">
+        <main className="flex-1 overflow-y-auto p-6 bg-[#F4F6F8] dark:bg-slate-950/80">
           <div className="max-w-7xl mx-auto">
             {/* Unauthorized Notice Toast / Banner */}
             {unauthorizedNotice && (
-              <div className="mb-4 p-4 rounded-xl bg-rose-950/80 border border-rose-600/50 flex items-start justify-between text-rose-200 text-xs shadow-lg animate-fade-in">
+              <div className="mb-4 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-600/50 flex items-start justify-between text-rose-800 dark:text-rose-200 text-xs shadow-lg animate-fade-in">
                 <div className="flex items-center space-x-2">
-                  <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0" />
+                  <ShieldAlert className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
                   <div>
                     <span className="font-bold">Access Restricted: </span>
                     <span>{unauthorizedNotice}</span>
@@ -182,7 +182,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
                 </div>
                 <button
                   onClick={clearUnauthorizedNotice}
-                  className="p-1 hover:bg-rose-900/50 rounded text-rose-400 hover:text-rose-200 transition-colors ml-4"
+                  className="p-1 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-200 transition-colors ml-4"
                   title="Dismiss"
                 >
                   <X className="w-4 h-4" />
@@ -192,11 +192,11 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
             {/* MD Executive Mode Banner */}
             {user?.role === 'MD' && (
-              <div className="mb-4 px-4 py-2.5 rounded-lg bg-purple-950/30 border border-purple-800/40 flex items-center justify-between text-purple-200 text-xs">
+              <div className="mb-4 px-4 py-2.5 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/40 flex items-center justify-between text-purple-800 dark:text-purple-200 text-xs">
                 <div className="flex items-center space-x-2">
-                  <Eye className="w-4 h-4 text-purple-400 shrink-0" />
+                  <Eye className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
                   <span>
-                    <strong className="font-semibold text-purple-300">Executive Read-Only Active:</strong> As Managing Director, you have full enterprise-wide visibility across all operational modules. Action buttons (Create, Edit, Delete, Issue, Inward) are restricted to prevent inadvertent mutations.
+                    <strong className="font-semibold text-purple-700 dark:text-purple-300">Executive Read-Only Active:</strong> As Managing Director, you have full enterprise-wide visibility across all operational modules. Action buttons (Create, Edit, Delete, Issue, Inward) are restricted to prevent inadvertent mutations.
                   </span>
                 </div>
               </div>
@@ -242,7 +242,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
 export default function ErpShell(props: ErpShellProps) {
   return (
-    <Suspense fallback={<div className="h-screen bg-slate-950 flex items-center justify-center text-slate-400 font-mono text-xs">Loading TUBEX ERP...</div>}>
+    <Suspense fallback={<div className="h-screen bg-[#F4F6F8] dark:bg-slate-950 flex items-center justify-center text-slate-600 dark:text-slate-400 font-mono text-xs">Loading TUBEX ERP...</div>}>
       <ErpShellContent initialTab={props.initialTab} />
     </Suspense>
   );
