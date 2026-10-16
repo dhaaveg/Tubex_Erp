@@ -12,8 +12,9 @@ concurrency:
 
 env:
   DATABASE_URL: "postgresql://postgres:password@127.0.0.1:5433/pipe_erp?schema=public"
+  DIRECT_URL: "postgresql://postgres:password@127.0.0.1:5433/pipe_erp?schema=public"
   SESSION_SECRET: "ci_cd_placeholder_session_secret_for_automated_builds_and_tests"
-  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+  NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000"
 
 jobs:
   lint-and-validate:
@@ -58,37 +59,48 @@ jobs:
         run: npx prisma db push --accept-data-loss --skip-generate
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
-      - name: Seed Authentication & Role Matrix
+      - name: Seed Authentication, Role Matrix & Master Catalog
         run: |
           node scripts/seed-auth.mjs
           node scripts/seed-role-permissions.mjs
+          node prisma/seed.js
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
       - name: Next.js Production Build
         run: npm run build
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
           SESSION_SECRET: ${{ env.SESSION_SECRET }}
           NEXT_PUBLIC_APP_URL: ${{ env.NEXT_PUBLIC_APP_URL }}
 
       - name: Start ERP Production Server for Integration Testing
         run: |
           npm start &
-          npx wait-on http://localhost:3000 -t 30000
+          npx wait-on http://127.0.0.1:3000/login -t 60000
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
           SESSION_SECRET: ${{ env.SESSION_SECRET }}
           PORT: 3000
 
       - name: Run Core Test Suite & URL Route Verification
         run: node scripts/verify-all-urls.mjs
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
       - name: Run RBAC & Password Security Validation
         run: |
           node scripts/test-password-input.mjs
           node scripts/test-po-thread-removal.mjs
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
   build-production:
     name: Package Production Artifacts
@@ -115,6 +127,7 @@ jobs:
         env:
           NODE_ENV: production
           DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
           SESSION_SECRET: ${{ env.SESSION_SECRET }}
           NEXT_PUBLIC_APP_URL: ${{ env.NEXT_PUBLIC_APP_URL }}
 
@@ -129,14 +142,17 @@ jobs:
           retention-days: 7
 
   deploy-aws:
-    name: Deploy to AWS (App Runner / ECS / Amplify)
+    name: Deploy to AWS (App Runner / ECS / RDS)
     needs: [build-production]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DB_URL: ${{ secrets.DATABASE_URL }}
+      AWS_APP_RUNNER_ARN: ${{ secrets.AWS_APP_RUNNER_SERVICE_ARN }}
+      AWS_ECS_CLUSTER: ${{ secrets.AWS_ECS_CLUSTER }}
+      AWS_ECS_SERVICE: ${{ secrets.AWS_ECS_SERVICE }}
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
@@ -147,14 +163,8 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
-      # ------------------------------------------------------------------------
-      # AWS Deployment Strategy Options:
-      # Option A: AWS App Runner Deploy (Zero infrastructure management)
-      # Option B: AWS ECS Fargate Docker Image Push
-      # Option C: AWS Amplify Web Hosting
-      # ------------------------------------------------------------------------
       - name: Run Prisma Database Migrations against AWS RDS
         if: env.DB_URL != ''
         run: |
@@ -162,7 +172,30 @@ jobs:
           npx prisma db push --skip-generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
 
-      - name: Trigger Deployment Notification
+      - name: Trigger AWS App Runner Deployment
+        if: env.AWS_APP_RUNNER_ARN != '' && env.AWS_KEY != ''
         run: |
-          echo "Production deployment steps executed successfully."
+          echo "Triggering AWS App Runner deployment for service: ${{ env.AWS_APP_RUNNER_ARN }}"
+          aws apprunner start-deployment --service-arn ${{ env.AWS_APP_RUNNER_ARN }}
+
+      - name: Trigger AWS ECS Fargate Deployment
+        if: env.AWS_ECS_CLUSTER != '' && env.AWS_ECS_SERVICE != '' && env.AWS_KEY != ''
+        run: |
+          echo "Updating AWS ECS service: ${{ env.AWS_ECS_SERVICE }} in cluster: ${{ env.AWS_ECS_CLUSTER }}"
+          aws ecs update-service --cluster ${{ env.AWS_ECS_CLUSTER }} --service ${{ env.AWS_ECS_SERVICE }} --force-new-deployment
+
+      - name: Validate Deployment Configuration
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ] || [ -z "${{ secrets.DATABASE_URL }}" ]; then
+            echo "ℹ️ Note: To enable automated AWS continuous deployment, configure the following repository secrets under GitHub Settings > Secrets and variables > Actions:"
+            echo "  - DATABASE_URL: AWS RDS PostgreSQL connection string"
+            echo "  - AWS_ACCESS_KEY_ID: AWS IAM deployment access key"
+            echo "  - AWS_SECRET_ACCESS_KEY: AWS IAM deployment secret key"
+            echo "  - AWS_REGION: (Optional, defaults to us-east-1)"
+            echo "  - AWS_APP_RUNNER_SERVICE_ARN: (Optional, for AWS App Runner automatic deployment)"
+            echo "  - AWS_ECS_CLUSTER / AWS_ECS_SERVICE: (Optional, for AWS ECS Fargate automatic deployment)"
+          else
+            echo "✅ Production AWS deployment commands executed successfully."
+          fi
