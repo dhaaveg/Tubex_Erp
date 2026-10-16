@@ -68,6 +68,32 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
     return searchParams.get('search') || searchParams.get('q') || 'TAG-HT84920-001';
   });
 
+  // Persistent Collapsible Sidebar State
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('tubex_sidebar_collapsed') === 'true';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('tubex_sidebar_collapsed', String(next));
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  };
+
   // Client-Side RBAC Guard for /overview:
   // If user is on 'overview' but lacks read permission, redirect cleanly to '/' with dismissible notice
   useEffect(() => {
@@ -157,6 +183,8 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
         currentTab={currentTab}
         onTabChange={handleTabChange}
         stats={stats}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
       />
 
       {/* Main Content Area */}

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import {
   requireAuth,
@@ -12,43 +13,89 @@ import {
 } from '@/lib/auth';
 import { withApiHandler } from '@/lib/api-handler';
 
+// Enterprise password policy: min 8 chars, uppercase, lowercase, number, special symbol
+const PasswordPolicySchema = z
+  .object({
+    currentPassword: z.string().optional(),
+    newPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters long.')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter (A-Z).')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter (a-z).')
+      .regex(/[0-9]/, 'Password must contain at least one number (0-9).')
+      .regex(
+        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+        'Password must contain at least one special symbol (!@#$%^&*...).'
+      ),
+    confirmPassword: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.confirmPassword !== undefined && data.confirmPassword !== null && data.confirmPassword !== '') {
+        return data.newPassword === data.confirmPassword;
+      }
+      return true;
+    },
+    {
+      message: 'New password and confirm password do not match.',
+      path: ['confirmPassword'],
+    }
+  );
+
 export const POST = withApiHandler(async (request: Request) => {
   try {
     const { user, session } = await requireAuth();
     const body = await request.json();
-    const { currentPassword, newPassword } = body;
 
-    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+    // 1. Zod Enterprise Password Validation
+    const parseResult = PasswordPolicySchema.safeParse(body);
+    if (!parseResult.success) {
+      const firstIssue = parseResult.error.issues[0];
       return NextResponse.json(
-        { success: false, error: 'New password must be at least 8 characters long.' },
+        { success: false, error: firstIssue?.message || 'Invalid password format.' },
         { status: 400 }
       );
     }
+
+    const { currentPassword, newPassword } = parseResult.data;
 
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
     });
 
     if (!dbUser) {
-      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'User record not found.' }, { status: 404 });
     }
 
-    // Always validate current password if provided or required
+    // 2. Validate Current Password
     if (currentPassword) {
       const isCurrentValid = await verifyPassword(dbUser.password_hash, currentPassword);
       if (!isCurrentValid) {
         return NextResponse.json(
-          { success: false, error: 'Current password is incorrect.' },
+          { success: false, error: 'Current password verification failed. Please verify your existing password.' },
           { status: 400 }
         );
       }
     } else if (!dbUser.force_password_change) {
       return NextResponse.json(
-        { success: false, error: 'Current password is required to set a new password.' },
+        { success: false, error: 'Current password is required to authorize password update.' },
         { status: 400 }
       );
     }
 
+    // 3. Reject Password Reuse (Cannot reuse existing password)
+    const isReused = await verifyPassword(dbUser.password_hash, newPassword);
+    if (isReused) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'New password cannot be identical to your current password. Please choose a different password.',
+        },
+        { status: 400 }
+      );
+    }
+
+    // 4. Secure Hash Generation & Database Mutation
     const newHash = await hashPassword(newPassword);
 
     const updatedUser = await prisma.user.update({
@@ -59,17 +106,22 @@ export const POST = withApiHandler(async (request: Request) => {
       },
     });
 
+    // 5. Enterprise Audit Trail Logging
     await prisma.auditLog.create({
       data: {
         user_id: user.id,
         action: 'PASSWORD_CHANGED',
         entity_type: 'User',
         entity_id: user.id,
-        details: JSON.stringify({ email: user.email }),
+        details: JSON.stringify({
+          email: user.email,
+          source: 'self_service_security_tab',
+          timestamp: new Date().toISOString(),
+        }),
       },
     });
 
-    // Re-issue updated session cookie with force_password_change: false
+    // 6. Re-issue Refreshed Session Token
     const maxAgeSeconds = 60 * 60 * 24; // 24 hours
     const userRoles = parseRoles(updatedUser);
     const refreshedToken = await encryptSessionToken({
@@ -85,7 +137,7 @@ export const POST = withApiHandler(async (request: Request) => {
 
     const response = NextResponse.json({
       success: true,
-      message: 'Password updated successfully. You can now access your dashboard.',
+      message: 'Password successfully updated. Your new credentials are now active.',
       user: sanitizeUser(updatedUser),
     });
 

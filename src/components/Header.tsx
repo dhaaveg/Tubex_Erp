@@ -17,11 +17,15 @@ import {
   Activity,
   Sun,
   Moon,
+  Lock,
+  KeyRound,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import RecentActivityFeed from './RecentActivityFeed';
 import ActiveShiftIndicator from './ActiveShiftIndicator';
+import { PasswordInput } from './ui/PasswordInput';
 import { apiUrl } from '@/lib/api';
 
 interface HeaderProps {
@@ -50,12 +54,20 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
   const isSuperAdmin = Boolean(user && (user.roles?.includes('SUPER_ADMIN') || user.role === 'SUPER_ADMIN'));
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [profileTab, setProfileTab] = useState<'profile' | 'activity'>('profile');
+  const [profileTab, setProfileTab] = useState<'profile' | 'security' | 'activity'>('profile');
   const [profileName, setProfileName] = useState('');
   const [profileEmail, setProfileEmail] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Security / Password State
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [pwdError, setPwdError] = useState<string | null>(null);
+  const [pwdSuccess, setPwdSuccess] = useState<string | null>(null);
 
   const handleOpenProfileModal = () => {
     if (!user) return;
@@ -63,8 +75,75 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
     setProfileEmail(user.email);
     setErrorMsg(null);
     setSuccessMsg(null);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setPwdError(null);
+    setPwdSuccess(null);
     setProfileTab('profile');
     setIsProfileModalOpen(true);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdError(null);
+    setPwdSuccess(null);
+
+    if (!currentPassword) {
+      setPwdError('Current password is required.');
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPwdError('New password must be at least 8 characters long.');
+      return;
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+      setPwdError('New password must contain at least one uppercase letter (A-Z).');
+      return;
+    }
+    if (!/[a-z]/.test(newPassword)) {
+      setPwdError('New password must contain at least one lowercase letter (a-z).');
+      return;
+    }
+    if (!/[0-9]/.test(newPassword)) {
+      setPwdError('New password must contain at least one number (0-9).');
+      return;
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
+      setPwdError('New password must contain at least one special symbol (!@#$%^&*...).');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwdError('New password and confirmation do not match.');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const res = await fetch(apiUrl('/api/auth/change-password'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update password');
+
+      setPwdSuccess('Password updated successfully! Your new credentials are now active.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        setPwdSuccess(null);
+      }, 4000);
+    } catch (err: any) {
+      setPwdError(err.message || 'Failed to change password.');
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -268,6 +347,19 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
 
               <button
                 type="button"
+                onClick={() => setProfileTab('security')}
+                className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
+                  profileTab === 'security'
+                    ? 'border-[#4F46E5] text-[#4F46E5] dark:border-indigo-400 dark:text-indigo-400'
+                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                }`}
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span>Security / Password</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setProfileTab('activity')}
                 className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
                   profileTab === 'activity'
@@ -284,6 +376,124 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
               <div className="p-5">
                 <RecentActivityFeed compact limit={10} title="My Recent Activity" showRefresh />
               </div>
+            ) : profileTab === 'security' ? (
+              <form onSubmit={handleChangePassword} className="p-5 space-y-4">
+                {pwdError && (
+                  <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-700/60 text-[#BE123C] dark:text-rose-200 text-xs flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                    <span>{pwdError}</span>
+                  </div>
+                )}
+
+                {pwdSuccess && (
+                  <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700/60 text-[#047857] dark:text-emerald-200 text-xs flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>{pwdSuccess}</span>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
+                    <Lock className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                    <span>Current Password *</span>
+                  </label>
+                  <PasswordInput
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    placeholder="Enter your existing password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
+                    <KeyRound className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                    <span>New Enterprise Password *</span>
+                  </label>
+                  <PasswordInput
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    placeholder="Min 8 characters, upper, lower, number, symbol"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
+                    <Check className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                    <span>Confirm New Password *</span>
+                  </label>
+                  <PasswordInput
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="Re-enter your new password"
+                  />
+                </div>
+
+                {/* Live Password Complexity Checklist */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    <span>Password Complexity Requirement</span>
+                    <span className="font-mono text-[10px]">
+                      {
+                        [
+                          newPassword.length >= 8,
+                          /[A-Z]/.test(newPassword),
+                          /[a-z]/.test(newPassword),
+                          /[0-9]/.test(newPassword),
+                          /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword),
+                          newPassword.length > 0 && newPassword === confirmPassword,
+                        ].filter(Boolean).length
+                      }
+                      /6 Met
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                    <div className={`flex items-center space-x-1.5 ${newPassword.length >= 8 ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${newPassword.length >= 8 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>8+ characters</span>
+                    </div>
+                    <div className={`flex items-center space-x-1.5 ${/[A-Z]/.test(newPassword) ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${/[A-Z]/.test(newPassword) ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>Uppercase letter</span>
+                    </div>
+                    <div className={`flex items-center space-x-1.5 ${/[a-z]/.test(newPassword) ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${/[a-z]/.test(newPassword) ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>Lowercase letter</span>
+                    </div>
+                    <div className={`flex items-center space-x-1.5 ${/[0-9]/.test(newPassword) ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${/[0-9]/.test(newPassword) ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>At least 1 number</span>
+                    </div>
+                    <div className={`flex items-center space-x-1.5 ${/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword) ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword) ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>Special character</span>
+                    </div>
+                    <div className={`flex items-center space-x-1.5 ${newPassword.length > 0 && newPassword === confirmPassword ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] ${newPassword.length > 0 && newPassword === confirmPassword ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-400'}`}>✓</span>
+                      <span>Passwords match</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsProfileModalOpen(false)}
+                    className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isChangingPassword}
+                    className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow disabled:opacity-50"
+                  >
+                    {isChangingPassword ? 'Securing...' : 'Update Password'}
+                  </button>
+                </div>
+              </form>
             ) : (
             <form onSubmit={handleSaveProfile} className="p-5 space-y-4">
               {errorMsg && (
