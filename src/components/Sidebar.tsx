@@ -86,7 +86,7 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
   const visibleNavItems = allNavItems.filter((item) => canAccess(item.id));
 
   return (
-    <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 select-none transition-colors duration-150">
+    <aside className="w-64 min-w-[16rem] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 select-none transition-colors duration-150">
       <div className="flex-1 overflow-y-auto">
         {/* Brand Header */}
         <div className="h-16 flex items-center px-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60">
@@ -147,13 +147,13 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                 }`}
               >
-                <div className="flex items-center space-x-2.5">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
-                  <span>{item.label}</span>
+                <div className="flex items-center space-x-2.5 truncate mr-2">
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
+                  <span className="truncate">{item.label}</span>
                 </div>
                 {item.badge !== undefined && (
                   <span
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
+                    className={`text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0 whitespace-nowrap ${
                       isActive
                         ? 'bg-blue-700/80 text-blue-100'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'

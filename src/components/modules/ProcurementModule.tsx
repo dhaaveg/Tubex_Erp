@@ -666,30 +666,30 @@ export default function ProcurementModule() {
     switch (status) {
       case 'Open':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 shadow-sm shadow-blue-500/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mr-1.5 animate-pulse" />
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 shadow-sm shadow-blue-500/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400 mr-1.5 animate-pulse" />
             Open
           </span>
         );
       case 'Approved':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5" />
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 shadow-sm shadow-emerald-500/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-1.5" />
             Approved
           </span>
         );
       case 'Closed':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5" />
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500 mr-1.5" />
             Closed
           </span>
         );
       case 'Draft':
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm shadow-amber-500/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5" />
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 shadow-sm shadow-amber-500/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400 mr-1.5" />
             Draft
           </span>
         );
@@ -703,124 +703,124 @@ export default function ProcurementModule() {
       {/* 1. Executive Summary & KPI Header */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Total Active POs */}
-        <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-700/80 transition-all group">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700/80 transition-all group">
           <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/10 transition-colors" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
               Total Active RM POs
             </span>
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
               <ShoppingCart className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <div className="text-2xl font-bold font-mono text-white tracking-tight">
-              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-800 animate-pulse rounded" /> : kpiStats.activeCount}
+            <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
+              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-slate-800 animate-pulse rounded" /> : kpiStats.activeCount}
             </div>
             <span className="text-[11px] font-mono text-slate-500">
               of {purchaseOrders.length} contracts
             </span>
           </div>
-          <div className="mt-2 text-[10px] text-slate-400 flex items-center space-x-1">
-            <span className="text-blue-400 font-medium">Active Mill Pipelines</span>
+          <div className="mt-2 text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+            <span className="text-blue-600 dark:text-blue-400 font-medium">Active Mill Pipelines</span>
           </div>
         </div>
 
         {/* Card 2: Pending Delivery / In Transit */}
-        <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-700/80 transition-all group">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700/80 transition-all group">
           <div className="absolute top-0 right-0 w-28 h-28 bg-amber-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-500/10 transition-colors" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
               Pending Delivery
             </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
               <Truck className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <div className="text-2xl font-bold font-mono text-white tracking-tight">
-              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-800 animate-pulse rounded" /> : kpiStats.pendingDeliveryCount}
+            <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
+              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-slate-800 animate-pulse rounded" /> : kpiStats.pendingDeliveryCount}
             </div>
-            <span className="text-[11px] font-mono text-amber-400/90 font-medium">
+            <span className="text-[11px] font-mono text-amber-700 dark:text-amber-400/90 font-medium bg-amber-50 dark:bg-transparent px-1.5 py-0.5 rounded border border-amber-200 dark:border-transparent">
               Inward Awaiting
             </span>
           </div>
-          <div className="mt-2 text-[10px] text-slate-400 flex items-center space-x-1">
-            <span className="text-slate-400">Dispatch / Transit Phase</span>
+          <div className="mt-2 text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+            <span className="text-slate-500 dark:text-slate-400">Dispatch / Transit Phase</span>
           </div>
         </div>
 
         {/* Card 3: Awaiting GRN / QC Inspection */}
-        <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-700/80 transition-all group">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700/80 transition-all group">
           <div className="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
               Awaiting GRN / QC
             </span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <div className="text-2xl font-bold font-mono text-white tracking-tight">
-              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-800 animate-pulse rounded" /> : kpiStats.awaitingQcCount}
+            <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white tracking-tight">
+              {isLoading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-slate-800 animate-pulse rounded" /> : kpiStats.awaitingQcCount}
             </div>
-            <span className="text-[11px] font-mono text-indigo-400/90 font-medium">
+            <span className="text-[11px] font-mono text-indigo-700 dark:text-indigo-400/90 font-medium bg-indigo-50 dark:bg-transparent px-1.5 py-0.5 rounded border border-indigo-200 dark:border-transparent">
               Weighbridge / Tally
             </span>
           </div>
-          <div className="mt-2 text-[10px] text-slate-400 flex items-center space-x-1">
-            <span className="text-slate-400">Quality Holds & Verification</span>
+          <div className="mt-2 text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+            <span className="text-slate-500 dark:text-slate-400">Quality Holds & Verification</span>
           </div>
         </div>
 
         {/* Card 4: Total Procurement Spend */}
-        <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-700/80 transition-all group">
+        <div className="relative overflow-hidden bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-700/80 transition-all group">
           <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
               Total Contract Spend
             </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <div className="text-2xl font-bold font-mono text-emerald-400 tracking-tight">
+            <div className="text-2xl font-bold font-mono text-emerald-700 dark:text-emerald-400 tracking-tight">
               {isLoading ? (
-                <span className="inline-block w-20 h-6 bg-slate-800 animate-pulse rounded" />
+                <span className="inline-block w-20 h-6 bg-slate-200 dark:bg-slate-800 animate-pulse rounded" />
               ) : (
                 `$${(kpiStats.totalSpend / 1000).toFixed(1)}k`
               )}
             </div>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
               {kpiStats.totalContractedMt.toFixed(1)} MT Total
             </span>
           </div>
-          <div className="mt-2 text-[10px] text-slate-400 flex items-center space-x-1">
-            <span className="text-emerald-400 font-medium">Reconciled Value</span>
+          <div className="mt-2 text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+            <span className="text-emerald-700 dark:text-emerald-400 font-medium">Reconciled Value</span>
           </div>
         </div>
       </div>
 
       {/* 2. Unified Filter & Action Toolbar */}
-      <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/90 rounded-xl p-3 shadow-lg space-y-3">
+      <div className="bg-white dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800/90 rounded-xl p-3 shadow-sm dark:shadow-lg space-y-3">
         {/* Top Row: Search Input, Quick Dropdown Filters & Primary Action */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           {/* Search Bar */}
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search RM PO #, Supplier, Mill, Grade, OD..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-8 py-2 text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-8 py-2 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -834,7 +834,7 @@ export default function ProcurementModule() {
               <select
                 value={selectedSupplierFilter}
                 onChange={(e) => setSelectedSupplierFilter(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-sans"
+                className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-sans"
               >
                 <option value="All">All Suppliers</option>
                 {suppliers.map((s) => (
@@ -843,7 +843,7 @@ export default function ProcurementModule() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
             {/* Material Grade Filter */}
@@ -851,7 +851,7 @@ export default function ProcurementModule() {
               <select
                 value={selectedGradeFilter}
                 onChange={(e) => setSelectedGradeFilter(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-mono"
+                className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-mono"
               >
                 <option value="All">All Grades</option>
                 {availableGrades.map((g) => (
@@ -860,7 +860,7 @@ export default function ProcurementModule() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
             {/* Sort Order Selector */}
@@ -872,7 +872,7 @@ export default function ProcurementModule() {
                   setSortField(field);
                   setSortOrder(order);
                 }}
-                className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-sans"
+                className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none pr-7 font-sans"
               >
                 <option value="date-desc">Newest First</option>
                 <option value="date-asc">Oldest First</option>
@@ -880,23 +880,23 @@ export default function ProcurementModule() {
                 <option value="mt-desc">Highest Tonnage</option>
                 <option value="po_no-asc">RM PO Number (A-Z)</option>
               </select>
-              <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
             {/* Refresh Button */}
             <button
               onClick={() => fetchData(true)}
               disabled={isRefreshing}
-              className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+              className="p-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Refresh Raw Material Purchase Orders"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-500' : ''}`} />
             </button>
 
             {/* Primary Action Button */}
             <button
               onClick={handleOpenCreate}
-              className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/25 transition-all transform active:scale-95 cursor-pointer ml-auto"
+              className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all transform active:scale-95 cursor-pointer ml-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Create RM Purchase Order</span>
@@ -905,7 +905,7 @@ export default function ProcurementModule() {
         </div>
 
         {/* Bottom Row: Pill-based Status Segmented Filters */}
-        <div className="flex items-center justify-between border-t border-slate-800/80 pt-2.5 overflow-x-auto scrollbar-none">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 pt-2.5 overflow-x-auto scrollbar-none">
           <div className="flex items-center space-x-1.5">
             {[
               { id: 'All', label: 'All Orders' },
@@ -924,13 +924,15 @@ export default function ProcurementModule() {
                   className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                      isActive ? 'bg-blue-800 text-white font-bold' : 'bg-slate-800 text-slate-400'
+                      isActive
+                        ? 'bg-blue-700 text-white font-bold'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     {count}
@@ -948,7 +950,7 @@ export default function ProcurementModule() {
                 setSelectedSupplierFilter('All');
                 setSelectedGradeFilter('All');
               }}
-              className="text-[11px] text-blue-400 hover:text-blue-300 font-medium flex items-center space-x-1 ml-3 shrink-0 cursor-pointer"
+              className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center space-x-1 ml-3 shrink-0 cursor-pointer"
             >
               <X className="w-3 h-3" />
               <span>Reset filters</span>
@@ -958,10 +960,10 @@ export default function ProcurementModule() {
       </div>
 
       {/* 3. High-Density PO Data Table & Information Hierarchy */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm dark:shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 text-slate-400 font-mono text-[10px] uppercase tracking-wider border-b border-slate-800 select-none">
+            <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-500 dark:text-slate-400 font-mono text-[10px] uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 select-none">
               <tr>
                 <th className="py-3 px-4 w-10"></th>
                 <th className="py-3 px-4">RM PO & Status</th>
@@ -974,19 +976,19 @@ export default function ProcurementModule() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-800/60 font-sans">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
               {isLoading ? (
                 // Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="py-3.5 px-4"><div className="w-4 h-4 bg-slate-800 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-36 h-4 bg-slate-800 rounded mb-1.5" /><div className="w-24 h-3 bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-32 h-4 bg-slate-800 rounded mb-1.5" /><div className="w-20 h-3 bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="w-16 h-4 bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-12 h-3 bg-slate-850 rounded ml-auto" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-4 bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-28 h-3 bg-slate-850 rounded ml-auto" /></td>
-                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-6 bg-slate-800 rounded ml-auto" /></td>
+                    <td className="py-3.5 px-4"><div className="w-4 h-4 bg-slate-200 dark:bg-slate-800 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-36 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-24 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-32 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-20 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="w-16 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-12 h-3 bg-slate-100 dark:bg-slate-850 rounded ml-auto" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-28 h-3 bg-slate-100 dark:bg-slate-850 rounded ml-auto" /></td>
+                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-6 bg-slate-200 dark:bg-slate-800 rounded ml-auto" /></td>
                   </tr>
                 ))
               ) : filteredOrders.length === 0 ? (
@@ -994,12 +996,12 @@ export default function ProcurementModule() {
                 <tr>
                   <td colSpan={8} className="py-16 text-center">
                     <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-400 shadow-inner">
-                        <Package className="w-6 h-6 text-slate-500" />
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 shadow-inner">
+                        <Package className="w-6 h-6 text-slate-400 dark:text-slate-500" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-white">No RM Purchase Orders Found</h4>
-                        <p className="text-xs text-slate-400">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white">No RM Purchase Orders Found</h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           {searchQuery || statusFilter !== 'All' || selectedSupplierFilter !== 'All'
                             ? 'No RM purchase orders match your active filter criteria. Try clearing filters.'
                             : 'No raw material purchase contracts have been recorded in the system yet.'}
@@ -1014,7 +1016,7 @@ export default function ProcurementModule() {
                               setSelectedSupplierFilter('All');
                               setSelectedGradeFilter('All');
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition"
+                            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition"
                           >
                             Clear All Filters
                           </button>
@@ -1043,14 +1045,14 @@ export default function ProcurementModule() {
                     <React.Fragment key={po.po_no}>
                       <tr 
                         onClick={() => setExpandedPo(isExpanded ? null : po.po_no)}
-                        className={`hover:bg-slate-800/40 transition-colors cursor-pointer group ${
-                          isExpanded ? 'bg-slate-800/30' : ''
+                        className={`hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer group ${
+                          isExpanded ? 'bg-slate-50/80 dark:bg-slate-800/30' : ''
                         }`}
                       >
                         {/* Expand Icon */}
-                        <td className="py-3.5 px-4 text-slate-500 group-hover:text-slate-300">
+                        <td className="py-3.5 px-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300">
                           {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-blue-400" />
+                            <ChevronDown className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           ) : (
                             <ChevronRight className="w-4 h-4" />
                           )}
@@ -1059,26 +1061,26 @@ export default function ProcurementModule() {
                         {/* PO # & Status */}
                         <td className="py-3.5 px-4">
                           <div className="flex items-center space-x-2">
-                            <span className="font-mono font-bold text-xs text-blue-400 group-hover:underline">
+                            <span className="font-mono font-bold text-xs text-blue-600 dark:text-blue-400 group-hover:underline">
                               {po.po_no}
                             </span>
                             {renderStatusBadge(po.po_status)}
                           </div>
-                          <div className="text-[11px] text-slate-400 mt-1 font-mono flex items-center space-x-1">
-                            <Calendar className="w-3 h-3 text-slate-500" />
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-mono flex items-center space-x-1">
+                            <Calendar className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                             <span>{formatDate(po.po_date)}</span>
                           </div>
                         </td>
 
                         {/* Supplier & Mill Details */}
                         <td className="py-3.5 px-4">
-                          <div className="font-medium text-slate-200 text-xs flex items-center space-x-1.5">
-                            <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <div className="font-medium text-slate-800 dark:text-slate-200 text-xs flex items-center space-x-1.5">
+                            <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-slate-400 shrink-0" />
                             <span className="truncate max-w-[200px]" title={po.supplier?.supplier_name}>
                               {po.supplier?.supplier_name || 'Vendor Unassigned'}
                             </span>
                           </div>
-                          <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-[200px]">
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-[200px]">
                             {po.supplier?.mill_name || po.supplier?.supplier_code || 'Direct Mill Delivery'}
                           </div>
                         </td>
@@ -1087,35 +1089,35 @@ export default function ProcurementModule() {
                         <td className="py-3.5 px-4">
                           {firstItem ? (
                             <div>
-                              <div className="font-mono text-xs text-slate-200">
+                              <div className="font-mono text-xs text-slate-800 dark:text-slate-200">
                                 {firstItem.size_od || firstItem.product?.size_od || '—'}mm OD • {firstItem.wall_thickness || firstItem.product?.wall_thickness || '—'}mm WT
                               </div>
-                              <div className="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-1.5">
-                                <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 font-mono text-[10px]">
+                              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center space-x-1.5">
+                                <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10px]">
                                   {firstItem.grade || firstItem.product?.grade || 'L80'}
                                 </span>
                                 {po.po_items && po.po_items.length > 1 && (
-                                  <span className="text-[10px] text-blue-400">
+                                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">
                                     +{po.po_items.length - 1} more item(s)
                                   </span>
                                 )}
                               </div>
                             </div>
                           ) : (
-                            <span className="text-slate-500 font-mono text-[11px]">No items configured</span>
+                            <span className="text-slate-400 dark:text-slate-500 font-mono text-[11px]">No items configured</span>
                           )}
                         </td>
 
                         {/* Tonnage & Lines */}
                         <td className="py-3.5 px-4 text-right">
-                          <div className="font-mono text-xs font-bold text-slate-200">
+                          <div className="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
                             {totalMt.toFixed(2)} MT
                           </div>
-                          <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                             {po.po_items?.length || 0} line item(s)
                           </div>
                           {fulfillmentPct > 0 && (
-                            <div className="w-20 bg-slate-800 rounded-full h-1 mt-1 ml-auto overflow-hidden">
+                            <div className="w-20 bg-slate-100 dark:bg-slate-800 rounded-full h-1 mt-1 ml-auto overflow-hidden">
                               <div 
                                 className="bg-emerald-500 h-1 rounded-full" 
                                 style={{ width: `${fulfillmentPct}%` }} 
@@ -1126,20 +1128,20 @@ export default function ProcurementModule() {
 
                         {/* Commercial Value */}
                         <td className="py-3.5 px-4 text-right">
-                          <div className="font-mono text-xs font-bold text-emerald-400">
+                          <div className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400">
                             ${totalVal.toLocaleString()}
                           </div>
-                          <div className="text-[10px] font-mono text-slate-400 mt-0.5">
+                          <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
                             Adv: ${po.advance_amount?.toLocaleString() || '0'} • Bal: ${(po.remaining_amount || Math.max(0, totalVal - (po.advance_amount || 0))).toLocaleString()}
                           </div>
                         </td>
 
                         {/* Delivery & Terms */}
                         <td className="py-3.5 px-4">
-                          <div className="font-mono text-xs text-slate-200">
+                          <div className="font-mono text-xs text-slate-800 dark:text-slate-200">
                             Due: {formatDate(po.delivery_date)}
                           </div>
-                          <div className="text-[11px] text-slate-400 truncate max-w-[150px] mt-0.5">
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[150px] mt-0.5">
                             {po.delivery_terms || 'FOB Mill Yard'}
                           </div>
                         </td>
@@ -1150,7 +1152,7 @@ export default function ProcurementModule() {
                             {/* Quick Print/PDF Invoice */}
                             <button
                               onClick={() => setSelectedInvoicePo(po)}
-                              className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-emerald-950 text-slate-400 hover:text-emerald-300 border border-slate-700/60 hover:border-emerald-600/50 transition-colors"
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800/80 dark:hover:bg-emerald-950 text-slate-600 hover:text-emerald-700 dark:text-slate-400 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700/60 hover:border-emerald-300 dark:hover:border-emerald-600/50 shadow-sm transition-colors"
                               title="Print / Export Commercial Invoice as PDF"
                             >
                               <Printer className="w-3.5 h-3.5" />
@@ -1159,7 +1161,7 @@ export default function ProcurementModule() {
                             {/* Link to GRN Receiving */}
                             <button
                               onClick={() => router.push(`/receiving?po=${encodeURIComponent(po.po_no)}`)}
-                              className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-blue-950 text-slate-400 hover:text-blue-300 border border-slate-700/60 hover:border-blue-600/50 transition-colors"
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 dark:bg-slate-800/80 dark:hover:bg-blue-950 text-slate-600 hover:text-blue-700 dark:text-slate-400 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700/60 hover:border-blue-300 dark:hover:border-blue-600/50 shadow-sm transition-colors"
                               title="Go to Receiving & Inward Tally (GRN)"
                             >
                               <Truck className="w-3.5 h-3.5" />
@@ -1169,7 +1171,7 @@ export default function ProcurementModule() {
                             <div className="relative">
                               <button
                                 onClick={() => setActiveMenuPo(activeMenuPo === po.po_no ? null : po.po_no)}
-                                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700/60 transition-colors"
+                                className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 shadow-sm transition-colors"
                                 title="More actions"
                               >
                                 <MoreVertical className="w-3.5 h-3.5" />
@@ -1178,7 +1180,7 @@ export default function ProcurementModule() {
                               {activeMenuPo === po.po_no && (
                                 <div
                                   ref={menuRef}
-                                  className="absolute right-0 top-full mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1 z-30 divide-y divide-slate-800 text-left font-sans animate-in fade-in zoom-in-95 duration-100"
+                                  className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl py-1 z-30 divide-y divide-slate-100 dark:divide-slate-800 text-left font-sans animate-in fade-in zoom-in-95 duration-100"
                                 >
                                   <div className="py-1">
                                     <button
@@ -1186,17 +1188,17 @@ export default function ProcurementModule() {
                                         setActiveMenuPo(null);
                                         handleOpenEdit(po);
                                       }}
-                                      className="w-full px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2"
+                                      className="w-full px-3 py-1.5 text-xs text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2"
                                     >
-                                      <Pencil className="w-3.5 h-3.5 text-blue-400" />
+                                      <Pencil className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                                       <span>Edit RM PO Contract</span>
                                     </button>
 
                                     <button
                                       onClick={() => handleDuplicatePO(po)}
-                                      className="w-full px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2"
+                                      className="w-full px-3 py-1.5 text-xs text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2"
                                     >
-                                      <Copy className="w-3.5 h-3.5 text-amber-400" />
+                                      <Copy className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                                       <span>Duplicate as New RM PO</span>
                                     </button>
 
@@ -1205,9 +1207,9 @@ export default function ProcurementModule() {
                                         setActiveMenuPo(null);
                                         setSelectedInvoicePo(po);
                                       }}
-                                      className="w-full px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-2"
+                                      className="w-full px-3 py-1.5 text-xs text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center space-x-2"
                                     >
-                                      <FileText className="w-3.5 h-3.5 text-emerald-400" />
+                                      <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                       <span>View Invoice Preview</span>
                                     </button>
                                   </div>
@@ -1216,13 +1218,13 @@ export default function ProcurementModule() {
                                     {!hasGrns ? (
                                       <button
                                         onClick={() => handleDeletePO(po.po_no)}
-                                        className="w-full px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-950/60 flex items-center space-x-2"
+                                        className="w-full px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/60 flex items-center space-x-2"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
                                         <span>Cancel & Delete RM PO</span>
                                       </button>
                                     ) : (
-                                      <div className="px-3 py-1 text-[10px] text-slate-500 font-mono">
+                                      <div className="px-3 py-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono">
                                         Locked by existing GRN
                                       </div>
                                     )}
@@ -1236,29 +1238,29 @@ export default function ProcurementModule() {
 
                       {/* Expanded Sub-Table Drawer */}
                       {isExpanded && (
-                        <tr className="bg-slate-950/90 border-t border-slate-800">
+                        <tr className="bg-slate-50/70 dark:bg-slate-950/90 border-t border-slate-200 dark:border-slate-800">
                           <td colSpan={8} className="p-4 pl-12">
                             <div className="space-y-4">
                               {/* Meta Details Header */}
-                              <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-slate-800/80 pb-3">
-                                <div className="flex flex-wrap items-center gap-4 text-slate-400">
-                                  <span>Pay Terms: <strong className="text-slate-200">{po.payment_terms}</strong></span>
-                                  <span>Delivery Terms: <strong className="text-slate-200">{po.delivery_terms || 'FOB Mill Yard'}</strong></span>
-                                  <span>Delivery Target: <strong className="text-slate-200">{formatDate(po.delivery_date)}</strong></span>
-                                  <span>Receiving Dock: <strong className="text-slate-200">{po.shipping_address}</strong></span>
+                              <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-slate-200 dark:border-slate-800/80 pb-3">
+                                <div className="flex flex-wrap items-center gap-4 text-slate-600 dark:text-slate-400">
+                                  <span>Pay Terms: <strong className="text-slate-800 dark:text-slate-200">{po.payment_terms}</strong></span>
+                                  <span>Delivery Terms: <strong className="text-slate-800 dark:text-slate-200">{po.delivery_terms || 'FOB Mill Yard'}</strong></span>
+                                  <span>Delivery Target: <strong className="text-slate-800 dark:text-slate-200">{formatDate(po.delivery_date)}</strong></span>
+                                  <span>Receiving Dock: <strong className="text-slate-800 dark:text-slate-200">{po.shipping_address}</strong></span>
                                 </div>
 
                                 <div className="flex items-center space-x-2">
                                   <button
                                     onClick={() => handleOpenEdit(po)}
-                                    className="px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-semibold border border-blue-500/40 flex items-center space-x-1 transition"
+                                    className="px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 dark:bg-blue-600/20 dark:hover:bg-blue-600/30 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-500/40 flex items-center space-x-1 transition shadow-sm"
                                   >
                                     <Pencil className="w-3 h-3" />
                                     <span>Edit RM PO</span>
                                   </button>
                                   <button
                                     onClick={() => setSelectedInvoicePo(po)}
-                                    className="px-2.5 py-1 rounded-md bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 text-xs font-semibold border border-emerald-500/40 flex items-center space-x-1 transition"
+                                    className="px-2.5 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-600/20 dark:hover:bg-emerald-600/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold border border-emerald-200 dark:border-emerald-500/40 flex items-center space-x-1 transition shadow-sm"
                                   >
                                     <Printer className="w-3 h-3" />
                                     <span>Print Invoice</span>
@@ -1268,12 +1270,12 @@ export default function ProcurementModule() {
 
                               {/* Nested Line Items Table */}
                               <div>
-                                <div className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center space-x-2">
+                                <div className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2 flex items-center space-x-2">
                                   <span>Line Items Breakdown ({po.po_items?.length || 0})</span>
                                 </div>
-                                <div className="rounded-lg border border-slate-800 overflow-hidden bg-slate-900/60">
+                                <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/60 shadow-sm">
                                   <table className="w-full text-left text-xs">
-                                    <thead className="bg-slate-950 text-slate-400 font-mono text-[10px] uppercase">
+                                    <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-mono text-[10px] uppercase border-b border-slate-200 dark:border-slate-800">
                                       <tr>
                                         <th className="py-2.5 px-3">Item #</th>
                                         <th className="py-2.5 px-3">Product Description</th>
@@ -1285,40 +1287,40 @@ export default function ProcurementModule() {
                                         <th className="py-2.5 px-3 text-center">Status</th>
                                       </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-850 font-mono text-xs">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-mono text-xs">
                                       {po.po_items?.map((item: any, idx: number) => (
-                                        <tr key={item.po_item_id || idx} className="hover:bg-slate-850/40 transition">
-                                          <td className="py-2 px-3 text-blue-400 font-bold">
+                                        <tr key={item.po_item_id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-850/40 transition">
+                                          <td className="py-2 px-3 text-blue-600 dark:text-blue-400 font-bold">
                                             #{idx + 1}
                                           </td>
-                                          <td className="py-2 px-3 font-sans font-medium text-slate-200">
+                                          <td className="py-2 px-3 font-sans font-medium text-slate-800 dark:text-slate-200">
                                             {item.product?.product_description
                                               ? item.product.product_description.replace(/\bPlain\s*End\s*Pipe\b/gi, 'Raw Pipe').replace(/\bPlain\s*End\b/gi, 'Raw Pipe').trim()
                                               : `${item.size_od}mm OD x ${item.wall_thickness}mm WT API 5CT ${item.grade} Raw Pipe`}
                                           </td>
-                                          <td className="py-2 px-3 text-slate-300">
+                                          <td className="py-2 px-3 text-slate-700 dark:text-slate-300">
                                             {item.size_od}mm × {item.wall_thickness}mm • Grade {item.grade}
                                           </td>
-                                          <td className="py-2 px-3 text-slate-400 font-sans text-[11px]">
+                                          <td className="py-2 px-3 text-slate-500 dark:text-slate-400 font-sans text-[11px]">
                                             {item.cvn_requirement || DEFAULT_CVN_REQUIREMENT}
                                           </td>
-                                          <td className="py-2 px-3 text-right font-bold text-slate-200">
+                                          <td className="py-2 px-3 text-right font-bold text-slate-800 dark:text-slate-200">
                                             {item.ordered_qty_mt} MT
                                           </td>
-                                          <td className="py-2 px-3 text-right text-slate-300">
+                                          <td className="py-2 px-3 text-right text-slate-700 dark:text-slate-300">
                                             ${item.unit_rate}
                                           </td>
-                                          <td className="py-2 px-3 text-right text-emerald-400 font-bold">
+                                          <td className="py-2 px-3 text-right text-emerald-700 dark:text-emerald-400 font-bold">
                                             ${(item.line_total || (item.ordered_qty_mt * item.unit_rate)).toLocaleString()}
                                           </td>
                                           <td className="py-2 px-3 text-center font-sans">
                                             <span
                                               className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                                                 item.line_status === 'Fulfilled'
-                                                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                                                  ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
                                                   : item.line_status === 'Partially Received'
-                                                  ? 'bg-blue-950 text-blue-300 border border-blue-800'
-                                                  : 'bg-amber-950 text-amber-300 border border-amber-800'
+                                                  ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                                                  : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
                                               }`}
                                             >
                                               {item.line_status || 'Pending'}
@@ -1333,12 +1335,12 @@ export default function ProcurementModule() {
 
                               {/* Quality Stipulations Note */}
                               {po.quality_stipulations && (
-                                <div className="p-3 bg-slate-900/40 border border-slate-800 rounded-lg text-xs space-y-1">
-                                  <div className="font-semibold text-slate-300 flex items-center space-x-1.5">
-                                    <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-lg text-xs space-y-1">
+                                  <div className="font-semibold text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                                     <span>Quality & Compliance Stipulations:</span>
                                   </div>
-                                  <p className="text-[11px] text-slate-400 font-mono whitespace-pre-line leading-relaxed">
+                                  <p className="text-[11px] text-slate-600 dark:text-slate-400 font-mono whitespace-pre-line leading-relaxed">
                                     {po.quality_stipulations}
                                   </p>
                                 </div>
@@ -1612,7 +1614,7 @@ export default function ProcurementModule() {
                         </div>
 
                         {/* Technical Spec Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-900/60 p-3 rounded-lg border border-slate-800/80">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-white dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-800/80">
                           {/* 1. Size OD */}
                           <div>
                             <label className="text-[10px] font-semibold text-slate-300 block mb-1">
@@ -1782,12 +1784,12 @@ export default function ProcurementModule() {
                             />
                           </div>
 
-                          <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between shadow-sm">
+                          <div className="bg-slate-100 dark:bg-slate-900/90 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
                             <div>
-                              <span className="text-[9px] text-slate-400 uppercase font-semibold block">Line Total</span>
-                              <span className="text-[9px] text-slate-500 font-mono">±{item.tolerable_variance_pct || 5}% tol</span>
+                              <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Line Total</span>
+                              <span className="text-[9px] text-slate-400 dark:text-slate-500 font-mono">±{item.tolerable_variance_pct || 5}% tol</span>
                             </div>
-                            <div className="text-emerald-400 font-mono font-bold text-sm">
+                            <div className="text-emerald-700 dark:text-emerald-400 font-mono font-bold text-sm">
                               ${lineTot.toLocaleString()}
                             </div>
                           </div>
