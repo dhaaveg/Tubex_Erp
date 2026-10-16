@@ -20,56 +20,15 @@ async function hash(password) {
 const SUPERADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || 'superadmin@energyoilfield.com';
 const SUPERADMIN_PASSWORD = process.env.SUPERADMIN_PASSWORD || 'SuperAdmin@2026!';
 
-const INITIAL_ROLES_USERS = [
-  {
-    email: 'admin@energyoilfield.com',
-    name: 'Vikram Joshi (Admin)',
-    role: 'ADMIN',
-    department: 'IT Administration',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'md@energyoilfield.com',
-    name: 'Rajesh Mehra (Managing Director)',
-    role: 'MD',
-    department: 'Executive Board',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'procurement@energyoilfield.com',
-    name: 'Anita Sharma (Procurement Head)',
-    role: 'PROCUREMENT',
-    department: 'Sourcing & Supply Chain',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'manufacturing@energyoilfield.com',
-    name: 'Sunil Rao (Shop Floor Manager)',
-    role: 'MANUFACTURING',
-    department: 'Plant Operations',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'sales@energyoilfield.com',
-    name: 'Priya Verma (Sales Manager)',
-    role: 'SALES',
-    department: 'Commercial & Sales',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'inventory@energyoilfield.com',
-    name: 'Karan Patel (Yard & Tally In-Charge)',
-    role: 'INVENTORY',
-    department: 'Weighbridge & Yard',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
-  {
-    email: 'quality@energyoilfield.com',
-    name: 'Marcus Vance (Level III NDT / QA)',
-    role: 'QUALITY',
-    department: 'Quality Assurance & Testing',
-    password: process.env.DEMO_USER_PASSWORD || 'EotErp@2026!',
-  },
+// Purge Demo Users: Strictly retain single foundational SUPER_ADMIN account
+const DEMO_EMAILS_TO_PURGE = [
+  'admin@energyoilfield.com',
+  'md@energyoilfield.com',
+  'procurement@energyoilfield.com',
+  'manufacturing@energyoilfield.com',
+  'sales@energyoilfield.com',
+  'inventory@energyoilfield.com',
+  'quality@energyoilfield.com',
 ];
 
 export async function seedAuth() {
@@ -110,7 +69,7 @@ export async function seedAuth() {
     }
   }
 
-  // 2. Check for existing SUPER_ADMIN
+  // 2. Check for foundational root SUPER_ADMIN
   const existingSuperAdmin = await prisma.user.findFirst({
     where: { role: 'SUPER_ADMIN' },
   });
@@ -124,6 +83,7 @@ export async function seedAuth() {
         email: SUPERADMIN_EMAIL.toLowerCase().trim(),
         password_hash: passwordHash,
         role: 'SUPER_ADMIN',
+        roles: JSON.stringify(['SUPER_ADMIN']),
         department: 'Root IT & Systems',
         is_active: true,
         force_password_change: false,
@@ -149,36 +109,21 @@ export async function seedAuth() {
       });
       console.log(`✓ Updated SUPER_ADMIN email to ${SUPERADMIN_EMAIL}`);
     } else {
-      console.log(`✓ SUPER_ADMIN already exists (${existingSuperAdmin.email}).`);
+      console.log(`✓ Foundational SUPER_ADMIN active (${existingSuperAdmin.email}).`);
     }
   }
 
-  // 3. Provision or sync standard departmental test accounts
-  for (const acc of INITIAL_ROLES_USERS) {
-    const existing = await prisma.user.findUnique({
-      where: { email: acc.email.toLowerCase().trim() },
-    });
-
-    if (!existing) {
-      const passwordHash = await hash(acc.password);
-      await prisma.user.create({
-        data: {
-          email: acc.email.toLowerCase().trim(),
-          name: acc.name,
-          role: acc.role,
-          department: acc.department,
-          password_hash: passwordHash,
-          is_active: true,
-          force_password_change: false,
-        },
-      });
-      console.log(`✓ Provisioned initial user: ${acc.email} (${acc.role})`);
-    } else {
-      console.log(`✓ User already exists: ${acc.email} (${existing.role})`);
-    }
+  // 3. Purge all hardcoded placeholder/demo accounts (retain strictly the single foundational SUPER_ADMIN)
+  const purged = await prisma.user.deleteMany({
+    where: {
+      email: { in: DEMO_EMAILS_TO_PURGE },
+    },
+  });
+  if (purged.count > 0) {
+    console.log(`✓ Purged ${purged.count} placeholder/demo user accounts from database.`);
   }
 
-  console.log('--- Authentication Seeding Complete ---');
+  console.log('--- Authentication Seeding Complete (Foundational Super Admin Verified) ---');
 }
 
 // Allow CLI direct execution: node scripts/seed-auth.mjs

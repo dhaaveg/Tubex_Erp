@@ -103,10 +103,17 @@ export const POST = withApiHandler(async (request: Request) => {
       assignedRoles = ['PROCUREMENT'];
     }
 
-    // Admins cannot assign the SUPER_ADMIN role
-    if (!isSuperAdmin && assignedRoles.includes('SUPER_ADMIN')) {
+    // Strict Role Validation: Only Super Admins can assign or modify the Admin or Super Admin role
+    const requestedAdminOrSuper =
+      body.role === 'ADMIN' ||
+      body.role === 'SUPER_ADMIN' ||
+      (Array.isArray(body.roles) && body.roles.some((r: string) => r === 'ADMIN' || r === 'SUPER_ADMIN')) ||
+      assignedRoles.includes('ADMIN') ||
+      assignedRoles.includes('SUPER_ADMIN');
+
+    if (!isSuperAdmin && requestedAdminOrSuper) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
+        { success: false, error: 'Only Super Admins can assign or modify the Admin role' },
         { status: 403 }
       );
     }
@@ -138,6 +145,16 @@ export const POST = withApiHandler(async (request: Request) => {
 
     const primaryRole = assignedRoles[0];
 
+    // Dynamic user access status: bind directly to request body / admin selection
+    const rawIsActive = body.is_active !== undefined
+      ? body.is_active
+      : body.isActive !== undefined
+      ? body.isActive
+      : body.status !== undefined
+      ? (body.status === 'ACTIVE' || body.status === 'Active' || body.status === true)
+      : true;
+    const resolvedIsActive = Boolean(rawIsActive);
+
     const newUser = await prisma.user.create({
       data: {
         email: cleanEmail,
@@ -146,7 +163,7 @@ export const POST = withApiHandler(async (request: Request) => {
         roles: JSON.stringify(assignedRoles),
         department: department ? String(department).trim() : null,
         password_hash: passwordHash,
-        is_active: true,
+        is_active: resolvedIsActive,
         force_password_change: true, // newly provisioned users must reset on first login
       },
     });

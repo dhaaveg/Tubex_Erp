@@ -49,11 +49,20 @@ export const PUT = withApiHandler(async (request: Request, { params }: RouteCont
     }
 
     const targetRoles = parseRoles(targetUser);
-    const isTargetSuperAdmin = targetRoles.includes('SUPER_ADMIN');
+    const isTargetSuperAdmin = targetRoles.includes('SUPER_ADMIN') || targetUser.role === 'SUPER_ADMIN';
+    const isTargetAdmin = targetRoles.includes('ADMIN') || targetUser.role === 'ADMIN';
 
     // Super Admin invisibility: If target is SUPER_ADMIN and caller is not, pretend 404 (unless self-edit)
     if (isTargetSuperAdmin && !isCallerSuperAdmin && !isSelfEdit) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
+
+    // Role modification restriction: Only Super Admins can modify accounts with Admin or Super Admin role
+    if (!isCallerSuperAdmin && !isSelfEdit && (isTargetAdmin || isTargetSuperAdmin)) {
+      return NextResponse.json(
+        { success: false, error: 'Only Super Admins can assign or modify the Admin role' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
@@ -112,10 +121,16 @@ export const PUT = withApiHandler(async (request: Request, { params }: RouteCont
         newRoles = [role as Role];
       }
 
-      // Admin privileges check: Non-super-admins cannot assign or elevate to SUPER_ADMIN
-      if (newRoles && newRoles.includes('SUPER_ADMIN') && !isCallerSuperAdmin) {
+      // Admin privileges check: Non-super-admins cannot assign or modify the Admin or Super Admin role
+      const payloadHasAdminOrSuper =
+        body.role === 'ADMIN' ||
+        body.role === 'SUPER_ADMIN' ||
+        (Array.isArray(body.roles) && body.roles.some((r: string) => r === 'ADMIN' || r === 'SUPER_ADMIN')) ||
+        (newRoles && (newRoles.includes('ADMIN') || newRoles.includes('SUPER_ADMIN')));
+
+      if (!isCallerSuperAdmin && payloadHasAdminOrSuper) {
         return NextResponse.json(
-          { success: false, error: 'Forbidden: Only a Super Administrator can assign the SUPER_ADMIN role.' },
+          { success: false, error: 'Only Super Admins can assign or modify the Admin role' },
           { status: 403 }
         );
       }
@@ -142,7 +157,15 @@ export const PUT = withApiHandler(async (request: Request, { params }: RouteCont
         }
       }
 
-      if (is_active !== undefined) updateData.is_active = Boolean(is_active);
+      const rawIsActive = is_active !== undefined
+        ? is_active
+        : body.isActive !== undefined
+        ? body.isActive
+        : body.status !== undefined
+        ? (body.status === 'ACTIVE' || body.status === 'Active' || body.status === true)
+        : undefined;
+
+      if (rawIsActive !== undefined) updateData.is_active = Boolean(rawIsActive);
       if (force_password_change !== undefined) updateData.force_password_change = Boolean(force_password_change);
 
       if (newRoles && newRoles.length > 0) {

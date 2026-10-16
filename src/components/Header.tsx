@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import {
   Search,
   RefreshCw,
-  Download,
   LogOut,
   ShieldCheck,
   Eye,
@@ -24,7 +23,6 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import RecentActivityFeed from './RecentActivityFeed';
-import ActiveShiftIndicator from './ActiveShiftIndicator';
 import { PasswordInput } from './ui/PasswordInput';
 import { apiUrl } from '@/lib/api';
 
@@ -208,9 +206,6 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
 
         {/* Header Badges & Actions */}
         <div className="flex items-center space-x-3">
-          {/* Real-Time Live Active Shift Status Indicator */}
-          <ActiveShiftIndicator />
-
           {onRefresh && (
             <button
               onClick={onRefresh}
@@ -220,17 +215,6 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-blue-500' : ''}`} />
               <span className="hidden sm:inline text-xs">Sync</span>
-            </button>
-          )}
-
-          {onExportClick && (
-            <button
-              onClick={onExportClick}
-              className="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 text-xs flex items-center space-x-1.5 transition-colors font-medium shadow-sm"
-              title="Export ERP Data (Excel & CSV)"
-            >
-              <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">Export Excel/CSV</span>
             </button>
           )}
 

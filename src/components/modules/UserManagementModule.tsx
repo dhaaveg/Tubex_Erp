@@ -78,6 +78,7 @@ export default function UserManagementModule() {
   const [newRoles, setNewRoles] = useState<Role[]>([]);
   const [newDepartment, setNewDepartment] = useState('');
   const [newTempPassword, setNewTempPassword] = useState('');
+  const [newIsActive, setNewIsActive] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
   // Edit User Modal State
@@ -275,6 +276,7 @@ export default function UserManagementModule() {
     setNewRoles([]);
     setNewDepartment('');
     setNewTempPassword('');
+    setNewIsActive(true);
     setError(null);
     setIsAddModalOpen(true);
   };
@@ -344,6 +346,7 @@ export default function UserManagementModule() {
           role: newRoles[0] || 'PROCUREMENT',
           department: newDepartment.trim(),
           temporaryPassword: newTempPassword.trim(),
+          is_active: newIsActive,
         }),
       });
       const data = await res.json();
@@ -366,6 +369,15 @@ export default function UserManagementModule() {
   };
 
   const handleOpenEdit = (user: SafeUser) => {
+    const isTargetAdmin =
+      user.role === 'ADMIN' ||
+      user.role === 'SUPER_ADMIN' ||
+      (user.roles && (user.roles.includes('ADMIN' as Role) || user.roles.includes('SUPER_ADMIN' as Role)));
+    if (!isSuperAdmin && isTargetAdmin) {
+      setError('Only Super Admins can assign or modify the Admin role');
+      return;
+    }
+
     setEditingUser(user);
     setEditName(user.name);
     setEditEmail(user.email);
@@ -464,9 +476,11 @@ export default function UserManagementModule() {
   );
 
   // Available roles in selector:
-  // If SUPER_ADMIN: can assign all roles including SUPER_ADMIN
-  // If ADMIN: CANNOT assign SUPER_ADMIN
-  const availableRoles = isSuperAdmin ? ALL_ROLES : ALL_ROLES.filter((r) => r !== 'SUPER_ADMIN');
+  // If SUPER_ADMIN: can assign all roles including SUPER_ADMIN and ADMIN
+  // If regular ADMIN: CANNOT assign or modify ADMIN or SUPER_ADMIN (operational roles only)
+  const availableRoles = isSuperAdmin
+    ? ALL_ROLES
+    : ALL_ROLES.filter((r) => r !== 'SUPER_ADMIN' && r !== 'ADMIN');
 
   const filteredUsers = users.filter((u) => {
     const userRoles = u.roles && u.roles.length > 0 ? u.roles : [u.role];
@@ -805,14 +819,33 @@ export default function UserManagementModule() {
                         {/* Actions */}
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end space-x-1.5">
-                            <button
-                              onClick={() => handleOpenEdit(user)}
-                              className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition"
-                              title="Edit User Profile"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                              <span>Edit</span>
-                            </button>
+                            {(() => {
+                              const isTargetAdmin =
+                                user.role === 'ADMIN' ||
+                                user.role === 'SUPER_ADMIN' ||
+                                (user.roles && (user.roles.includes('ADMIN' as Role) || user.roles.includes('SUPER_ADMIN' as Role)));
+                              const canEditUser = isSuperAdmin || !isTargetAdmin;
+
+                              return canEditUser ? (
+                                <button
+                                  onClick={() => handleOpenEdit(user)}
+                                  className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition"
+                                  title="Edit User Profile"
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                  <span>Edit</span>
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-800 text-[11px] font-medium flex items-center space-x-1 cursor-not-allowed opacity-60"
+                                  title="Only Super Admins can assign or modify the Admin role"
+                                >
+                                  <Lock className="w-3 h-3" />
+                                  <span>Edit</span>
+                                </button>
+                              );
+                            })()}
 
                             {/* Delete button: Visible ONLY to Super Admin */}
                             {isSuperAdmin && user.id !== currentUser?.id && (
@@ -1318,6 +1351,27 @@ export default function UserManagementModule() {
                 <p className="text-[10px] text-slate-500 mt-1">
                   Account will be provisioned with <strong>Reset on First Login</strong> flag active.
                 </p>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+                <label className="flex items-center space-x-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newIsActive}
+                    onChange={(e) => setNewIsActive(e.target.checked)}
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700"
+                  />
+                  <div>
+                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block">
+                      Account Status: {newIsActive ? 'Active' : 'Inactive'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">
+                      {newIsActive
+                        ? 'User will be enabled and permitted to authenticate immediately.'
+                        : 'User will be provisioned in an inactive/disabled state.'}
+                    </span>
+                  </div>
+                </label>
               </div>
 
               </div>
