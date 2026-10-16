@@ -323,20 +323,20 @@ export default function CustomerOrdersModule() {
   return (
     <div className="space-y-6">
       {/* Module Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-blue-300 border border-blue-800/60 uppercase font-semibold tracking-wider">
-              Step 4 • Sales & Demand Allocation
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 uppercase font-semibold tracking-wider">
+              Step 4 • Sales &amp; Demand Allocation
             </span>
-            <span className="text-slate-500">•</span>
-            <span className="text-xs text-slate-400">Pre-Production Work Order Driver</span>
+            <span className="text-slate-400 dark:text-slate-500">•</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">Pre-Production Work Order Driver</span>
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight mt-1 flex items-center space-x-2">
-            <FileSpreadsheet className="w-5 h-5 text-blue-400" />
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mt-1 flex items-center space-x-2">
+            <FileSpreadsheet className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span>Customer&apos;s Orders &amp; Demand Master</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             Log official customer purchase orders with commercial delivery &amp; payment terms and dynamic tubular line items before releasing shop floor Work Orders.
           </p>
         </div>
@@ -344,7 +344,7 @@ export default function CustomerOrdersModule() {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleOpenCreateModal}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>New Customer Order</span>
@@ -354,49 +354,49 @@ export default function CustomerOrdersModule() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-sm">
-          <div className="text-slate-400 text-xs font-medium flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+          <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center justify-between">
             <span>Total Customer Orders</span>
-            <FileText className="w-4 h-4 text-blue-400" />
+            <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-2xl font-bold text-white mt-1 font-mono">{customerOrders.length}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Logged sales contracts</div>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1 font-mono">{customerOrders.length}</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Logged sales contracts</div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-sm">
-          <div className="text-slate-400 text-xs font-medium flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+          <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center justify-between">
             <span>Active Demand</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <div className="text-2xl font-bold text-amber-400 mt-1 font-mono">{totalOpenOrders}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Open / In Production</div>
+          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1 font-mono">{totalOpenOrders}</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Open / In Production</div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-sm">
-          <div className="text-slate-400 text-xs font-medium flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+          <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center justify-between">
             <span>Total Contract Value</span>
-            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-2xl font-bold text-emerald-400 mt-1 font-mono">
+          <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-1 font-mono">
             ${totalContractValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">Booked customer revenue</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Booked customer revenue</div>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-sm">
-          <div className="text-slate-400 text-xs font-medium flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+          <div className="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center justify-between">
             <span>Total Demand Volume</span>
-            <Layers className="w-4 h-4 text-purple-400" />
+            <Layers className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <div className="text-2xl font-bold text-purple-300 mt-1 font-mono">
+          <div className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-1 font-mono">
             {totalOrderedPieces.toLocaleString()} Pcs
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">Total pieces on order</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Total pieces on order</div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -404,16 +404,16 @@ export default function CustomerOrdersModule() {
             placeholder="Search by Customer PO No, Customer Name, Paying Terms, Delivery Terms, Size, Grade..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500"
           />
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs text-slate-400 whitespace-nowrap">Status:</span>
+          <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">Status:</span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+            className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
           >
             <option value="ALL">All Statuses</option>
             <option value="Open">Open</option>
@@ -426,10 +426,10 @@ export default function CustomerOrdersModule() {
       </div>
 
       {/* Customer Orders Main Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-mono border-b border-slate-800">
+            <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-3 py-3 w-8"></th>
                 <th className="px-4 py-3">Customer&apos;s PO No</th>
@@ -443,10 +443,10 @@ export default function CustomerOrdersModule() {
                 <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-slate-500">
+                  <td colSpan={10} className="px-4 py-10 text-center text-slate-500 font-sans">
                     {isLoading ? 'Loading customer orders...' : 'No customer purchase orders logged yet.'}
                   </td>
                 </tr>
@@ -459,8 +459,8 @@ export default function CustomerOrdersModule() {
                   return (
                     <React.Fragment key={ord.customer_po_no}>
                       <tr
-                        className={`hover:bg-slate-850/50 transition-colors ${
-                          isExpanded ? 'bg-slate-850/40 border-l-2 border-blue-500' : ''
+                        className={`hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors ${
+                          isExpanded ? 'bg-slate-50/80 dark:bg-slate-850/40 border-l-2 border-blue-500' : ''
                         }`}
                       >
                         <td className="px-3 py-3 text-center">
@@ -468,69 +468,69 @@ export default function CustomerOrdersModule() {
                             onClick={() =>
                               setExpandedOrder(isExpanded ? null : ord.customer_po_no)
                             }
-                            className="text-slate-400 hover:text-white transition-colors"
+                            className="text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="w-4 h-4 text-blue-400" />
+                              <ChevronDown className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                             ) : (
                               <ChevronRight className="w-4 h-4" />
                             )}
                           </button>
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-blue-400">
+                        <td className="px-4 py-3 font-mono font-bold text-blue-600 dark:text-blue-400">
                           <button
                             onClick={() => setPreviewTagOrder(ord)}
                             className="hover:underline flex items-center space-x-1"
                             title="Preview Order Tag / Commercial Spec"
                           >
-                            <Tag className="w-3 h-3 text-blue-400" />
+                            <Tag className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                             <span>{ord.customer_po_no}</span>
                           </button>
-                          <div className="text-[10px] text-slate-500 font-sans font-normal mt-0.5">
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-sans font-normal mt-0.5">
                             Date: {formatDate(ord.order_date)}
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="font-semibold text-slate-200">{ord.customer_name}</div>
+                          <div className="font-semibold text-slate-900 dark:text-slate-200">{ord.customer_name}</div>
                           {ord.remarks && (
-                            <div className="text-[11px] text-slate-400 truncate max-w-xs" title={ord.remarks}>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs" title={ord.remarks}>
                               &quot;{ord.remarks}&quot;
                             </div>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-slate-300 font-medium">
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-medium">
                           {ord.payment_terms}
                         </td>
-                        <td className="px-4 py-3 text-slate-300">
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
                           <div className="flex items-center space-x-1.5">
-                            <Truck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                            <Truck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
                             <span>{ord.delivery_terms}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3 font-mono">
                           <div className="flex items-center space-x-1.5">
                             <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className={isDueSoon ? 'text-amber-400 font-semibold' : 'text-slate-300'}>
+                            <span className={isDueSoon ? 'text-amber-600 dark:text-amber-400 font-semibold' : 'text-slate-700 dark:text-slate-300'}>
                               {formatDate(ord.delivery_due_date)}
                             </span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-right font-mono font-bold text-slate-200">
+                        <td className="px-4 py-3 text-right font-mono font-bold text-slate-900 dark:text-slate-200">
                           {ord.total_quantity?.toLocaleString()} Pcs
                         </td>
-                        <td className="px-4 py-3 text-right font-mono font-bold text-emerald-400">
+                        <td className="px-4 py-3 text-right font-mono font-bold text-emerald-700 dark:text-emerald-400">
                           ${ord.total_amount?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <span
-                            className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+                            className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${
                               ord.order_status === 'Fulfilled'
-                                ? 'bg-emerald-950 border-emerald-800 text-emerald-300'
+                                ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
                                 : ord.order_status === 'In Production'
-                                ? 'bg-blue-950 border-blue-800 text-blue-300'
+                                ? 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300'
                                 : ord.order_status === 'Cancelled'
-                                ? 'bg-rose-950 border-rose-800 text-rose-300'
-                                : 'bg-amber-950 border-amber-800 text-amber-300'
+                                ? 'bg-rose-50 dark:bg-rose-950 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300'
+                                : 'bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300'
                             }`}
                           >
                             <span>{ord.order_status}</span>
@@ -540,18 +540,18 @@ export default function CustomerOrdersModule() {
                           <div className="flex items-center justify-center space-x-2">
                             <button
                               onClick={() => setPreviewTagOrder(ord)}
-                              className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1"
+                              className="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-blue-400 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 shadow-sm transition-colors"
                               title="Preview Order Spec"
                             >
-                              <Tag className="w-3.5 h-3.5" />
+                              <Tag className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                               <span>Tag</span>
                             </button>
                             <button
                               onClick={() => handleOpenEditModal(ord)}
-                              className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1"
+                              className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-amber-400 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 shadow-sm transition-colors"
                               title="Edit Customer Order"
                             >
-                              <Edit className="w-3.5 h-3.5" />
+                              <Edit className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                               <span>Edit</span>
                             </button>
                           </div>

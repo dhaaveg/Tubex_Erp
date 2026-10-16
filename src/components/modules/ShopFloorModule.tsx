@@ -916,10 +916,10 @@ export default function ShopFloorModule() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Shop Floor & Work Order Execution</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Shop Floor &amp; Work Order Execution</h2>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             Release job cards from available pipes and track the 8-stage manufacturing routing with live quantity balance gates.
           </p>
         </div>
@@ -927,7 +927,7 @@ export default function ShopFloorModule() {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleOpenReleaseModal}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Release Work Order</span>
@@ -939,14 +939,14 @@ export default function ShopFloorModule() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Work Order Cards */}
         <div className="lg:col-span-4 space-y-3">
-          <div className="text-xs font-mono uppercase font-bold text-slate-400 flex items-center justify-between px-1">
+          <div className="text-xs font-mono uppercase font-bold text-slate-600 dark:text-slate-400 flex items-center justify-between px-1">
             <span>Work Orders ({workOrders.length})</span>
             <span className="text-[10px] text-slate-500">Select to inspect routing</span>
           </div>
 
           <div className="space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
             {workOrders.length === 0 ? (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center text-slate-500 text-xs">
                 No active work orders.
               </div>
             ) : (
@@ -959,20 +959,20 @@ export default function ShopFloorModule() {
                     onClick={() => setSelectedWo(wo)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-slate-850 border-blue-500 shadow-md shadow-blue-500/10'
-                        : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                        ? 'bg-blue-50/60 dark:bg-slate-850 border-blue-500 shadow-sm'
+                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-sm text-blue-400">{wo.wo_id}</span>
+                      <span className="font-mono font-bold text-sm text-blue-600 dark:text-blue-400">{wo.wo_id}</span>
                       <div className="flex items-center space-x-1.5">
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                             wo.wo_status === 'Completed'
-                              ? 'bg-emerald-950 border border-emerald-800 text-emerald-300'
+                              ? 'bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
                               : wo.wo_status === 'In Progress'
-                              ? 'bg-blue-950 border border-blue-800 text-blue-300'
-                              : 'bg-slate-800 text-slate-400'
+                              ? 'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                           }`}
                         >
                           {wo.wo_status}
@@ -1067,40 +1067,40 @@ export default function ShopFloorModule() {
         {/* Right Column: 8-Stage Routing Flow Visualizer */}
         <div className="lg:col-span-8 space-y-4">
           {selectedWo ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-5">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm dark:shadow-lg space-y-5">
               {/* Selected WO Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold font-mono text-white">{selectedWo.wo_id}</span>
-                    <span className="text-xs bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-slate-300 font-mono">
+                    <span className="text-lg font-bold font-mono text-slate-900 dark:text-white">{selectedWo.wo_id}</span>
+                    <span className="text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono">
                       Target: {selectedWo.target_product?.grade} {selectedWo.target_product?.thread_type}
                     </span>
-                    <span className="text-xs bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-slate-300 font-mono">
+                    <span className="text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono">
                       Date: {formatDate(selectedWo.wo_date)}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Planned Parts to Produce: <span className="font-mono font-bold text-emerald-400">{selectedWo.planned_parts_to_produce} pcs</span> from Pipe Tag{' '}
-                    <span className="font-mono text-amber-300">{selectedWo.ti_id}</span>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    Planned Parts to Produce: <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{selectedWo.planned_parts_to_produce} pcs</span> from Pipe Tag{' '}
+                    <span className="font-mono text-amber-600 dark:text-amber-300">{selectedWo.ti_id}</span>
                   </p>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleOpenEditWO(selectedWo)}
-                    className="inline-flex items-center space-x-1 px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-colors"
+                    className="inline-flex items-center space-x-1 px-2.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium border border-slate-200 dark:border-slate-700 transition-colors"
                     title="Edit Work Order"
                   >
-                    <Pencil className="w-3.5 h-3.5 text-blue-400" />
+                    <Pencil className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                     <span>Edit WO</span>
                   </button>
                   <button
                     onClick={() => handleDeleteWO(selectedWo.wo_id)}
-                    className="inline-flex items-center space-x-1 px-2.5 py-2 rounded-lg bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 text-xs font-medium border border-rose-800/50 transition-colors"
+                    className="inline-flex items-center space-x-1 px-2.5 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-xs font-medium border border-rose-200 dark:border-rose-800/50 transition-colors"
                     title="Delete Work Order"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <Trash2 className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
                     <span>Delete</span>
                   </button>
                   <button
@@ -1116,10 +1116,10 @@ export default function ShopFloorModule() {
               {/* 8 Process Stages Visual Pipeline */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono uppercase font-bold text-slate-400 block">
+                  <span className="text-xs font-mono uppercase font-bold text-slate-700 dark:text-slate-400 block">
                     8-Stage Manufacturing Routing Operations
                   </span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
                     💡 Click any stage card to log or record run
                   </span>
                 </div>
@@ -1146,15 +1146,15 @@ export default function ShopFloorModule() {
                           isCompleted
                             ? isFullyCompleted
                               ? hasRejection
-                                ? 'bg-amber-950/20 border-amber-800/60'
-                                : 'bg-emerald-950/20 border-emerald-800/60'
-                              : 'bg-blue-950/20 border-blue-800/50'
-                            : 'bg-slate-950/80 border-slate-800 hover:opacity-100 opacity-75'
+                                ? 'bg-amber-50/70 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800/60'
+                                : 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800/60'
+                              : 'bg-blue-50/70 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800/50'
+                            : 'bg-slate-50 dark:bg-slate-950/80 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                         title={`Click to log or view OP ${stage.seq}: ${stage.name}`}
                       >
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-blue-300">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-300">
                             OP {stage.seq} {stagePostings.length > 1 ? `(${stagePostings.length} runs)` : ''}
                           </span>
                           <div className="flex items-center space-x-1">
@@ -1166,39 +1166,39 @@ export default function ShopFloorModule() {
                                   handleOpenEditPosting(stagePostings[stagePostings.length - 1]);
                                 }}
                                 title={`Edit OP ${stage.seq}: ${stage.name}`}
-                                className="p-1 rounded hover:bg-blue-900/60 text-slate-400 hover:text-blue-300 transition-colors"
+                                className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/60 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
                               >
                                 <Pencil className="w-3 h-3" />
                               </button>
                             )}
                             {isCompleted ? (
                               <CheckCircle2
-                                className={`w-4 h-4 ${hasRejection ? 'text-amber-400' : isFullyCompleted ? 'text-emerald-400' : 'text-blue-400'}`}
+                                className={`w-4 h-4 ${hasRejection ? 'text-amber-500 dark:text-amber-400' : isFullyCompleted ? 'text-emerald-500 dark:text-emerald-400' : 'text-blue-500 dark:text-blue-400'}`}
                               />
                             ) : (
-                              <Clock className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-400" />
+                              <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600 group-hover:text-blue-500 dark:group-hover:text-blue-400" />
                             )}
                           </div>
                         </div>
 
-                        <div className="font-semibold text-xs text-white group-hover:text-blue-200 transition-colors">{stage.name}</div>
-                        <div className="text-[10px] text-slate-500 truncate mb-2">{stage.description}</div>
+                        <div className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-200 transition-colors">{stage.name}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate mb-2">{stage.description}</div>
 
                         {isCompleted ? (
-                          <div className="pt-2 border-t border-slate-800/80 font-mono text-[10px] space-y-1">
-                            <div className="flex justify-between text-slate-400">
+                          <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 font-mono text-[10px] space-y-1">
+                            <div className="flex justify-between text-slate-600 dark:text-slate-400">
                               <span>In: {stageInput}</span>
-                              <span className="text-emerald-400 font-bold">Acc: {stageAcc}</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Acc: {stageAcc}</span>
                             </div>
-                            <div className="flex justify-between text-slate-400">
-                              <span className={stageRej > 0 ? 'text-rose-400 font-bold' : ''}>
+                            <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                              <span className={stageRej > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : ''}>
                                 Rej: {stageRej}
                               </span>
                               <span>Rew: {stageRew}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[9px] text-slate-500 pt-0.5">
+                            <div className="flex justify-between items-center text-[9px] text-slate-500 dark:text-slate-400 pt-0.5">
                               <span>Total: {stageAcc + stageRej}/{woPlanned}</span>
-                              <span className={isFullyCompleted ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                              <span className={isFullyCompleted ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-amber-600 dark:text-amber-400'}>
                                 {isFullyCompleted ? '✓ Done' : `${woPlanned - (stageAcc + stageRej)} left`}
                               </span>
                             </div>
@@ -1214,7 +1214,7 @@ export default function ShopFloorModule() {
                                       e.stopPropagation();
                                       handleOpenEditPosting(p);
                                     }}
-                                    className="text-[9px] px-1.5 py-0.5 rounded bg-blue-950/80 hover:bg-blue-900 border border-blue-800 text-blue-300 flex items-center space-x-1 transition-colors"
+                                    className="text-[9px] px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/80 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center space-x-1 transition-colors"
                                     title={`Edit Run ${idx + 1}: ${p.pp_id}`}
                                   >
                                     <span>Run {idx + 1} ({p.accepted_quantity})</span>
@@ -1225,14 +1225,14 @@ export default function ShopFloorModule() {
                             )}
 
                             {/* Card action footer */}
-                            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
+                            <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleOpenEditPosting(stagePostings[stagePostings.length - 1]);
                                 }}
-                                className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-950/70 hover:bg-blue-900 text-blue-300 border border-blue-800/60 font-medium transition-colors"
+                                className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/70 hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 font-medium transition-colors"
                                 title="Edit this stage posting"
                               >
                                 <Pencil className="w-3 h-3" />
@@ -1245,7 +1245,7 @@ export default function ShopFloorModule() {
                                     e.stopPropagation();
                                     handleOpenPostingModal(stage);
                                   }}
-                                  className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-800/60 font-medium transition-colors"
+                                  className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/70 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-medium transition-colors"
                                   title="Log another run for this stage"
                                 >
                                   <Plus className="w-3 h-3" />
@@ -1255,7 +1255,7 @@ export default function ShopFloorModule() {
                             </div>
                           </div>
                         ) : (
-                          <div className="pt-2 border-t border-slate-800/80 text-[10px] text-blue-400/80 group-hover:text-blue-300 flex items-center justify-between">
+                          <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 text-[10px] text-blue-600 dark:text-blue-400/80 group-hover:text-blue-700 dark:group-hover:text-blue-300 flex items-center justify-between">
                             <span>Pending</span>
                             <span className="text-[9px] underline">Click to log &rarr;</span>
                           </div>
@@ -1268,52 +1268,52 @@ export default function ShopFloorModule() {
 
               {/* Detailed Logged Routing Operations Table with Direct Edit and Delete */}
               {selectedWo.production_postings?.length > 0 && (
-                <div className="pt-3 border-t border-slate-800 space-y-2">
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono uppercase font-bold text-blue-400 flex items-center space-x-1.5">
+                    <span className="text-xs font-mono uppercase font-bold text-blue-600 dark:text-blue-400 flex items-center space-x-1.5">
                       <Layers className="w-4 h-4" />
                       <span>Logged Routing Operations ({selectedWo.production_postings.length} Postings)</span>
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
                       ✏️ Click Edit on any row to modify quantities, defect reasons or machine
                     </span>
                   </div>
 
-                  <div className="overflow-x-auto rounded-lg border border-slate-800">
+                  <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
                     <table className="w-full text-left text-xs font-mono">
-                      <thead className="bg-slate-950 text-slate-400 text-[11px]">
+                      <thead className="bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 text-[11px]">
                         <tr>
                           <th className="px-3 py-2">Stage</th>
                           <th className="px-3 py-2">Posting ID</th>
                           <th className="px-3 py-2 text-right">Input</th>
-                          <th className="px-3 py-2 text-right text-emerald-400">Accepted</th>
-                          <th className="px-3 py-2 text-right text-rose-400">Rejected</th>
-                          <th className="px-3 py-2 text-right text-amber-400">Rework</th>
+                          <th className="px-3 py-2 text-right text-emerald-600 dark:text-emerald-400">Accepted</th>
+                          <th className="px-3 py-2 text-right text-rose-600 dark:text-rose-400">Rejected</th>
+                          <th className="px-3 py-2 text-right text-amber-600 dark:text-amber-400">Rework</th>
                           <th className="px-3 py-2">Station / Operator</th>
                           <th className="px-3 py-2 text-center">Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800/60">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                         {selectedWo.production_postings.map((p: any) => (
-                          <tr key={p.pp_id} className="hover:bg-slate-850/40 transition-colors">
-                            <td className="px-3 py-2 font-bold text-slate-200">
-                              <span className="px-1.5 py-0.5 rounded bg-slate-800 text-blue-300">
+                          <tr key={p.pp_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/40 transition-colors">
+                            <td className="px-3 py-2 font-bold text-slate-800 dark:text-slate-200">
+                              <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-300">
                                 OP {p.operation_seq_no}: {p.process_stage_name}
                               </span>
                             </td>
-                            <td className="px-3 py-2 text-blue-400 font-bold">
+                            <td className="px-3 py-2 text-blue-600 dark:text-blue-400 font-bold">
                               <div>{p.pp_id}</div>
                               <div className="text-[10px] text-slate-500 font-normal">{formatDateTime(p.stage_completion_timestamp)}</div>
                             </td>
-                            <td className="px-3 py-2 text-right text-slate-300 font-bold">{p.input_quantity}</td>
-                            <td className="px-3 py-2 text-right text-emerald-400 font-bold">{p.accepted_quantity}</td>
+                            <td className="px-3 py-2 text-right text-slate-700 dark:text-slate-300 font-bold">{p.input_quantity}</td>
+                            <td className="px-3 py-2 text-right text-emerald-600 dark:text-emerald-400 font-bold">{p.accepted_quantity}</td>
                             <td className="px-3 py-2 text-right font-bold">
-                              <span className={p.rejected_quantity > 0 ? 'text-rose-400' : 'text-slate-500'}>
+                              <span className={p.rejected_quantity > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400 dark:text-slate-500'}>
                                 {p.rejected_quantity}
                               </span>
                             </td>
-                            <td className="px-3 py-2 text-right text-amber-400 font-bold">{p.rework_quantity}</td>
-                            <td className="px-3 py-2 text-slate-400 text-[11px] truncate max-w-[180px]">
+                            <td className="px-3 py-2 text-right text-amber-600 dark:text-amber-400 font-bold">{p.rework_quantity}</td>
+                            <td className="px-3 py-2 text-slate-600 dark:text-slate-400 text-[11px] truncate max-w-[180px]">
                               {p.operator_machine_id}
                             </td>
                             <td className="px-3 py-2 text-center">
@@ -1321,7 +1321,7 @@ export default function ShopFloorModule() {
                                 <button
                                   type="button"
                                   onClick={() => handleOpenEditPosting(p)}
-                                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-blue-950 hover:bg-blue-900 border border-blue-800 text-blue-300 text-[11px] font-semibold transition-colors shadow-sm"
+                                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-[11px] font-semibold transition-colors shadow-sm"
                                   title={`Edit ${p.pp_id}`}
                                 >
                                   <Pencil className="w-3 h-3" />
@@ -1330,7 +1330,7 @@ export default function ShopFloorModule() {
                                 <button
                                   type="button"
                                   onClick={() => handleDeletePosting(p.pp_id)}
-                                  className="p-1 rounded hover:bg-rose-950 text-slate-500 hover:text-rose-400 transition-colors"
+                                  className="p-1 rounded hover:bg-rose-50 dark:hover:bg-rose-950 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
                                   title={`Delete ${p.pp_id}`}
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1347,15 +1347,15 @@ export default function ShopFloorModule() {
 
               {/* Defect Logs for this Work Order */}
               {selectedWo.rejection_postings?.length > 0 && (
-                <div className="pt-3 border-t border-slate-800 space-y-2">
-                  <span className="text-xs font-mono uppercase font-bold text-rose-400 flex items-center space-x-1.5">
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                  <span className="text-xs font-mono uppercase font-bold text-rose-600 dark:text-rose-400 flex items-center space-x-1.5">
                     <ShieldAlert className="w-4 h-4" />
                     <span>Defects Logged For This Job Card ({selectedWo.rejection_postings.length})</span>
                   </span>
 
-                  <div className="overflow-x-auto rounded-lg border border-slate-800">
+                  <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
                     <table className="w-full text-left text-xs font-mono">
-                      <thead className="bg-slate-950 text-slate-400 text-[11px]">
+                      <thead className="bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 text-[11px]">
                         <tr>
                           <th className="px-3 py-2">Defect ID</th>
                           <th className="px-3 py-2">Defect Category</th>
@@ -1364,24 +1364,24 @@ export default function ShopFloorModule() {
                           <th className="px-3 py-2">Inspector Remarks</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800/60">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                         {selectedWo.rejection_postings.map((r: any) => (
-                          <tr key={r.rp_id} className="hover:bg-slate-850/40">
-                            <td className="px-3 py-2 text-rose-400">{r.rp_id}</td>
-                            <td className="px-3 py-2 font-bold text-slate-200">{r.defect_category}</td>
-                            <td className="px-3 py-2 text-rose-400 font-bold">{r.defect_quantity} pcs</td>
+                          <tr key={r.rp_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/40">
+                            <td className="px-3 py-2 text-rose-600 dark:text-rose-400">{r.rp_id}</td>
+                            <td className="px-3 py-2 font-bold text-slate-800 dark:text-slate-200">{r.defect_category}</td>
+                            <td className="px-3 py-2 text-rose-600 dark:text-rose-400 font-bold">{r.defect_quantity} pcs</td>
                             <td className="px-3 py-2">
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] ${
+                                className={`px-2 py-0.5 rounded text-[10px] font-medium ${
                                   r.disposition_action === 'Scrap'
-                                    ? 'bg-rose-950 text-rose-300 border border-rose-800'
-                                    : 'bg-amber-950 text-amber-300 border border-amber-800'
+                                    ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800'
+                                    : 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800'
                                 }`}
                               >
                                 {r.disposition_action}
                               </span>
                             </td>
-                            <td className="px-3 py-2 font-sans text-slate-400 text-[11px]">{r.inspector_remarks}</td>
+                            <td className="px-3 py-2 font-sans text-slate-600 dark:text-slate-400 text-[11px]">{r.inspector_remarks}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1391,7 +1391,7 @@ export default function ShopFloorModule() {
               )}
             </div>
           ) : (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center text-slate-500 text-xs">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center text-slate-500 text-xs">
               Select a work order from the left to inspect routing.
             </div>
           )}

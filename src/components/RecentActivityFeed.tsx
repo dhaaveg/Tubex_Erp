@@ -266,42 +266,42 @@ export default function RecentActivityFeed({
 
   return (
     <div
-      className={`bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl ${
+      className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm dark:shadow-xl ${
         compact ? 'p-3' : 'p-5'
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
         <div className="flex items-center space-x-2.5">
-          <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center">
-            <Activity className="w-4 h-4 text-blue-400" />
+          <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center">
+            <Activity className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-bold text-white tracking-wide">{title}</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-wide">{title}</h3>
               {feedLabel && (
                 <span
                   className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${
                     feedScope === 'SYSTEM_AUDIT'
-                      ? 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60'
+                      ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/80 dark:text-indigo-300 dark:border-indigo-700/60'
                       : feedScope === 'PLANT_OPERATIONS'
-                      ? 'bg-cyan-950/80 text-cyan-300 border-cyan-700/60'
-                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                      ? 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/80 dark:text-cyan-300 dark:border-cyan-700/60'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
                   }`}
                 >
                   {feedScope === 'SYSTEM_AUDIT' ? (
-                    <Shield className="w-2.5 h-2.5 text-indigo-400 shrink-0" />
+                    <Shield className="w-2.5 h-2.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                   ) : feedScope === 'PLANT_OPERATIONS' ? (
-                    <Factory className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+                    <Factory className="w-2.5 h-2.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                   ) : (
-                    <User className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+                    <User className="w-2.5 h-2.5 text-slate-500 dark:text-slate-400 shrink-0" />
                   )}
                   <span>{feedLabel}</span>
                 </span>
               )}
             </div>
             {!compact && (
-              <p className="text-[11px] text-slate-400 mt-0.5">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                 {feedDescription || 'Real-time operational audit trail & security events'}
               </p>
             )}
@@ -309,8 +309,8 @@ export default function RecentActivityFeed({
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950 border border-emerald-800/80 text-emerald-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
             <span>Live Audit</span>
           </span>
 
@@ -319,9 +319,9 @@ export default function RecentActivityFeed({
               onClick={() => fetchActivities(true)}
               disabled={isRefreshing}
               title="Refresh Activity Feed"
-              className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition disabled:opacity-50 cursor-pointer"
+              className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-500 dark:text-blue-400' : ''}`} />
             </button>
           )}
         </div>
@@ -331,25 +331,25 @@ export default function RecentActivityFeed({
       {isLoading ? (
         <div className="space-y-3 py-3">
           {[...Array(compact ? 3 : 5)].map((_, i) => (
-            <div key={i} className="animate-pulse flex items-center space-x-3 p-2 rounded-lg bg-slate-950/40 border border-slate-800/60">
-              <div className="w-6 h-6 rounded-md bg-slate-800" />
+            <div key={i} className="animate-pulse flex items-center space-x-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/60">
+              <div className="w-6 h-6 rounded-md bg-slate-200 dark:bg-slate-800" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3 bg-slate-800 rounded w-1/3" />
-                <div className="h-2.5 bg-slate-850 rounded w-2/3" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/3" />
+                <div className="h-2.5 bg-slate-100 dark:bg-slate-850 rounded w-2/3" />
               </div>
-              <div className="h-2.5 bg-slate-800 rounded w-16" />
+              <div className="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-16" />
             </div>
           ))}
         </div>
       ) : error ? (
-        <div className="p-4 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs flex items-center space-x-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+        <div className="p-4 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300 text-xs flex items-center space-x-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 dark:text-rose-400" />
           <span>{error}</span>
         </div>
       ) : activities.length === 0 ? (
         <div className="text-center py-8">
-          <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2 opacity-60" />
-          <p className="text-xs text-slate-400 font-medium">No recent activity recorded.</p>
+          <Clock className="w-8 h-8 text-slate-400 dark:text-slate-600 mx-auto mb-2 opacity-60" />
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">No recent activity recorded.</p>
         </div>
       ) : (
         <div className={`space-y-2.5 overflow-y-auto ${compact ? 'max-h-[280px]' : 'max-h-[460px]'} pr-1`}>
@@ -364,12 +364,12 @@ export default function RecentActivityFeed({
             return (
               <div
                 key={item.id}
-                className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-950/90 transition-all duration-150 gap-2"
+                className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-950/90 transition-all duration-150 gap-2 shadow-sm"
               >
                 {/* Left section: Action badge + Actor info + Summary */}
                 <div className="flex items-start sm:items-center space-x-3 min-w-0">
-                  <div className="mt-0.5 sm:mt-0 p-1.5 rounded-lg bg-slate-900 border border-slate-800 shrink-0">
-                    <ActionIcon className="w-3.5 h-3.5 text-slate-300" />
+                  <div className="mt-0.5 sm:mt-0 p-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shrink-0 shadow-sm">
+                    <ActionIcon className="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" />
                   </div>
 
                   <div className="min-w-0 flex-1">
@@ -380,31 +380,31 @@ export default function RecentActivityFeed({
                         {config.label}
                       </span>
 
-                      <span className="text-xs font-semibold text-slate-200 truncate">
+                      <span className="text-xs font-semibold text-slate-900 dark:text-slate-200 truncate">
                         {item.user.name}
                       </span>
 
-                      <span className="text-[10px] text-slate-500 font-medium truncate">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
                         • {item.user.department} ({item.user.role})
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-300 line-clamp-1 leading-snug">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1 leading-snug">
                       {item.summary}
                     </p>
                   </div>
                 </div>
 
                 {/* Right section: Timestamp & IP Address */}
-                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800/50 text-[10px] text-slate-500 space-y-0.5 font-mono">
-                  <div className="flex items-center space-x-1 text-slate-400">
-                    <Clock className="w-3 h-3 text-slate-500" />
+                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-800/50 text-[10px] text-slate-500 dark:text-slate-400 space-y-0.5 font-mono">
+                  <div className="flex items-center space-x-1 text-slate-600 dark:text-slate-400">
+                    <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                     <span>{formatRelativeTime(item.created_at)}</span>
                   </div>
 
                   {item.ip_address && item.ip_address !== 'local' && (
-                    <div className="flex items-center space-x-1 text-slate-600">
-                      <Globe className="w-2.5 h-2.5 text-slate-600" />
+                    <div className="flex items-center space-x-1 text-slate-400 dark:text-slate-600">
+                      <Globe className="w-2.5 h-2.5 text-slate-400 dark:text-slate-600" />
                       <span>{item.ip_address}</span>
                     </div>
                   )}
@@ -417,10 +417,10 @@ export default function RecentActivityFeed({
 
       {/* Footer link if onViewAll provided */}
       {onViewAll && (
-        <div className="pt-3 mt-3 border-t border-slate-800 flex justify-end">
+        <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
           <button
             onClick={onViewAll}
-            className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center space-x-1 transition cursor-pointer"
+            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center space-x-1 transition cursor-pointer"
           >
             <span>View Full Audit Log</span>
             <ArrowRight className="w-3.5 h-3.5" />

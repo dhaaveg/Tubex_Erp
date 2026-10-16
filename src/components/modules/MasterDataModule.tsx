@@ -281,22 +281,22 @@ export default function MasterDataModule() {
   return (
     <div className="space-y-6">
       {/* Header & Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Master Data Management</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Master Data Management</h2>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             Maintain normalized supplier, mill, and product specifications without field duplication.
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-lg">
+          <div className="flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-1 rounded-lg">
             <button
               onClick={() => setActiveTab('suppliers')}
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                 activeTab === 'suppliers'
                   ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Building2 className="w-3.5 h-3.5" />
@@ -307,7 +307,7 @@ export default function MasterDataModule() {
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                 activeTab === 'products'
                   ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Package className="w-3.5 h-3.5" />
@@ -319,7 +319,7 @@ export default function MasterDataModule() {
                 className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                   activeTab === 'lov'
                     ? 'bg-blue-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Tag className="w-3.5 h-3.5" />
@@ -331,7 +331,7 @@ export default function MasterDataModule() {
           {activeTab !== 'lov' && (
             <button
               onClick={handleOpenCreateModal}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Add {activeTab === 'suppliers' ? 'Supplier' : 'Product'}</span>
@@ -344,12 +344,12 @@ export default function MasterDataModule() {
         isAdmin ? (
           <LovManagementTab />
         ) : (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center max-w-lg mx-auto my-8">
-            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-800/80 flex items-center justify-center mx-auto mb-4 text-red-400">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 text-center max-w-lg mx-auto my-8 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/80 flex items-center justify-center mx-auto mb-4 text-red-500 dark:text-red-400">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-bold text-slate-100">Access Denied</h3>
-            <p className="text-xs text-slate-400 mt-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Access Denied</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
               Only Super Admin or Admin can create, modify, or delete List of Values (LOV).
             </p>
             <button
@@ -363,7 +363,7 @@ export default function MasterDataModule() {
       ) : (
         <>
           {/* Search & Filter Bar */}
-          <div className="flex items-center space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+          <div className="flex items-center space-x-3 bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -375,17 +375,17 @@ export default function MasterDataModule() {
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
           {/* Table Content */}
           {activeTab === 'suppliers' ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm dark:shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-mono border-b border-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="px-4 py-3">Supplier ID</th>
                   <th className="px-4 py-3">Company & Contact</th>
@@ -396,7 +396,7 @@ export default function MasterDataModule() {
                   <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                 {suppliers.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
@@ -405,38 +405,38 @@ export default function MasterDataModule() {
                   </tr>
                 ) : (
                   suppliers.map((s) => (
-                    <tr key={s.supplier_id} className="hover:bg-slate-850/50 transition-colors">
+                    <tr key={s.supplier_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors">
                       <td className="px-4 py-3 font-mono font-semibold">
                         <button
                           onClick={() => setPreviewTagItem({ type: 'supplier', data: s })}
-                          className="text-blue-400 hover:text-blue-300 hover:underline flex items-center space-x-1 font-mono"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline flex items-center space-x-1 font-mono"
                           title="Click to view Tag"
                         >
-                          <Tag className="w-3 h-3 text-blue-400" />
+                          <Tag className="w-3 h-3 text-blue-500 dark:text-blue-400" />
                           <span>{s.supplier_id}</span>
                         </button>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="font-medium text-slate-200">{s.supplier_name}</div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="font-semibold text-slate-900 dark:text-slate-200">{s.supplier_name}</div>
+                        <div className="text-[11px] text-slate-600 dark:text-slate-400">
                           {s.contact_person} • {s.supplier_mail}
                         </div>
-                        <div className="text-[10px] text-slate-500 font-mono">
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                           Onboarded: {formatDate(s.supplier_onboarding_date)}
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center space-x-1.5 text-slate-300 font-medium">
-                          <Factory className="w-3.5 h-3.5 text-amber-400" />
+                        <div className="flex items-center space-x-1.5 text-slate-800 dark:text-slate-300 font-medium">
+                          <Factory className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                           <span>{s.mill_name}</span>
                         </div>
-                        <div className="text-[11px] text-slate-500 truncate max-w-xs">{s.mill_address}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs">{s.mill_address}</div>
                       </td>
-                      <td className="px-4 py-3 font-mono text-slate-300">
-                        {s.gst_tax_id ? s.gst_tax_id : <span className="text-slate-500 italic">—</span>}
+                      <td className="px-4 py-3 font-mono text-slate-700 dark:text-slate-300">
+                        {s.gst_tax_id ? s.gst_tax_id : <span className="text-slate-400 dark:text-slate-500 italic">—</span>}
                       </td>
-                      <td className="px-4 py-3 font-mono text-slate-300">
-                        <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
+                      <td className="px-4 py-3 font-mono text-slate-700 dark:text-slate-300">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                           {s._count?.purchase_orders ?? 0} RM POs
                         </span>
                       </td>
@@ -444,13 +444,13 @@ export default function MasterDataModule() {
                         <span
                           className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${
                             s.status === 'Active'
-                              ? 'bg-emerald-950 border border-emerald-800/80 text-emerald-300'
-                              : 'bg-rose-950 border border-rose-800/80 text-rose-300'
+                              ? 'bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-800/80 dark:text-emerald-300'
+                              : 'bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-950 dark:border-rose-800/80 dark:text-rose-300'
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
-                              s.status === 'Active' ? 'bg-emerald-400' : 'bg-rose-400'
+                              s.status === 'Active' ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-rose-500 dark:bg-rose-400'
                             }`}
                           ></span>
                           <span>{s.status}</span>
@@ -460,7 +460,7 @@ export default function MasterDataModule() {
                         <div className="flex items-center justify-center space-x-2">
                           <button
                             onClick={() => setPreviewTagItem({ type: 'supplier', data: s })}
-                            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
+                            className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
                             title="Preview Master Tag"
                           >
                             <Tag className="w-3.5 h-3.5" />
@@ -468,7 +468,7 @@ export default function MasterDataModule() {
                           </button>
                           <button
                             onClick={() => handleOpenEditSupplier(s)}
-                            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
+                            className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
                             title="Edit Supplier Record"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -484,10 +484,10 @@ export default function MasterDataModule() {
           </div>
         </div>
       ) : (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm dark:shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-mono border-b border-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="px-4 py-3">Product ID</th>
                   <th className="px-4 py-3">Description</th>
@@ -500,7 +500,7 @@ export default function MasterDataModule() {
                   <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                 {products.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="px-4 py-8 text-center text-slate-500">
@@ -509,41 +509,41 @@ export default function MasterDataModule() {
                   </tr>
                 ) : (
                   products.map((p) => (
-                    <tr key={p.product_id} className="hover:bg-slate-850/50 transition-colors">
+                    <tr key={p.product_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors">
                       <td className="px-4 py-3 font-mono font-semibold">
                         <button
                           onClick={() => setPreviewTagItem({ type: 'product', data: p })}
-                          className="text-blue-400 hover:text-blue-300 hover:underline flex items-center space-x-1 font-mono"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline flex items-center space-x-1 font-mono"
                           title="Click to view Tag"
                         >
-                          <Tag className="w-3 h-3 text-blue-400" />
+                          <Tag className="w-3 h-3 text-blue-500 dark:text-blue-400" />
                           <span>{p.product_id}</span>
                         </button>
                       </td>
-                      <td className="px-4 py-3 font-medium text-slate-200">
+                      <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">
                         {p.product_description}
                       </td>
-                      <td className="px-4 py-3 font-mono text-slate-300">{p.size_od}</td>
-                      <td className="px-4 py-3 font-mono text-slate-300">{p.wall_thickness}</td>
+                      <td className="px-4 py-3 font-mono text-slate-700 dark:text-slate-300">{p.size_od}</td>
+                      <td className="px-4 py-3 font-mono text-slate-700 dark:text-slate-300">{p.wall_thickness}</td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/80 text-blue-300 font-mono font-bold">
+                        <span className="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 font-mono font-bold">
                           {p.grade}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-800/80 text-indigo-300 font-mono">
+                        <span className="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 font-mono">
                           {p.thread_type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-400">{p.cvn_requirement}</td>
-                      <td className="px-4 py-3 font-mono text-slate-300">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{p.cvn_requirement}</td>
+                      <td className="px-4 py-3 font-mono text-slate-700 dark:text-slate-300">
                         {p.nominal_weight_kg_m} {p.uom}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center space-x-2">
                           <button
                             onClick={() => setPreviewTagItem({ type: 'product', data: p })}
-                            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
+                            className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
                             title="Preview Specification Tag"
                           >
                             <Tag className="w-3.5 h-3.5" />
@@ -551,7 +551,7 @@ export default function MasterDataModule() {
                           </button>
                           <button
                             onClick={() => handleOpenEditProduct(p)}
-                            className="p-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
+                            className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 border border-slate-200 dark:border-slate-700 text-[11px] font-medium flex items-center space-x-1 transition-colors"
                             title="Edit Product Specification"
                           >
                             <Edit className="w-3.5 h-3.5" />

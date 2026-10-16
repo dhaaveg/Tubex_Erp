@@ -519,18 +519,18 @@ export default function DataExportModule() {
       )}
 
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Database className="w-5 h-5 text-blue-400" />
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <Database className="w-5 h-5 text-blue-500 dark:text-blue-400" />
               Admin Data Export & Backup Center
             </h1>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/60 font-semibold">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/60 dark:text-blue-300 dark:border-blue-700/60 font-semibold">
               ADMIN SECURE
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Export production records, pipe inventory, work orders, 8-stage routing logs, and master catalog in Microsoft Excel (.xlsx) and CSV formats.
           </p>
         </div>
@@ -540,35 +540,35 @@ export default function DataExportModule() {
             type="button"
             onClick={fetchExportData}
             disabled={isLoading}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700 transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-blue-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-blue-500 dark:text-blue-400' : ''}`} />
             <span>Refresh Counts</span>
           </button>
         </div>
       </div>
 
       {/* Hero Master Download Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-900 border border-blue-800/50 p-6 shadow-xl shadow-blue-950/20">
+      <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-blue-800/50 p-6 shadow-sm dark:shadow-xl shadow-blue-950/20">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-md bg-blue-900/60 border border-blue-700/60 text-blue-300 text-xs font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-700/60 text-blue-700 dark:text-blue-300 text-xs font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>Full System Snapshot</span>
             </div>
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               Download Complete ERP Database Workbook (.xlsx)
             </h2>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
               Export all system tables into a single formatted Microsoft Excel file. Each table is arranged in a dedicated worksheet with headers, optimal column widths, and proper formatting.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono text-slate-400">
+            <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono text-slate-600 dark:text-slate-400">
               <span className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${hasMasterRows ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>
-                <strong className={hasMasterRows ? 'text-white' : 'text-amber-300'}>
+                <span className={`w-2 h-2 rounded-full ${hasMasterRows ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-amber-500 dark:bg-amber-400'}`}></span>
+                <strong className={hasMasterRows ? 'text-slate-900 dark:text-white' : 'text-amber-600 dark:text-amber-300'}>
                   {totalFilteredCount} {totalFilteredCount === 1 ? 'record' : 'records'} selected
                 </strong>
                 {isFilterActive && (
@@ -582,8 +582,8 @@ export default function DataExportModule() {
             </div>
 
             {!hasMasterRows && !isLoading && (
-              <div className="text-xs text-amber-300/90 flex items-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200">
-                <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <div className="text-xs text-amber-700 dark:text-amber-300/90 flex items-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
                 <span>No records found to export for the selected filter criteria.</span>
               </div>
             )}
@@ -606,7 +606,7 @@ export default function DataExportModule() {
               isLoading={isLoading}
               variant="master-csv"
               count={totalFilteredCount}
-              icon={<FileText className="w-4 h-4 text-blue-400" />}
+              icon={<FileText className="w-4 h-4 text-blue-500 dark:text-blue-400" />}
               label="Download All Tables as CSVs"
             />
           </div>
@@ -614,23 +614,23 @@ export default function DataExportModule() {
       </div>
 
       {/* Interactive Filter & Date Range Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Search Box */}
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <input
               type="text"
               placeholder="Filter by table name, heat #, PO #, serial #, or keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-9 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-colors"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-9 py-2 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -639,8 +639,8 @@ export default function DataExportModule() {
 
           {/* Date Range Presets */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mr-1">
-              <Calendar className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mr-1">
+              <Calendar className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>Date:</span>
             </span>
             {(
@@ -659,8 +659,8 @@ export default function DataExportModule() {
                 onClick={() => setDatePreset(preset.id)}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   datePreset === preset.id
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-900/50'
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800/80'
                 }`}
               >
                 {preset.label}
@@ -671,7 +671,7 @@ export default function DataExportModule() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-colors ml-2"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 border border-amber-200 dark:border-amber-500/30 transition-colors ml-2"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset Filters</span>
@@ -682,20 +682,20 @@ export default function DataExportModule() {
 
         {/* Custom Date Range Inputs (Shown when custom is selected) */}
         {datePreset === 'custom' && (
-          <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-3 animate-in fade-in duration-150">
-            <span className="text-xs text-slate-400 font-medium">From Date:</span>
+          <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center gap-3 animate-in fade-in duration-150">
+            <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">From Date:</span>
             <input
               type="date"
               value={customStartDate}
               onChange={(e) => setCustomStartDate(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-600"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-600"
             />
-            <span className="text-xs text-slate-400 font-medium">To Date:</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">To Date:</span>
             <input
               type="date"
               value={customEndDate}
               onChange={(e) => setCustomEndDate(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-600"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-600"
             />
             <span className="text-[11px] text-slate-500 italic">
               Tip: Pick a future or past date range to observe disabled states when 0 records match.
@@ -704,8 +704,8 @@ export default function DataExportModule() {
         )}
 
         {/* Category Filter Pills */}
-        <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mr-1">
+        <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mr-1">
             <Filter className="w-3.5 h-3.5 text-slate-400" />
             <span>Category:</span>
           </span>
@@ -716,8 +716,8 @@ export default function DataExportModule() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors ${
                 selectedCategory === cat
-                  ? 'bg-slate-700 text-white font-semibold border border-slate-600'
-                  : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800/80'
+                  ? 'bg-blue-600 text-white font-semibold'
+                  : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800/80'
               }`}
             >
               {cat === 'ALL' ? 'All Modules' : cat}
@@ -729,11 +729,11 @@ export default function DataExportModule() {
       {/* Dataset Cards Grid */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <Download className="w-4 h-4 text-blue-400" />
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center gap-2">
+            <Download className="w-4 h-4 text-blue-500 dark:text-blue-400" />
             Module-by-Module Data Exports ({visibleDatasets.length})
           </h3>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             Download individual operational records in Excel (.xlsx) or CSV
           </span>
         </div>
@@ -749,19 +749,19 @@ export default function DataExportModule() {
             return (
               <div
                 key={meta.key}
-                className={`bg-slate-900 border rounded-xl p-4 flex flex-col justify-between transition-all shadow-sm ${
-                  hasRows ? 'border-slate-800 hover:border-slate-700' : 'border-slate-800/60 bg-slate-900/60'
+                className={`bg-white dark:bg-slate-900 border rounded-xl p-4 flex flex-col justify-between transition-all shadow-sm ${
+                  hasRows ? 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700' : 'border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/60'
                 }`}
               >
                 <div>
                   {/* Card Header */}
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center space-x-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-blue-950/80 border border-blue-800/60 flex items-center justify-center text-blue-400 shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
                         <Icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-white tracking-wide">{meta.name}</h4>
+                        <h4 className="text-xs font-bold text-slate-900 dark:text-white tracking-wide">{meta.name}</h4>
                         <span className="text-[10px] text-slate-500 font-mono">{meta.category}</span>
                       </div>
                     </div>
@@ -770,15 +770,15 @@ export default function DataExportModule() {
                     <span
                       className={`text-[11px] font-mono px-2 py-0.5 rounded-md font-semibold shrink-0 transition-colors ${
                         count === 0
-                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-300'
-                          : 'bg-slate-800 border border-slate-700 text-slate-300'
+                          ? 'bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-300'
+                          : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {count} records selected
                     </span>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 line-clamp-2 mb-3 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mb-3 leading-relaxed">
                     {meta.description}
                   </p>
 
@@ -791,13 +791,13 @@ export default function DataExportModule() {
                       {meta.columns.slice(0, 4).map((col) => (
                         <span
                           key={col}
-                          className="text-[9px] font-mono bg-slate-950 text-slate-400 px-1.5 py-0.5 rounded border border-slate-800/80"
+                          className="text-[9px] font-mono bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800/80"
                         >
                           {col}
                         </span>
                       ))}
                       {meta.columns.length > 4 && (
-                        <span className="text-[9px] font-mono bg-slate-950 text-blue-400 px-1 py-0.5 rounded border border-blue-900/40">
+                        <span className="text-[9px] font-mono bg-blue-50 dark:bg-slate-950 text-blue-700 dark:text-blue-400 px-1 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
                           +{meta.columns.length - 4} more
                         </span>
                       )}
@@ -806,7 +806,7 @@ export default function DataExportModule() {
                 </div>
 
                 {/* Card Action Buttons & Feedback */}
-                <div className="pt-3 border-t border-slate-800/80 space-y-2">
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     <ExportButton
                       onClick={() => handleExportSingleExcel(meta)}
@@ -814,7 +814,7 @@ export default function DataExportModule() {
                       isLoading={isLoading || activeExportingKey === `${meta.key}-excel`}
                       variant="excel"
                       count={count}
-                      icon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                      icon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />}
                       label="Excel (.xlsx)"
                     />
 
@@ -824,15 +824,15 @@ export default function DataExportModule() {
                       isLoading={isLoading || activeExportingKey === `${meta.key}-csv`}
                       variant="csv"
                       count={count}
-                      icon={<FileText className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
+                      icon={<FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />}
                       label="CSV (.csv)"
                     />
                   </div>
 
                   {/* Subtitle Hint when Empty / Filtered out */}
                   {!hasRows && (
-                    <div className="text-[10.5px] text-amber-400/90 flex items-center justify-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200 text-center">
-                      <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <div className="text-[10.5px] text-amber-700 dark:text-amber-400/90 flex items-center justify-center gap-1.5 pt-1 font-medium animate-in fade-in duration-200 text-center">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
                       <span>No records found to export for the selected filter criteria.</span>
                     </div>
                   )}
@@ -840,9 +840,9 @@ export default function DataExportModule() {
                   <button
                     type="button"
                     onClick={() => setPreviewKey(isPreviewOpen ? null : meta.key)}
-                    className="w-full flex items-center justify-center space-x-1 py-1 text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+                    className="w-full flex items-center justify-center space-x-1 py-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
                   >
-                    <Eye className="w-3 h-3 text-slate-500" />
+                    <Eye className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                     <span>{isPreviewOpen ? 'Hide Preview' : `Preview First 5 Rows (${count})`}</span>
                     {isPreviewOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                   </button>
@@ -850,21 +850,21 @@ export default function DataExportModule() {
 
                 {/* Inline Preview Table */}
                 {isPreviewOpen && (
-                  <div className="mt-3 pt-3 border-t border-slate-800 overflow-x-auto">
-                    <div className="text-[10px] text-slate-400 font-mono mb-2 flex items-center justify-between">
+                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 overflow-x-auto">
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono mb-2 flex items-center justify-between">
                       <span>
                         Showing {Math.min(rows.length, 5)} of {rows.length} {rows.length === 1 ? 'record' : 'records'}:
                       </span>
                     </div>
                     {rows.length === 0 ? (
-                      <div className="text-[11px] text-amber-300/80 py-4 text-center bg-slate-950/40 rounded-lg border border-slate-800/80 flex items-center justify-center gap-2">
-                        <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                      <div className="text-[11px] text-amber-700 dark:text-amber-300/80 py-4 text-center bg-amber-50/50 dark:bg-slate-950/40 rounded-lg border border-amber-200 dark:border-slate-800/80 flex items-center justify-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
                         <span>No records found to export for the selected filter criteria.</span>
                       </div>
                     ) : (
                       <table className="w-full text-left text-[10px] font-mono border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-800 text-slate-400 bg-slate-950/60">
+                          <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60">
                             {Object.keys(rows[0]).slice(0, 5).map((col) => (
                               <th key={col} className="p-1.5 whitespace-nowrap">{col}</th>
                             ))}
@@ -872,7 +872,7 @@ export default function DataExportModule() {
                         </thead>
                         <tbody>
                           {rows.slice(0, 5).map((row, idx) => (
-                            <tr key={idx} className="border-b border-slate-800/50 hover:bg-slate-800/40 text-slate-300">
+                            <tr key={idx} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-700 dark:text-slate-300">
                               {Object.keys(rows[0]).slice(0, 5).map((col) => (
                                 <td key={col} className="p-1.5 whitespace-nowrap truncate max-w-[140px]">
                                   {row[col] !== null && row[col] !== undefined ? String(row[col]) : '-'}
@@ -892,11 +892,11 @@ export default function DataExportModule() {
       </div>
 
       {/* Admin Notes & Instructions */}
-      <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 flex items-start space-x-3">
-        <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 flex items-start space-x-3 shadow-sm">
+        <Info className="w-4 h-4 text-blue-500 dark:text-blue-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <div className="font-semibold text-slate-300">Format & Compatibility Guide</div>
-          <div className="text-slate-400 leading-relaxed text-[11px]">
+          <div className="font-bold text-slate-900 dark:text-slate-300">Format & Compatibility Guide</div>
+          <div className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
             • <strong>Excel (.xlsx)</strong>: Native Microsoft Excel format. Numbers are formatted as numeric fields, dates are standardized, and column widths are auto-fitted.
             <br />
             • <strong>CSV (.csv)</strong>: Universal UTF-8 encoded text with Byte Order Mark (BOM). Fully compatible with Google Sheets, LibreOffice Calc, Python Pandas, and database import tools.
