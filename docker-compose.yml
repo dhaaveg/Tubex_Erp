@@ -12,6 +12,10 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://erp_user:erp_secret_pass@erp-postgres:5432/tubex_erp?schema=public
+      - DIRECT_URL=postgresql://erp_user:erp_secret_pass@erp-postgres:5432/tubex_erp?schema=public
+      - SESSION_SECRET=eot_couplings_super_secret_auth_encryption_key_2026_vps_deploy
+      - NEXT_PUBLIC_APP_URL=http://187.126.123.28:3000
+      - PORT=3000
     depends_on:
       erp-postgres:
         condition: service_healthy
@@ -24,11 +28,8 @@ services:
       POSTGRES_USER: erp_user
       POSTGRES_PASSWORD: erp_secret_pass
       POSTGRES_DB: tubex_erp
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U erp_user -d tubex_erp"]
       interval: 5s
