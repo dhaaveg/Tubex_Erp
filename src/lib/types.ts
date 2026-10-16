@@ -50,7 +50,7 @@ export type DispositionAction = (typeof DISPOSITION_ACTIONS)[number];
 export const PIPE_STATUSES = ['Available', 'Allocated', 'Consumed', 'Scrapped'] as const;
 export type PipeAllocationStatus = (typeof PIPE_STATUSES)[number];
 
-export const SHIFTS = ['Shift A', 'Shift B', 'Shift C'] as const;
+export const SHIFTS = ['Shift A', 'Shift B', 'Shift C', 'General Shift'] as const;
 export type ShiftType = (typeof SHIFTS)[number];
 
 export const WO_STATUSES = ['Released', 'In Progress', 'Completed', 'Closed'] as const;

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { NavigationTab } from '../Sidebar';
 import RecentActivityFeed from '../RecentActivityFeed';
+import { useCurrentShift } from '@/hooks/useCurrentShift';
 
 interface OverviewDashboardProps {
   stats: any;
@@ -24,6 +25,7 @@ interface OverviewDashboardProps {
 }
 
 export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboardProps) {
+  const { currentShift, productionDate, isTransitioning, timeRemaining } = useCurrentShift();
   const cards = [
     {
       title: 'Active Suppliers',
@@ -98,9 +100,31 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700/50 text-blue-700 dark:text-blue-300 text-xs font-mono mb-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>API 5CT Tubular Processing Operations</span>
+            <div className="flex items-center flex-wrap gap-2 mb-2">
+              <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700/50 text-blue-700 dark:text-blue-300 text-xs font-mono">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>API 5CT Tubular Processing Operations</span>
+              </div>
+              <div
+                className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full border text-xs font-mono ${
+                  isTransitioning
+                    ? 'bg-amber-50 dark:bg-amber-950/80 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 animate-pulse'
+                    : 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isTransitioning ? 'bg-amber-500 animate-ping' : 'bg-indigo-500 animate-pulse'
+                  }`}
+                />
+                <span>
+                  {isTransitioning
+                    ? `${currentShift.displayName} Handover (${timeRemaining.formatted} left)`
+                    : `${currentShift.displayName} Active (${currentShift.startTime.slice(0, 5)} - ${currentShift.endTime.slice(0, 5)})`}
+                </span>
+                <span className="text-slate-400">•</span>
+                <span>Prod Date: {productionDate}</span>
+              </div>
             </div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Manufacturing & Pipe Processing ERP Hub

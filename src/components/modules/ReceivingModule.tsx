@@ -26,6 +26,7 @@ import { exportToCsv } from '@/lib/export';
 import TagPrintModal from '../TagPrintModal';
 import MtcViewerModal from '../MtcViewerModal';
 import { apiUrl } from '@/lib/api';
+import { useCurrentShift } from '@/hooks/useCurrentShift';
 
 export interface GrnLineItemEntry {
   grn_item_id?: string;
@@ -43,6 +44,8 @@ export interface GrnLineItemEntry {
 }
 
 export default function ReceivingModule() {
+  const { currentShift, productionDate } = useCurrentShift();
+
   const [grns, setGrns] = useState<any[]>([]);
   const [tallySheets, setTallySheets] = useState<any[]>([]);
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
@@ -316,7 +319,7 @@ export default function ReceivingModule() {
     setFormError(null);
     setGrnForm({
       grn_id: `GRN-${new Date().getFullYear()}-${String(grns.length + 1).padStart(3, '0')}`,
-      grn_date: new Date().toISOString().split('T')[0],
+      grn_date: productionDate,
       po_no: '',
       invoice_no: '',
       invoice_date: new Date().toISOString().split('T')[0],
@@ -581,7 +584,7 @@ export default function ReceivingModule() {
       lot_no: '',
       heat_no: '',
       mill_test_certificate_no: '',
-      tally_sheet_date: new Date().toISOString().split('T')[0],
+      tally_sheet_date: productionDate,
       inspector_name: '',
       bundle_count: 1,
       defaultPartingLength: matchedLength,
@@ -1578,6 +1581,20 @@ export default function ReceivingModule() {
             )}
 
             <form onSubmit={handleCreateGRN} className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Active Receiving Shift Banner */}
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Inwarding Shift:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {currentShift.displayName} ({currentShift.startTime.slice(0, 5)} - {currentShift.endTime.slice(0, 5)})
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  Production Date: <span className="font-bold text-slate-900 dark:text-white">{productionDate}</span>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">
@@ -2178,6 +2195,20 @@ export default function ReceivingModule() {
             )}
 
             <form onSubmit={handleSubmitTally} className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Active Shift Tally Logging Banner */}
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Tally Inspection Shift:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {currentShift.displayName} ({currentShift.startTime.slice(0, 5)} - {currentShift.endTime.slice(0, 5)})
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  Production Date: <span className="font-bold text-slate-900 dark:text-white">{productionDate}</span>
+                </div>
+              </div>
+
               {/* Header Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
                 <div>

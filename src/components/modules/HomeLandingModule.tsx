@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { NavigationTab } from '@/lib/routes';
+import { useCurrentShift } from '@/hooks/useCurrentShift';
 
 interface HomeLandingModuleProps {
   stats?: any;
@@ -58,6 +59,7 @@ interface OperationalModuleCard {
 
 export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModuleProps) {
   const { user, canAccess } = useAuth();
+  const { currentShift, productionDate, isTransitioning, timeRemaining } = useCurrentShift();
 
   const userRoles =
     user?.roles && user.roles.length > 0
@@ -174,11 +176,25 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
           <div className="space-y-3 max-w-2xl">
             {/* Status Pill & Date Header */}
             <div className="flex items-center flex-wrap gap-2 text-xs">
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-blue-950/80 border border-blue-700/50 text-blue-300 font-mono text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Shift A Active</span>
+              <div
+                className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full border font-mono text-[11px] ${
+                  isTransitioning
+                    ? 'bg-amber-950/80 border-amber-600/60 text-amber-300 animate-pulse'
+                    : 'bg-blue-950/80 border-blue-700/50 text-blue-300'
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isTransitioning ? 'bg-amber-400 animate-ping' : 'bg-emerald-400 animate-pulse'
+                  }`}
+                />
+                <span>
+                  {isTransitioning
+                    ? `${currentShift.displayName} Handover (${timeRemaining.formatted} left)`
+                    : `${currentShift.displayName} Active (${currentShift.startTime.slice(0, 5)} - ${currentShift.endTime.slice(0, 5)})`}
+                </span>
                 <span className="text-slate-500">•</span>
-                <span>Mill Synchronized</span>
+                <span>Prod Date: {productionDate}</span>
               </div>
               <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-800/70 border border-slate-700/60 text-slate-300 text-[11px] font-mono">
                 <Calendar className="w-3 h-3 text-slate-400" />

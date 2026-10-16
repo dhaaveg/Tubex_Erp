@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import RecentActivityFeed from './RecentActivityFeed';
+import ActiveShiftIndicator from './ActiveShiftIndicator';
 import { apiUrl } from '@/lib/api';
 
 interface HeaderProps {
@@ -128,6 +129,9 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
 
         {/* Header Badges & Actions */}
         <div className="flex items-center space-x-3">
+          {/* Real-Time Live Active Shift Status Indicator */}
+          <ActiveShiftIndicator />
+
           {onRefresh && (
             <button
               onClick={onRefresh}

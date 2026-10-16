@@ -24,6 +24,7 @@ import {
 import { PROCESS_STAGES, DEFECT_CATEGORIES, DISPOSITION_ACTIONS, SHIFTS } from '@/lib/types';
 import { validateProductionBalance, validateWorkOrderStageQuantityLimit, formatDate, formatDateTime } from '@/lib/calculations';
 import { apiUrl } from '@/lib/api';
+import { useCurrentShift } from '@/hooks/useCurrentShift';
 
 // Specification normalization helpers for seamless matching
 function normalizeSize(s: string | number | null | undefined): string {
@@ -93,6 +94,8 @@ function isThreadCompatible(t1: string | null | undefined, t2: string | null | u
 }
 
 export default function ShopFloorModule() {
+  const { currentShift, productionDate } = useCurrentShift();
+
   const [workOrders, setWorkOrders] = useState<any[]>([]);
   const [availablePipes, setAvailablePipes] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -498,7 +501,7 @@ export default function ShopFloorModule() {
     const nextWoId = `WO-${new Date().getFullYear()}-${String(workOrders.length + 1).padStart(3, '0')}`;
     setWoForm({
       wo_id: nextWoId,
-      wo_date: new Date().toISOString().split('T')[0],
+      wo_date: productionDate,
       customer_po_no: '',
       cpo_item_id: '',
       source_type: 'PO',
@@ -510,7 +513,7 @@ export default function ShopFloorModule() {
       ti_id: '',
       target_product_id: '',
       machine_line_no: '',
-      shift: '',
+      shift: currentShift.displayName,
       wo_status: 'Released',
     });
     setIsWoModalOpen(true);
@@ -1441,7 +1444,14 @@ export default function ShopFloorModule() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Work Order Date *</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-slate-700 dark:text-slate-400 font-medium">Work Order Date *</label>
+                    {woForm.wo_date === productionDate && (
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono font-medium">
+                        Shift Prod Date
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="date"
                     value={woForm.wo_date}
@@ -1758,7 +1768,19 @@ export default function ShopFloorModule() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Production Shift</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-slate-700 dark:text-slate-400 font-semibold">Production Shift</label>
+                    {woForm.shift === currentShift.displayName ? (
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center space-x-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Live Synced</span>
+                      </span>
+                    ) : woForm.shift ? (
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                        Manual Override (Backlog)
+                      </span>
+                    ) : null}
+                  </div>
                   <select
                     value={woForm.shift}
                     onChange={(e) => setWoForm({ ...woForm, shift: e.target.value })}
@@ -1768,6 +1790,7 @@ export default function ShopFloorModule() {
                     <option value="Shift A">Shift A (Morning 06:00 - 14:00)</option>
                     <option value="Shift B">Shift B (Evening 14:00 - 22:00)</option>
                     <option value="Shift C">Shift C (Night 22:00 - 06:00)</option>
+                    <option value="General Shift">General Shift (09:00 - 17:30)</option>
                   </select>
                 </div>
               </div>
@@ -1871,6 +1894,20 @@ export default function ShopFloorModule() {
             )}
 
             <form onSubmit={handleCreatePosting} className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Active Shift Attribution Banner */}
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Active Production Shift:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {currentShift.displayName} ({currentShift.startTime.slice(0, 5)} - {currentShift.endTime.slice(0, 5)})
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  Prod Date: <span className="font-bold text-slate-900 dark:text-white">{productionDate}</span>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">

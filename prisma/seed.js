@@ -535,6 +535,7 @@ async function main() {
     { category: 'SHIFT', code: 'SHIFT_A', label: 'Shift A (06:00 - 14:00)', value: 'Shift A', sort_order: 10, is_system_default: true },
     { category: 'SHIFT', code: 'SHIFT_B', label: 'Shift B (14:00 - 22:00)', value: 'Shift B', sort_order: 20, is_system_default: true },
     { category: 'SHIFT', code: 'SHIFT_C', label: 'Shift C (22:00 - 06:00)', value: 'Shift C', sort_order: 30, is_system_default: true },
+    { category: 'SHIFT', code: 'SHIFT_GEN', label: 'General Shift (09:00 - 17:30)', value: 'General Shift', sort_order: 40, is_system_default: true },
     { category: 'STEEL_GRADE', code: 'J55', label: 'API 5CT J55', value: 'J55', sort_order: 10, is_system_default: true },
     { category: 'STEEL_GRADE', code: 'K55', label: 'API 5CT K55', value: 'K55', sort_order: 20, is_system_default: true },
     { category: 'STEEL_GRADE', code: 'L80', label: 'API 5CT L80-1', value: 'L80', sort_order: 30, is_system_default: true },
