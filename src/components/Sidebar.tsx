@@ -55,14 +55,14 @@ interface SidebarProps {
 }
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
-  SUPER_ADMIN: 'bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-600/40',
-  ADMIN: 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-600/40',
-  MD: 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-600/40',
-  PROCUREMENT: 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-600/40',
-  MANUFACTURING: 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-600/40',
-  SALES: 'bg-orange-50 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-600/40',
-  INVENTORY: 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-600/40',
-  QUALITY: 'bg-cyan-50 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-600/40',
+  SUPER_ADMIN: 'bg-rose-50 dark:bg-rose-500/20 text-[#BE123C] dark:text-rose-300 border-rose-200 dark:border-rose-600/40',
+  ADMIN: 'bg-indigo-50 dark:bg-indigo-500/20 text-[#4338CA] dark:text-indigo-300 border-indigo-200 dark:border-indigo-600/40',
+  MD: 'bg-purple-50 dark:bg-purple-500/20 text-[#6D28D9] dark:text-purple-300 border-purple-200 dark:border-purple-600/40',
+  PROCUREMENT: 'bg-blue-50 dark:bg-blue-500/20 text-[#1D4ED8] dark:text-blue-300 border-blue-200 dark:border-blue-600/40',
+  MANUFACTURING: 'bg-amber-50 dark:bg-amber-500/20 text-[#B45309] dark:text-amber-300 border-amber-200 dark:border-amber-600/40',
+  SALES: 'bg-orange-50 dark:bg-orange-500/20 text-[#C2410C] dark:text-orange-300 border-orange-200 dark:border-orange-600/40',
+  INVENTORY: 'bg-emerald-50 dark:bg-emerald-500/20 text-[#047857] dark:text-emerald-300 border-emerald-200 dark:border-emerald-600/40',
+  QUALITY: 'bg-cyan-50 dark:bg-cyan-500/20 text-[#0E7490] dark:text-cyan-300 border-cyan-200 dark:border-cyan-600/40',
 };
 
 export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps) {
@@ -91,7 +91,7 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
         {/* Brand Header */}
         <div className="h-16 flex items-center px-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60">
           <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#4F46E5] to-[#4338CA] flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Factory className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -125,8 +125,8 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
 
         {/* MD Executive Read-Only Notice */}
         {user?.role === 'MD' && (
-          <div className="mx-3 mt-2 px-2.5 py-1.5 rounded bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 text-purple-800 dark:text-purple-200 text-[10px] flex items-center space-x-1.5">
-            <Eye className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+          <div className="mx-3 mt-2 px-2.5 py-1.5 rounded bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 text-[#6D28D9] dark:text-purple-200 text-[10px] flex items-center space-x-1.5">
+            <Eye className="w-3.5 h-3.5 text-[#6D28D9] dark:text-purple-400 shrink-0" />
             <span>Executive Read-Only Active</span>
           </div>
         )}
@@ -143,19 +143,19 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    ? 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#4F46E5] dark:text-white font-semibold border border-[#C7D2FE]/70 dark:border-transparent shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-[#4338CA] dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                 }`}
               >
                 <div className="flex items-center space-x-2.5 truncate mr-2">
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#4F46E5] dark:text-white' : 'text-slate-500 dark:text-slate-400'}`} />
                   <span className="truncate">{item.label}</span>
                 </div>
                 {item.badge !== undefined && (
                   <span
                     className={`text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0 whitespace-nowrap ${
                       isActive
-                        ? 'bg-blue-700/80 text-blue-100'
+                        ? 'bg-[#4F46E5]/10 text-[#4F46E5] dark:bg-white/20 dark:text-white font-bold'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
                     }`}
                   >
@@ -197,7 +197,7 @@ export default function Sidebar({ currentTab, onTabChange, stats }: SidebarProps
         ) : (
           <Link
             href="/login"
-            className="w-full py-1.5 px-3 rounded-lg bg-blue-600 text-white text-xs font-semibold text-center block"
+            className="w-full py-1.5 px-3 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold text-center block transition-colors"
           >
             Sign In
           </Link>

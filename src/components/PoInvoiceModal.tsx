@@ -237,27 +237,27 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
   const modalContent = (
     <div 
       id="po-invoice-modal-portal"
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 print:p-0 print:bg-white print:static"
+      className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 print:p-0 print:bg-white print:static"
     >
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[94vh] flex flex-col print:border-none print:shadow-none print:max-w-none print:w-full print:max-h-none print:bg-white">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[94vh] flex flex-col print:border-none print:shadow-none print:max-w-none print:w-full print:max-h-none print:bg-white">
         
         {/* Modal Top Bar (Hidden in Print) */}
-        <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80 print-hidden-bar print:hidden">
+        <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80 print-hidden-bar print:hidden">
           <div className="flex items-center space-x-3">
-            <div className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold flex items-center space-x-1.5 shadow">
+            <div className="px-3 py-1.5 rounded-lg bg-[#4F46E5] text-white text-xs font-semibold flex items-center space-x-1.5 shadow">
               <FileText className="w-3.5 h-3.5" />
               <span>PO Invoice Document</span>
             </div>
 
-            <span className="text-xs font-mono text-slate-400">
-              PO: <strong className="text-blue-400">{po.po_no}</strong>
+            <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+              PO: <strong className="text-[#4F46E5] dark:text-blue-400">{po.po_no}</strong>
             </span>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors"
+              className="px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors cursor-pointer"
               title="Print to Paper or Save as PDF"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -266,7 +266,7 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
 
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+              className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               title="Close"
             >
               <X className="w-4 h-4" />
@@ -275,7 +275,7 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
         </div>
 
         {/* COMMERCIAL INVOICE DOCUMENT VIEW */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-950/40 print:p-0 print:bg-white print:overflow-visible">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-100 dark:bg-slate-950/40 print:p-0 print:bg-white print:overflow-visible">
           {/* Printable Invoice Page */}
           <div 
             id="po-invoice-printable-document"

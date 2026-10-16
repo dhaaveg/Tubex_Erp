@@ -62,18 +62,18 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-150">
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-center mb-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
-            <ShieldAlert className="w-6 h-6 text-amber-400" />
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500/40 flex items-center justify-center">
+            <ShieldAlert className="w-6 h-6 text-amber-600 dark:text-amber-400" />
           </div>
         </div>
 
-        <h2 className="text-center text-xl font-bold text-white tracking-tight">
+        <h2 className="text-center text-xl font-bold text-slate-900 dark:text-white tracking-tight">
           {user?.force_password_change ? 'Initial Password Setup' : 'Change Password'}
         </h2>
-        <p className="mt-1 text-center text-xs text-slate-400 font-medium">
+        <p className="mt-1 text-center text-xs text-slate-600 dark:text-slate-400 font-medium">
           {user?.force_password_change
             ? 'Your account was provisioned with a temporary password. Please set a secure permanent password to continue.'
             : 'Update your corporate password.'}
@@ -81,25 +81,25 @@ export default function ChangePasswordPage() {
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-slate-900 border border-slate-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 py-8 px-6 shadow-xl dark:shadow-2xl rounded-2xl sm:px-10">
           {success ? (
             <div className="text-center py-6 space-y-3">
-              <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
-              <h3 className="text-white font-bold text-sm">Password Updated Successfully!</h3>
-              <p className="text-slate-400 text-xs">Redirecting to your ERP dashboard...</p>
+              <CheckCircle2 className="w-12 h-12 text-emerald-600 dark:text-emerald-400 mx-auto animate-bounce" />
+              <h3 className="text-slate-900 dark:text-white font-bold text-sm">Password Updated Successfully!</h3>
+              <p className="text-slate-600 dark:text-slate-400 text-xs">Redirecting to your ERP dashboard...</p>
             </div>
           ) : (
             <form className="space-y-4" onSubmit={handleSubmit}>
               {error && (
-                <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-700/60 text-rose-200 text-xs flex items-center space-x-2">
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-700/60 text-rose-700 dark:text-rose-200 text-xs flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
               {!user?.force_password_change && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Current Password
                   </label>
                   <PasswordInput
@@ -112,7 +112,7 @@ export default function ChangePasswordPage() {
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   New Password (Min 8 Characters)
                 </label>
                 <PasswordInput
@@ -126,7 +126,7 @@ export default function ChangePasswordPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Confirm New Password
                 </label>
                 <PasswordInput
@@ -142,7 +142,7 @@ export default function ChangePasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-4 flex justify-center items-center py-2 px-4 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition shadow"
+                className="w-full mt-4 flex justify-center items-center py-2 px-4 rounded-lg text-xs font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] disabled:opacity-50 transition shadow-md shadow-indigo-600/20 cursor-pointer"
               >
                 {loading ? 'Securing with Argon2...' : 'Set New Password & Continue'}
                 <ArrowRight className="ml-1.5 w-4 h-4" />

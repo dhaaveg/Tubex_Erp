@@ -896,7 +896,7 @@ export default function ProcurementModule() {
             {/* Primary Action Button */}
             <button
               onClick={handleOpenCreate}
-              className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all transform active:scale-95 cursor-pointer ml-auto"
+              className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition-all transform active:scale-95 cursor-pointer ml-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Create RM Purchase Order</span>
@@ -923,15 +923,15 @@ export default function ProcurementModule() {
                   onClick={() => setStatusFilter(tab.id)}
                   className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                      ? 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#4F46E5] dark:text-white font-semibold border border-[#C7D2FE]/70 dark:border-transparent shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-[#4338CA] dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
                       isActive
-                        ? 'bg-blue-700 text-white font-bold'
+                        ? 'bg-[#4F46E5]/10 text-[#4F46E5] dark:bg-white/20 dark:text-white font-bold'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
                     }`}
                   >
@@ -1023,7 +1023,7 @@ export default function ProcurementModule() {
                         ) : null}
                         <button
                           onClick={handleOpenCreate}
-                          className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition"
+                          className="px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition cursor-pointer"
                         >
                           + Create First RM Purchase Order
                         </button>
@@ -1360,22 +1360,22 @@ export default function ProcurementModule() {
 
       {/* 4. "Create / Edit Purchase Order" Modal (Sectioned Enterprise Layout) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-hidden">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-5xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-2xl w-full max-w-5xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Top Header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70 shrink-0">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/70 shrink-0">
               <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 flex items-center justify-center text-[#4F46E5] dark:text-indigo-400">
                   <ShoppingCart className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center space-x-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                     <span>{isEditMode ? 'Edit Raw Material Purchase Order (RM PO) Contract' : 'Create Raw Material Purchase Order (RM PO) Contract'}</span>
-                    <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300 text-[10px] font-mono font-bold">
+                    <span className="px-2 py-0.5 rounded bg-[#EEF2FF] dark:bg-blue-950 border border-[#C7D2FE] dark:border-blue-800 text-[#4F46E5] dark:text-blue-300 text-[10px] font-mono font-bold">
                       {poNo}
                     </span>
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
                     Precision engineering multi-line contract builder with automated MT calculation and MTC compliance.
                   </p>
                 </div>
@@ -1383,7 +1383,7 @@ export default function ProcurementModule() {
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1391,7 +1391,7 @@ export default function ProcurementModule() {
 
             {/* Error Notification */}
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2 shrink-0">
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-[#BE123C] dark:text-rose-300 text-xs flex items-center space-x-2 shrink-0">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -1400,10 +1400,10 @@ export default function ProcurementModule() {
             {/* Modal Body: Scrollable Content with Sections */}
             <form id="rm-po-form" onSubmit={handleSubmitPO} className="flex-1 overflow-y-auto p-6 space-y-6 text-xs">
               {/* SECTION 1: General Details & Logistics */}
-              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                  <span className="font-mono text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+              <div className="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80 pb-2">
+                  <span className="font-mono text-xs font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-[#4F46E5]" />
                     <span>Section 1: Contract Header & Vendor Details</span>
                   </span>
                   <span className="text-[11px] text-slate-500 font-mono">
@@ -1414,13 +1414,13 @@ export default function ProcurementModule() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* PO Number */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
-                      RM PO Number {isEditMode && <span className="text-amber-400 font-mono">(Locked)</span>}
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                      RM PO Number {isEditMode && <span className="text-amber-600 dark:text-amber-400 font-mono">(Locked)</span>}
                     </label>
                     {isEditMode ? (
-                      <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-300 font-mono">
-                        <Lock className="w-3.5 h-3.5 text-amber-400" />
-                        <span className="font-bold text-blue-400">{poNo}</span>
+                      <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-mono">
+                        <Lock className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="font-bold text-[#4F46E5] dark:text-blue-400">{poNo}</span>
                       </div>
                     ) : (
                       <input
@@ -1428,27 +1428,27 @@ export default function ProcurementModule() {
                         value={poNo}
                         onChange={(e) => setPoNo(e.target.value)}
                         required
-                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                       />
                     )}
                   </div>
 
                   {/* PO Date */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">RM PO Issuance Date</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">RM PO Issuance Date</label>
                     <input
                       type="date"
                       value={poDate}
                       onChange={(e) => setPoDate(e.target.value)}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   {/* Supplier Selection */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">
-                      Vendor / Mill Supplier <span className="text-rose-400">*</span>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                      Vendor / Mill Supplier <span className="text-rose-500">*</span>
                     </label>
                     <select
                       value={supplierId}
@@ -1457,11 +1457,11 @@ export default function ProcurementModule() {
                         if (formError) setFormError(null);
                       }}
                       required
-                      className={`w-full bg-slate-900 border ${
+                      className={`w-full bg-white dark:bg-slate-900 border ${
                         !supplierId && formError
-                          ? 'border-rose-500 ring-1 ring-rose-500 text-rose-200'
-                          : 'border-slate-700 text-slate-200'
-                      } rounded-lg px-3 py-2 focus:border-blue-500 outline-none font-medium transition`}
+                          ? 'border-rose-500 ring-1 ring-rose-500 text-rose-600'
+                          : 'border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200'
+                      } rounded-lg px-3 py-2 focus:border-[#4F46E5] outline-none font-medium transition`}
                     >
                       <option value="" disabled={suppliers.length > 0}>
                         {suppliers.length === 0 ? '-- Loading Suppliers... --' : '-- Select Vendor / Mill Supplier --'}
@@ -1473,7 +1473,7 @@ export default function ProcurementModule() {
                       ))}
                     </select>
                     {!supplierId && formError && (
-                      <p className="mt-1 text-[10px] text-rose-400 font-medium">
+                      <p className="mt-1 text-[10px] text-rose-500 font-medium">
                         Please select a vendor / mill supplier
                       </p>
                     )}
@@ -1481,19 +1481,19 @@ export default function ProcurementModule() {
 
                   {/* Delivery Due Date */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Delivery Due Target</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Delivery Due Target</label>
                     <input
                       type="date"
                       value={deliveryDate}
                       onChange={(e) => setDeliveryDate(e.target.value)}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   {/* Delivery IncoTerms */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">IncoTerms / Delivery Terms</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">IncoTerms / Delivery Terms</label>
                     <input
                       type="text"
                       list="po-delivery-terms-list"
@@ -1501,7 +1501,7 @@ export default function ProcurementModule() {
                       onChange={(e) => setDeliveryTerms(e.target.value)}
                       placeholder="e.g. FOB Mill Yard"
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none"
                     />
                     <datalist id="po-delivery-terms-list">
                       <option value="FOB Mill Yard" />
@@ -1514,37 +1514,37 @@ export default function ProcurementModule() {
 
                   {/* Payment Terms */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Payment Commercial Terms</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Payment Commercial Terms</label>
                     <input
                       type="text"
                       value={paymentTerms}
                       onChange={(e) => setPaymentTerms(e.target.value)}
                       placeholder="e.g. 30% Advance, Net 60 Days"
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   {/* Shipping Destination */}
                   <div className="md:col-span-2">
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Destination Receiving Yard</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Destination Receiving Yard</label>
                     <input
                       type="text"
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
                       placeholder="e.g. Dock 4, Tubular Inwarding Yard, Precision Hub"
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   {/* PO Status */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Contract Status</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Contract Status</label>
                     <select
                       value={poStatus}
                       onChange={(e) => setPoStatus(e.target.value as any)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 outline-none font-medium"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] outline-none font-medium"
                     >
                       <option value="Draft">Draft</option>
                       <option value="Approved">Approved</option>
@@ -1558,14 +1558,14 @@ export default function ProcurementModule() {
               {/* SECTION 2: Line Items Builder */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="font-mono text-xs font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-[#10B981]" />
                     <span>Section 2: Pipe Specifications & Line Items ({items.length})</span>
                   </span>
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition"
+                    className="px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add Item Line</span>
@@ -1580,22 +1580,22 @@ export default function ProcurementModule() {
                     return (
                       <div
                         key={idx}
-                        className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 relative hover:border-slate-700 transition shadow-inner"
+                        className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 relative hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm"
                       >
                         {/* Item Bar Header */}
-                        <div className="flex items-center justify-between pb-2.5 border-b border-slate-800 text-xs">
+                        <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800 text-xs">
                           <div className="flex items-center space-x-2">
-                            <span className="font-mono font-bold text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800 text-[11px]">
+                            <span className="font-mono font-bold text-[#4F46E5] dark:text-blue-400 bg-[#EEF2FF] dark:bg-blue-950 px-2 py-0.5 rounded border border-[#C7D2FE] dark:border-blue-800 text-[11px]">
                               Line #{idx + 1}
                             </span>
-                            <span className="text-[10px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-mono">
+                            <span className="text-[10px] text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 font-mono">
                               {item.size_od ? `${item.size_od}mm OD` : 'Pending OD'} • {item.grade || 'Select Grade'} • {item.wall_thickness ? `${item.wall_thickness}mm WT` : 'Pending WT'}
                             </span>
                           </div>
 
                           <div className="flex items-center space-x-3">
                             <span className="text-[10px] text-slate-500 font-mono">
-                              Nominal: <strong className="text-blue-400">{nomWt > 0 ? `${nomWt} kg/m` : '-'}</strong>
+                              Nominal: <strong className="text-[#4F46E5] dark:text-blue-400">{nomWt > 0 ? `${nomWt} kg/m` : '-'}</strong>
                             </span>
                             <button
                               type="button"
@@ -1603,8 +1603,8 @@ export default function ProcurementModule() {
                               disabled={items.length === 1}
                               className={`p-1.5 rounded transition ${
                                 items.length === 1
-                                  ? 'text-slate-600 cursor-not-allowed'
-                                  : 'text-rose-400 hover:bg-rose-950 hover:text-rose-300'
+                                  ? 'text-slate-400 cursor-not-allowed'
+                                  : 'text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 hover:text-rose-700'
                               }`}
                               title="Remove Line Item"
                             >
@@ -1617,7 +1617,7 @@ export default function ProcurementModule() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-white dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-800/80">
                           {/* 1. Size OD */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-300 block mb-1">
+                            <label className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                               1. Size / OD (mm)
                             </label>
                             <input
@@ -1626,7 +1626,7 @@ export default function ProcurementModule() {
                               required
                               value={item.size_od ?? ''}
                               onChange={(e) => handleItemSpecChange(idx, 'size_od', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                               placeholder="e.g. 177.8"
                             />
                             {/* Preset Chips */}
@@ -1643,8 +1643,8 @@ export default function ProcurementModule() {
                                   onClick={() => handleItemSpecChange(idx, 'size_od', s.val)}
                                   className={`text-[9px] px-1.5 py-0.5 rounded border transition ${
                                     Math.abs((Number(item.size_od) || 0) - s.val) < 0.1
-                                      ? 'bg-blue-900 text-blue-200 border-blue-600 font-bold'
-                                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+                                      ? 'bg-[#EEF2FF] text-[#4F46E5] border-[#C7D2FE] font-bold dark:bg-blue-900 dark:text-blue-200 dark:border-blue-600'
+                                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:text-slate-900 dark:bg-slate-950 dark:text-slate-400 dark:border-slate-800 dark:hover:text-slate-200'
                                   }`}
                                 >
                                   {s.label}
@@ -1655,13 +1655,13 @@ export default function ProcurementModule() {
 
                           {/* 2. Steel Grade */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-300 block mb-1">
+                            <label className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                               2. Steel Grade
                             </label>
                             <select
                               value={item.grade}
                               onChange={(e) => handleItemSpecChange(idx, 'grade', e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                               required
                             >
                               <option value="">-- Select Grade --</option>
@@ -1681,8 +1681,8 @@ export default function ProcurementModule() {
                                   onClick={() => handleItemSpecChange(idx, 'grade', g)}
                                   className={`text-[9px] px-2 py-0.5 rounded border transition ${
                                     item.grade === g
-                                      ? 'bg-blue-900 text-blue-200 border-blue-600 font-bold'
-                                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+                                      ? 'bg-[#EEF2FF] text-[#4F46E5] border-[#C7D2FE] font-bold dark:bg-blue-900 dark:text-blue-200 dark:border-blue-600'
+                                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:text-slate-900 dark:bg-slate-950 dark:text-slate-400 dark:border-slate-800 dark:hover:text-slate-200'
                                   }`}
                                 >
                                   {g}
@@ -1693,7 +1693,7 @@ export default function ProcurementModule() {
 
                           {/* 3. Wall Thickness / Schedule */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-300 block mb-1">
+                            <label className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                               3. Wall Thickness / Sch (mm)
                             </label>
                             <input
@@ -1702,7 +1702,7 @@ export default function ProcurementModule() {
                               required
                               value={item.wall_thickness ?? ''}
                               onChange={(e) => handleItemSpecChange(idx, 'wall_thickness', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                               placeholder="e.g. 10.36"
                             />
                             {/* Quick WT Chips */}
@@ -1719,8 +1719,8 @@ export default function ProcurementModule() {
                                   onClick={() => handleItemSpecChange(idx, 'wall_thickness', wt.val)}
                                   className={`text-[9px] px-1.5 py-0.5 rounded border transition ${
                                     Math.abs((Number(item.wall_thickness) || 0) - wt.val) < 0.1
-                                      ? 'bg-blue-900 text-blue-200 border-blue-600 font-bold'
-                                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+                                      ? 'bg-[#EEF2FF] text-[#4F46E5] border-[#C7D2FE] font-bold dark:bg-blue-900 dark:text-blue-200 dark:border-blue-600'
+                                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:text-slate-900 dark:bg-slate-950 dark:text-slate-400 dark:border-slate-800 dark:hover:text-slate-200'
                                   }`}
                                 >
                                   {wt.label}
@@ -1731,13 +1731,13 @@ export default function ProcurementModule() {
 
                           {/* 4. CVN Charpy V-Notch Requirement */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-300 block mb-1">
+                            <label className="text-[10px] font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                               4. CVN (Charpy V-Notch)
                             </label>
                             <select
                               value={item.cvn_requirement}
                               onChange={(e) => handleItemSpecChange(idx, 'cvn_requirement', e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-slate-200 text-xs focus:border-[#4F46E5] outline-none"
                               required
                             >
                               <option value="">-- Select CVN Spec --</option>
@@ -1757,9 +1757,9 @@ export default function ProcurementModule() {
                         </div>
 
                         {/* Order Commercials: Ordered MT, Unit Rate, Line Total */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2 border-t border-slate-900">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2 border-t border-slate-200 dark:border-slate-800">
                           <div>
-                            <label className="text-[10px] text-slate-400 block mb-1 font-medium">Ordered MT (Tonnage)</label>
+                            <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1 font-medium">Ordered MT (Tonnage)</label>
                             <input
                               type="number"
                               step="0.001"
@@ -1767,12 +1767,12 @@ export default function ProcurementModule() {
                               value={item.ordered_qty_mt ?? ''}
                               onChange={(e) => handleItemChange(idx, 'ordered_qty_mt', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               placeholder="0.000"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1.5 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-400 block mb-1 font-medium">Contract Rate ($/MT)</label>
+                            <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1 font-medium">Contract Rate ($/MT)</label>
                             <input
                               type="number"
                               step="0.01"
@@ -1780,7 +1780,7 @@ export default function ProcurementModule() {
                               value={item.unit_rate ?? ''}
                               onChange={(e) => handleItemChange(idx, 'unit_rate', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               placeholder="0.00"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs focus:border-blue-500 outline-none"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1.5 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] outline-none"
                             />
                           </div>
 
@@ -1789,7 +1789,7 @@ export default function ProcurementModule() {
                               <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">Line Total</span>
                               <span className="text-[9px] text-slate-400 dark:text-slate-500 font-mono">±{item.tolerable_variance_pct || 5}% tol</span>
                             </div>
-                            <div className="text-emerald-700 dark:text-emerald-400 font-mono font-bold text-sm">
+                            <div className="text-[#047857] dark:text-emerald-400 font-mono font-bold text-sm">
                               ${lineTot.toLocaleString()}
                             </div>
                           </div>
@@ -1801,18 +1801,18 @@ export default function ProcurementModule() {
               </div>
 
               {/* SECTION 3: Quality & Compliance Stipulations */}
-              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-2">
+              <div className="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                    <span className="font-mono text-xs font-bold text-slate-200 uppercase tracking-wider">
+                    <span className="w-2 h-2 rounded-full bg-[#4F46E5]" />
+                    <span className="font-mono text-xs font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider">
                       Section 3: Quality & Receiving Stipulations
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setQualityStipulations(DEFAULT_QUALITY_STIPULATIONS)}
-                    className="text-[10px] text-blue-400 hover:text-blue-300 underline font-mono"
+                    className="text-[10px] text-[#4F46E5] dark:text-blue-400 hover:underline font-mono"
                   >
                     Reset to Standard Clauses
                   </button>
@@ -1822,9 +1822,9 @@ export default function ProcurementModule() {
                   value={qualityStipulations}
                   onChange={(e) => setQualityStipulations(e.target.value)}
                   placeholder="Enter quality, MTC 3.1, CVN, weighbridge tolerance, and receiving inspection stipulations..."
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 text-xs font-mono focus:border-blue-500 leading-relaxed outline-none shadow-inner"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-slate-900 dark:text-slate-200 text-xs font-mono focus:border-[#4F46E5] leading-relaxed outline-none shadow-sm"
                 />
-                <div className="text-[10px] text-slate-400 flex items-center justify-between">
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
                   <span>These compliance stipulations print directly on the official PO Invoice document.</span>
                   <span className="font-mono text-slate-500">{qualityStipulations.split('\n').filter(Boolean).length} clause(s)</span>
                 </div>
@@ -1832,20 +1832,20 @@ export default function ProcurementModule() {
             </form>
 
             {/* SECTION 4: Financial Summary Sticky Footer */}
-            <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0 shadow-2xl">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0 shadow-lg">
               {/* Financial Snapshot */}
               <div className="flex flex-wrap items-center gap-6 font-mono text-xs">
                 <div>
                   <span className="text-[9px] text-slate-500 uppercase block">Total Tonnage</span>
-                  <span className="text-sm font-bold text-slate-200">{totalPOMt.toFixed(2)} MT</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-200">{totalPOMt.toFixed(2)} MT</span>
                 </div>
 
                 <div>
                   <span className="text-[9px] text-slate-500 uppercase block">Total Value</span>
-                  <span className="text-base font-bold text-emerald-400">${totalPOValue.toLocaleString()}</span>
+                  <span className="text-base font-bold text-[#047857] dark:text-emerald-400">${totalPOValue.toLocaleString()}</span>
                 </div>
 
-                <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+                <div className="flex items-center space-x-2 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
                   <div>
                     <span className="text-[9px] text-slate-500 uppercase block">Advance Paid ($)</span>
                     <input
@@ -1853,14 +1853,14 @@ export default function ProcurementModule() {
                       value={advanceAmount || ''}
                       onChange={(e) => setAdvanceAmount(parseFloat(e.target.value) || 0)}
                       placeholder="0"
-                      className="w-24 bg-transparent font-bold text-blue-400 text-xs outline-none"
+                      className="w-24 bg-transparent font-bold text-[#4F46E5] dark:text-blue-400 text-xs outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
                   <span className="text-[9px] text-slate-500 uppercase block">Balance Due</span>
-                  <span className="text-sm font-bold text-amber-400">${remainingAmount.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-[#B45309] dark:text-amber-400">${remainingAmount.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -1869,14 +1869,14 @@ export default function ProcurementModule() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   form="rm-po-form"
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center space-x-1.5 transition cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-500/20 flex items-center space-x-1.5 transition cursor-pointer"
                 >
                   {isEditMode ? <Pencil className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                   <span>{isEditMode ? 'Update RM Purchase Order' : 'Save & Release RM PO'}</span>

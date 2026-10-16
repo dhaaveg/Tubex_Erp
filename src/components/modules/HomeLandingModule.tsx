@@ -237,67 +237,67 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
       {/* 2. "WHAT THIS ERP IS ABOUT" OVERVIEW SECTION */}
       <section className="space-y-4">
         <div className="flex items-center space-x-2">
-          <Sparkles className="w-4 h-4 text-blue-400" />
-          <h2 className="text-base font-bold text-white uppercase tracking-wider font-mono">
+          <Sparkles className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
+          <h2 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
             What This ERP Is About
           </h2>
         </div>
 
         {/* Mission Statement Box */}
-        <div className="relative rounded-xl bg-slate-900/70 border border-slate-800 p-5 sm:p-6 shadow-md">
-          <blockquote className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans border-l-2 border-blue-500 pl-4">
+        <div className="relative rounded-xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm dark:shadow-md">
+          <blockquote className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans border-l-2 border-[#4F46E5] pl-4">
             &ldquo;EOT Couplings ERP is a comprehensive manufacturing execution and traceability platform engineered specifically for OCTG (Oil Country Tubular Goods), API 5CT casing &amp; tubing processing, and precision coupling fabrication. The system governs raw pipe heat tally inwarding, weighbridge tolerance reconciliation, 8-stage shop floor routing balance, defect disposition logging, and complete metallurgical heat-to-pipe provenance.&rdquo;
           </blockquote>
 
           {/* Core Function Highlights Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5 pt-5 border-t border-slate-800/80">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5 pt-5 border-t border-slate-100 dark:border-slate-800/80">
             {/* 1. Procurement & Receiving */}
-            <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/60 flex flex-col justify-between">
+            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/60 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-blue-400 mb-1.5">
+                <div className="flex items-center space-x-2 text-[#4F46E5] dark:text-blue-400 mb-1.5">
                   <Truck className="w-4 h-4 shrink-0" />
-                  <span className="font-semibold text-xs text-white">Procurement &amp; Receiving</span>
+                  <span className="font-semibold text-xs text-slate-900 dark:text-white">Procurement &amp; Receiving</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-normal">
                   RM PO tracking, weighbridge gross verification, tally sheet logging.
                 </p>
               </div>
             </div>
 
             {/* 2. Shop Floor Routing */}
-            <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/60 flex flex-col justify-between">
+            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/60 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-amber-400 mb-1.5">
+                <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 mb-1.5">
                   <Wrench className="w-4 h-4 shrink-0" />
-                  <span className="font-semibold text-xs text-white">Shop Floor Routing</span>
+                  <span className="font-semibold text-xs text-slate-900 dark:text-white">Shop Floor Routing</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-normal">
                   8-stage manufacturing balance (Cutting, Roughing, Threading, Phosphating, Inspection).
                 </p>
               </div>
             </div>
 
             {/* 3. Quality & Compliance */}
-            <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/60 flex flex-col justify-between">
+            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/60 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-cyan-400 mb-1.5">
+                <div className="flex items-center space-x-2 text-cyan-600 dark:text-cyan-400 mb-1.5">
                   <ShieldAlert className="w-4 h-4 shrink-0" />
-                  <span className="font-semibold text-xs text-white">Quality &amp; Compliance</span>
+                  <span className="font-semibold text-xs text-slate-900 dark:text-white">Quality &amp; Compliance</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-normal">
                   Non-destructive testing (MPI), defect categorization, and scrap dispositioning.
                 </p>
               </div>
             </div>
 
             {/* 4. End-to-End Traceability */}
-            <div className="p-3 rounded-lg bg-slate-950/50 border border-slate-800/60 flex flex-col justify-between">
+            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800/60 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 text-indigo-400 mb-1.5">
+                <div className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 mb-1.5">
                   <GitFork className="w-4 h-4 shrink-0" />
-                  <span className="font-semibold text-xs text-white">End-to-End Traceability</span>
+                  <span className="font-semibold text-xs text-slate-900 dark:text-white">End-to-End Traceability</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-normal">
                   Serialized barcode/tag lookup with full heat and MTC genealogy.
                 </p>
               </div>
@@ -310,12 +310,12 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-emerald-400" />
-            <h2 className="text-base font-bold text-white uppercase tracking-wider font-mono">
+            <Layers className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <h2 className="text-base font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
               Authorized Operational Workspaces
             </h2>
           </div>
-          <span className="text-[11px] font-mono text-slate-400 bg-slate-800/60 border border-slate-700/60 px-2 py-0.5 rounded">
+          <span className="text-[11px] font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 px-2 py-0.5 rounded">
             {permittedModules.length} Modules Accessible
           </span>
         </div>
@@ -328,7 +328,7 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
                 <div
                   key={module.id}
                   onClick={() => onNavigate(module.id)}
-                  className="group relative rounded-xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/50 p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-950/30 flex flex-col justify-between"
+                  className="group relative rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-[#4F46E5]/60 dark:hover:border-blue-500/50 p-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/10 dark:hover:shadow-blue-950/30 flex flex-col justify-between"
                   tabIndex={0}
                   role="button"
                   onKeyDown={(e) => {
@@ -349,23 +349,23 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
                       </div>
 
                       {module.badge && (
-                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700/80">
+                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80">
                           {module.badge}
                         </span>
                       )}
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#4F46E5] dark:group-hover:text-blue-400 transition-colors">
                       {module.title}
                     </h3>
-                    <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
                       {module.description}
                     </p>
                   </div>
 
                   {/* Launch Action */}
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-blue-400 group-hover:text-blue-300">
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-[#4F46E5] group-hover:text-[#4338CA] dark:text-blue-400 dark:group-hover:text-blue-300">
                     <span>Open Module</span>
                     <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -374,10 +374,10 @@ export default function HomeLandingModule({ stats, onNavigate }: HomeLandingModu
             })}
           </div>
         ) : (
-          <div className="p-8 rounded-xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
-            <ShieldAlert className="w-8 h-8 text-amber-400 mx-auto" />
-            <h3 className="text-sm font-semibold text-white">Pending Operational Assignment</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
+          <div className="p-8 rounded-xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+            <ShieldAlert className="w-8 h-8 text-amber-500 dark:text-amber-400 mx-auto" />
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Pending Operational Assignment</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
               Your logged-in role has not yet been assigned active module read permissions. Please contact your system administrator to configure departmental access.
             </p>
           </div>

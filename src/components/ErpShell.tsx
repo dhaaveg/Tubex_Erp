@@ -130,7 +130,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
   if (authLoading) {
     return (
-      <div className="h-screen w-screen bg-[#F4F6F8] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
+      <div className="h-screen w-screen bg-[#F8FAFC] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
         <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">
           Authenticating TUBEX ERP...
@@ -141,7 +141,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
   if (!user) {
     return (
-      <div className="h-screen w-screen bg-[#F4F6F8] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
+      <div className="h-screen w-screen bg-[#F8FAFC] dark:bg-slate-950 flex flex-col items-center justify-center text-slate-700 dark:text-slate-300 font-sans">
         <div className="w-10 h-10 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">
           Redirecting to Login...
@@ -151,7 +151,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
   }
 
   return (
-    <div className="flex h-screen bg-[#F4F6F8] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-150">
+    <div className="flex h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-150">
       {/* Sidebar Navigation with Active Links */}
       <Sidebar
         currentTab={currentTab}
@@ -168,7 +168,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
           isLoading={isLoading}
         />
 
-        <main className="flex-1 overflow-y-auto p-6 bg-[#F4F6F8] dark:bg-slate-950/80">
+        <main className="flex-1 overflow-y-auto p-6 bg-[#F8FAFC] dark:bg-slate-950/80">
           <div className="max-w-7xl mx-auto">
             {/* Unauthorized Notice Toast / Banner */}
             {unauthorizedNotice && (
@@ -242,7 +242,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
 
 export default function ErpShell(props: ErpShellProps) {
   return (
-    <Suspense fallback={<div className="h-screen bg-[#F4F6F8] dark:bg-slate-950 flex items-center justify-center text-slate-600 dark:text-slate-400 font-mono text-xs">Loading TUBEX ERP...</div>}>
+    <Suspense fallback={<div className="h-screen bg-[#F8FAFC] dark:bg-slate-950 flex items-center justify-center text-slate-600 dark:text-slate-400 font-mono text-xs">Loading TUBEX ERP...</div>}>
       <ErpShellContent initialTab={props.initialTab} />
     </Suspense>
   );

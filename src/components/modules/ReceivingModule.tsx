@@ -899,7 +899,7 @@ export default function ReceivingModule() {
             <button
               onClick={() => setActiveSubTab('grn')}
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
-                activeSubTab === 'grn' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                activeSubTab === 'grn' ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold dark:bg-[#4F46E5] dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Truck className="w-3.5 h-3.5" />
@@ -908,7 +908,7 @@ export default function ReceivingModule() {
             <button
               onClick={() => setActiveSubTab('tally')}
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
-                activeSubTab === 'tally' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                activeSubTab === 'tally' ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold dark:bg-[#4F46E5] dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -919,7 +919,7 @@ export default function ReceivingModule() {
           {activeSubTab === 'grn' ? (
             <button
               onClick={handleOpenCreateGRN}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 transition-all"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Log GRN Entry</span>
@@ -927,7 +927,7 @@ export default function ReceivingModule() {
           ) : (
             <button
               onClick={() => handleOpenCreateTally()}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/30 transition-all"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition-all"
             >
               <Scissors className="w-4 h-4" />
               <span>New Lot Tally Log</span>
@@ -1554,25 +1554,25 @@ export default function ReceivingModule() {
       {/* Log GRN Modal */}
       {isGrnModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
               <div>
-                <h3 className="text-sm font-bold text-white">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   {isEditGrnMode ? 'Edit Goods Receipt & Weighbridge Entry' : 'Log Goods Receipt & Weighbridge Entry'}
                 </h3>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
                   {isEditGrnMode
                     ? 'Modify invoice metadata, weighbridge reconciliation, and edit line items (Size, Grade, Thread, Qty).'
                     : 'Gate weighbridge weight difference validation and pipe line items inwarding.'}
                 </p>
               </div>
-              <button onClick={() => setIsGrnModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsGrnModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs">
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs">
                 {formError}
               </div>
             )}
@@ -1580,7 +1580,7 @@ export default function ReceivingModule() {
             <form onSubmit={handleCreateGRN} className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">
                     GRN ID {isEditGrnMode && <span className="text-[10px] text-slate-500">(Locked during edit)</span>}
                   </label>
                   <input
@@ -1589,15 +1589,15 @@ export default function ReceivingModule() {
                     onChange={(e) => setGrnForm({ ...grnForm, grn_id: e.target.value })}
                     disabled={isEditGrnMode}
                     required
-                    className={`w-full border rounded px-3 py-1.5 text-slate-200 font-mono ${
+                    className={`w-full border rounded px-3 py-1.5 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                       isEditGrnMode
-                        ? 'bg-slate-900/50 border-slate-800 text-slate-400 cursor-not-allowed'
-                        : 'bg-slate-950 border-slate-800'
+                        ? 'bg-slate-100 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 text-slate-400 cursor-not-allowed'
+                        : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-200'
                     }`}
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Raw Material PO Reference (RM PO)</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Raw Material PO Reference (RM PO)</label>
                   <select
                     value={grnForm.po_no}
                     onChange={(e) => {
@@ -1619,7 +1619,7 @@ export default function ReceivingModule() {
                       }));
                     }}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   >
                     <option value="">-- Select RM Purchase Order --</option>
                     {purchaseOrders.map((p) => (
@@ -1636,13 +1636,13 @@ export default function ReceivingModule() {
                 <div
                   className={`p-3.5 rounded-xl border text-xs transition-all ${
                     isInvoiceMtExceeded
-                      ? 'bg-rose-950/40 border-rose-800 text-rose-200'
-                      : 'bg-slate-950/80 border-slate-800 text-slate-300'
+                      ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+                      : 'bg-slate-50 dark:bg-slate-950/80 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-1.5 font-semibold text-slate-200">
-                      <Scale className="w-3.5 h-3.5 text-blue-400" />
+                    <div className="flex items-center space-x-1.5 font-semibold text-slate-900 dark:text-slate-200">
+                      <Scale className="w-3.5 h-3.5 text-[#4F46E5] dark:text-blue-400" />
                       <span>RM PO Ordered MT Reconciliation Gate</span>
                     </div>
                     <span
@@ -1650,8 +1650,8 @@ export default function ReceivingModule() {
                         isInvoiceMtExceeded
                           ? 'bg-rose-600 text-white animate-pulse'
                           : autoCalculatedInvoiceWeightMt === 0
-                          ? 'bg-slate-800 text-slate-400'
-                          : 'bg-emerald-950 border border-emerald-800 text-emerald-300'
+                          ? 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          : 'bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
                       }`}
                     >
                       {isInvoiceMtExceeded
@@ -1663,28 +1663,28 @@ export default function ReceivingModule() {
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 text-center text-[11px] font-mono">
-                    <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                      <div className="text-slate-400 text-[10px] font-sans">RM PO Total Ordered</div>
-                      <div className="font-bold text-white mt-0.5">{poTotalOrderedMt.toFixed(3)} MT</div>
+                    <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                      <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">RM PO Total Ordered</div>
+                      <div className="font-bold text-slate-900 dark:text-white mt-0.5">{poTotalOrderedMt.toFixed(3)} MT</div>
                     </div>
-                    <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                      <div className="text-slate-400 text-[10px] font-sans">Prior GRNs Invoiced</div>
-                      <div className="font-bold text-amber-300 mt-0.5">{existingGrnInvoiceMt.toFixed(3)} MT</div>
+                    <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                      <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">Prior GRNs Invoiced</div>
+                      <div className="font-bold text-amber-600 dark:text-amber-300 mt-0.5">{existingGrnInvoiceMt.toFixed(3)} MT</div>
                     </div>
-                    <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                      <div className="text-slate-400 text-[10px] font-sans">This GRN Invoice MT</div>
-                      <div className="font-bold text-blue-300 mt-0.5">
+                    <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                      <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">This GRN Invoice MT</div>
+                      <div className="font-bold text-[#4F46E5] dark:text-blue-300 mt-0.5">
                         {autoCalculatedInvoiceWeightMt > 0 ? `${autoCalculatedInvoiceWeightMt.toFixed(3)} MT` : '0.000 MT'}
                       </div>
                     </div>
                     <div
-                      className={`p-2 rounded border ${
+                      className={`p-2 rounded border shadow-sm ${
                         isInvoiceMtExceeded
-                          ? 'bg-rose-950/80 border-rose-700 text-rose-300 font-bold'
-                          : 'bg-slate-900/90 border-slate-800 text-emerald-400 font-bold'
+                          ? 'bg-rose-50 dark:bg-rose-950/80 border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-300 font-bold'
+                          : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-emerald-700 dark:text-emerald-400 font-bold'
                       }`}
                     >
-                      <div className="text-slate-400 text-[10px] font-sans">Cumulative / Remaining</div>
+                      <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">Cumulative / Remaining</div>
                       <div className="mt-0.5">
                         {poWeightGate.newCumulativeInvoiceMt.toFixed(3)} / {Math.max(0, poTotalOrderedMt - poWeightGate.newCumulativeInvoiceMt).toFixed(3)} MT
                       </div>
@@ -1692,8 +1692,8 @@ export default function ReceivingModule() {
                   </div>
 
                   {isInvoiceMtExceeded && (
-                    <div className="mt-2.5 p-2 rounded bg-rose-950/90 border border-rose-700 text-rose-200 font-sans text-[11px] flex items-center space-x-1.5">
-                      <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+                    <div className="mt-2.5 p-2 rounded bg-rose-50 dark:bg-rose-950/90 border border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200 font-sans text-[11px] flex items-center space-x-1.5">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-500" />
                       <span>
                         Total GRN Invoice Weight ({poWeightGate.newCumulativeInvoiceMt.toFixed(3)} MT) exceeds RM PO {grnForm.po_no}&apos;s
                         Ordered Weight ({poTotalOrderedMt.toFixed(3)} MT). Remaining allowable MT is{' '}
@@ -1706,57 +1706,57 @@ export default function ReceivingModule() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Invoice Number</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Invoice Number</label>
                   <input
                     type="text"
                     placeholder="e.g. INV-TEN-9022"
                     value={grnForm.invoice_no}
                     onChange={(e) => setGrnForm({ ...grnForm, invoice_no: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Invoice Date</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Invoice Date</label>
                   <input
                     type="date"
                     value={grnForm.invoice_date}
                     onChange={(e) => setGrnForm({ ...grnForm, invoice_date: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Transporter / Vehicle #</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Transporter / Vehicle #</label>
                   <input
                     type="text"
                     placeholder="e.g. TRUCK-MH-12-8821"
                     value={grnForm.vehicle_transporter_no}
                     onChange={(e) => setGrnForm({ ...grnForm, vehicle_transporter_no: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
               </div>
 
               {/* Weighbridge Delta Verification Box */}
-              <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-200">
-                  <Scale className="w-4 h-4 text-blue-400" />
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                  <Scale className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
                   <span>Weighbridge Weight Reconciliation Gate</span>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center space-x-1.5">
-                        <label className="block text-slate-400 text-[11px]">Invoice Weight (MT)</label>
-                        <span className="text-[9px] text-blue-300 font-mono bg-blue-950/80 border border-blue-800/80 px-1.5 py-0.2 rounded font-medium">
+                        <label className="block text-slate-700 dark:text-slate-400 text-[11px] font-medium">Invoice Weight (MT)</label>
+                        <span className="text-[9px] text-[#4F46E5] dark:text-blue-300 font-mono bg-[#EEF2FF] dark:bg-blue-950/80 border border-[#E0E7FF] dark:border-blue-800/80 px-1.5 py-0.2 rounded font-medium">
                           Auto-calculated
                         </span>
                       </div>
                       {activeSelectedPo && (
-                        <span className="text-[10px] text-slate-400">
-                          Max: <strong className={isInvoiceMtExceeded ? 'text-rose-400 font-bold' : 'text-emerald-400'}>{poWeightGate.remainingAllowableMt.toFixed(3)} MT</strong>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                          Max: <strong className={isInvoiceMtExceeded ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{poWeightGate.remainingAllowableMt.toFixed(3)} MT</strong>
                         </span>
                       )}
                     </div>
@@ -1766,12 +1766,12 @@ export default function ReceivingModule() {
                       readOnly
                       placeholder="Auto from Line Items"
                       value={autoCalculatedInvoiceWeightMt > 0 ? autoCalculatedInvoiceWeightMt : ''}
-                      className={`w-full bg-slate-950/90 border rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs cursor-default ${
-                        isInvoiceMtExceeded ? 'border-rose-500 text-rose-200 ring-1 ring-rose-500 bg-rose-950/20' : 'border-slate-800'
+                      className={`w-full bg-white dark:bg-slate-950/90 border rounded px-2.5 py-1.5 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs cursor-default ${
+                        isInvoiceMtExceeded ? 'border-rose-500 text-rose-700 dark:text-rose-200 ring-1 ring-rose-500 bg-rose-50 dark:bg-rose-950/20' : 'border-slate-300 dark:border-slate-800'
                       }`}
                     />
                     {isInvoiceMtExceeded && (
-                      <p className="text-[10px] text-rose-400 mt-1 font-sans font-semibold">
+                      <p className="text-[10px] text-rose-600 dark:text-rose-400 mt-1 font-sans font-semibold">
                         ⚠️ Exceeds max allowable {poWeightGate.remainingAllowableMt.toFixed(3)} MT
                       </p>
                     )}
@@ -1779,8 +1779,8 @@ export default function ReceivingModule() {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center space-x-1.5">
-                        <label className="block text-slate-400 text-[11px]">Actual Weighbridge (MT)</label>
-                        <span className="text-[9px] text-blue-300 font-mono bg-blue-950/80 border border-blue-800/80 px-1.5 py-0.2 rounded font-medium">
+                        <label className="block text-slate-700 dark:text-slate-400 text-[11px] font-medium">Actual Weighbridge (MT)</label>
+                        <span className="text-[9px] text-[#4F46E5] dark:text-blue-300 font-mono bg-[#EEF2FF] dark:bg-blue-950/80 border border-[#E0E7FF] dark:border-blue-800/80 px-1.5 py-0.2 rounded font-medium">
                           Auto-calculated
                         </span>
                       </div>
@@ -1791,22 +1791,22 @@ export default function ReceivingModule() {
                       readOnly
                       placeholder="Auto from Line Items"
                       value={autoCalculatedActualWeighbridgeMt > 0 ? autoCalculatedActualWeighbridgeMt : ''}
-                      className="w-full bg-slate-950/90 border border-slate-800 rounded px-2.5 py-1.5 text-slate-200 font-mono font-bold text-xs cursor-default"
+                      className="w-full bg-white dark:bg-slate-950/90 border border-slate-300 dark:border-slate-800 rounded px-2.5 py-1.5 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs cursor-default"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 mb-1 text-[11px]">Weight Delta (Calculated)</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 text-[11px] font-medium">Weight Delta (Calculated)</label>
                     <div
                       className={`font-mono text-sm font-bold p-1 rounded ${
                         !hasWeighbridgeValues
-                          ? 'text-slate-400'
+                          ? 'text-slate-400 dark:text-slate-500'
                           : weighbridgeCalc.weightDifferenceMt < 0
-                          ? 'text-amber-400'
-                          : 'text-emerald-400'
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-emerald-600 dark:text-emerald-400'
                       }`}
                     >
                       {!hasWeighbridgeValues ? (
-                        <span className="text-slate-500 font-normal text-xs">— (Enter item weights)</span>
+                        <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">— (Enter item weights)</span>
                       ) : (
                         <>
                           {weighbridgeCalc.weightDifferenceMt > 0 ? '+' : ''}
@@ -1819,10 +1819,10 @@ export default function ReceivingModule() {
               </div>
 
               {/* GRN Line Items Inwarding Section (Required User Entry) */}
-              <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-200">
-                    <PackageCheck className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                    <PackageCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>GRN Line Items Inwarding (Required User Entry)</span>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -1830,17 +1830,17 @@ export default function ReceivingModule() {
                       <span
                         className={`px-2 py-0.5 rounded text-[11px] font-mono font-medium ${
                           isTotalInvoiceMtExceeded
-                            ? 'bg-rose-950 border border-rose-700 text-rose-300 font-bold'
-                            : 'bg-slate-900 border border-slate-800 text-slate-300'
+                            ? 'bg-rose-50 dark:bg-rose-950 border border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300 font-bold'
+                            : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
                       >
-                        Sum MT: <strong className={isTotalInvoiceMtExceeded ? 'text-rose-400' : 'text-blue-300'}>{currentGrnItemsMtTotal.toFixed(3)}</strong> / {remainingAllowableInvoiceMt.toFixed(3)} Rem (RM PO: {poTotalOrderedMt.toFixed(3)} MT)
+                        Sum MT: <strong className={isTotalInvoiceMtExceeded ? 'text-rose-600 dark:text-rose-400' : 'text-[#4F46E5] dark:text-blue-300'}>{currentGrnItemsMtTotal.toFixed(3)}</strong> / {remainingAllowableInvoiceMt.toFixed(3)} Rem (RM PO: {poTotalOrderedMt.toFixed(3)} MT)
                       </span>
                     )}
                     <button
                       type="button"
                       onClick={handleAddGrnLineItem}
-                      className="px-2.5 py-1 rounded bg-blue-900/60 hover:bg-blue-800 border border-blue-700 text-blue-200 text-[11px] font-medium flex items-center space-x-1.5 self-start sm:self-auto transition-colors"
+                      className="px-2.5 py-1 rounded bg-[#EEF2FF] hover:bg-indigo-100 dark:bg-blue-900/60 dark:hover:bg-blue-800 border border-[#E0E7FF] dark:border-blue-700 text-[#4F46E5] dark:text-blue-200 text-[11px] font-semibold flex items-center space-x-1.5 self-start sm:self-auto transition-colors"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>+ Add Line Item</span>
@@ -1849,8 +1849,8 @@ export default function ReceivingModule() {
                 </div>
 
                 {isTotalInvoiceMtExceeded && (
-                  <div className="p-2.5 rounded bg-rose-950/90 border border-rose-700 text-rose-200 text-[11px] flex items-center space-x-1.5 font-sans">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+                  <div className="p-2.5 rounded bg-rose-50 dark:bg-rose-950/90 border border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200 text-[11px] flex items-center space-x-1.5 font-sans">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-500" />
                     <span>
                       ⚠️ Validation Error: Sum of all &quot;Qty as per invoice (MT)&quot; ({(currentGrnItemsMtTotal + existingGrnInvoiceMtSum).toFixed(3)} MT) associated with RM PO {grnForm.po_no} exceeds RM PO&apos;s Total Ordered MT ({poTotalOrderedMt.toFixed(3)} MT). Already received in earlier GRNs: {existingGrnInvoiceMtSum.toFixed(3)} MT. Remaining allowable across this GRN is <strong>{remainingAllowableInvoiceMt.toFixed(3)} MT</strong>.
                     </span>
@@ -1858,14 +1858,14 @@ export default function ReceivingModule() {
                 )}
 
                 {grnForm.items.length === 0 ? (
-                  <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-lg text-slate-400 text-center text-xs">
+                  <div className="p-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 dark:text-slate-400 text-center text-xs">
                     No line items added yet. Click &quot;+ Add Line Item&quot; to add.
                   </div>
                 ) : (
-                  <div className="border border-slate-800 rounded-lg overflow-hidden bg-slate-900/80">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900/80">
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-950 text-slate-400 font-mono text-[10px] uppercase border-b border-slate-800">
+                        <thead className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 font-mono text-[10px] uppercase border-b border-slate-200 dark:border-slate-800">
                           <tr>
                             <th className="px-3 py-2 w-1/5">Size</th>
                             <th className="px-3 py-2 w-1/6">Grade</th>
@@ -1875,11 +1875,11 @@ export default function ReceivingModule() {
                             <th className="px-2 py-2 text-center w-10"></th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800/60">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                           {grnForm.items.map((item, idx) => (
                             <tr
                               key={idx}
-                              className="bg-slate-900/70 hover:bg-slate-850/50 transition-colors"
+                              className="bg-white dark:bg-slate-900/70 hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors"
                             >
                               {/* 1. Size */}
                               <td className="px-3 py-2.5">
@@ -1892,7 +1892,7 @@ export default function ReceivingModule() {
                                   onChange={(e) =>
                                     handleUpdateGrnLineItem(idx, 'size', e.target.value)
                                   }
-                                  className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500"
+                                  className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                                 />
                               </td>
 
@@ -1903,7 +1903,7 @@ export default function ReceivingModule() {
                                   onChange={(e) =>
                                     handleUpdateGrnLineItem(idx, 'grade', e.target.value)
                                   }
-                                  className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500"
+                                  className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                                 >
                                   <option value="">-- Select Grade --</option>
                                   <option value="J55">J55</option>
@@ -1923,7 +1923,7 @@ export default function ReceivingModule() {
                                   onChange={(e) =>
                                     handleUpdateGrnLineItem(idx, 'thread', e.target.value)
                                   }
-                                  className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs focus:border-blue-500"
+                                  className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                                 >
                                   <option value="">-- Select Connection / End --</option>
                                   <option value="BTC">BTC (Buttress)</option>
@@ -1979,7 +1979,7 @@ export default function ReceivingModule() {
                                   return (
                                     <div className="space-y-1">
                                       {selectedPo?.po_items && selectedPo.po_items.length > 1 && (
-                                        <div className="text-[10px] text-slate-400 font-mono flex items-center space-x-1">
+                                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center space-x-1">
                                           <span>RM PO Line:</span>
                                           <select
                                             value={item.po_item_id || matchedPoi?.po_item_id || ''}
@@ -1995,7 +1995,7 @@ export default function ReceivingModule() {
                                                 }
                                               }
                                             }}
-                                            className="bg-slate-950 border border-slate-700 rounded px-1 py-0.5 text-blue-300 font-bold text-[10px]"
+                                            className="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-1 py-0.5 text-[#4F46E5] dark:text-blue-300 font-bold text-[10px] focus:border-[#4F46E5] focus:outline-none"
                                           >
                                             {selectedPo.po_items.map((poi: any) => (
                                               <option key={poi.po_item_id} value={poi.po_item_id}>
@@ -2015,24 +2015,24 @@ export default function ReceivingModule() {
                                           handleUpdateGrnLineItem(idx, 'invoice_quantity_mt', e.target.value)
                                         }
                                         required
-                                        className={`w-full bg-slate-950 border rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs ${
+                                        className={`w-full bg-white dark:bg-slate-950 border rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                                           hasError
-                                            ? 'border-rose-500 text-rose-200 ring-1 ring-rose-500'
+                                            ? 'border-rose-500 text-rose-700 dark:text-rose-200 ring-1 ring-rose-500'
                                             : item.invoice_quantity_mt === ''
                                             ? 'border-amber-500/80 ring-1 ring-amber-500/50'
-                                            : 'border-slate-700'
+                                            : 'border-slate-300 dark:border-slate-700'
                                         }`}
                                       />
                                       {poOrderedMt !== null && (
-                                        <div className="text-[10px] font-sans flex items-center justify-between text-slate-400">
-                                          <span>RM PO Ord: <strong className="text-slate-300 font-mono">{poOrderedMt.toFixed(3)} MT</strong></span>
-                                          <span className={remainingAllowable !== null && remainingAllowable <= 0 ? 'text-rose-400 font-bold' : 'text-emerald-400'}>
+                                        <div className="text-[10px] font-sans flex items-center justify-between text-slate-500 dark:text-slate-400">
+                                          <span>RM PO Ord: <strong className="text-slate-700 dark:text-slate-300 font-mono">{poOrderedMt.toFixed(3)} MT</strong></span>
+                                          <span className={remainingAllowable !== null && remainingAllowable <= 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>
                                             Rem: <strong className="font-mono">{remainingAllowable?.toFixed(3)} MT</strong>
                                           </span>
                                         </div>
                                       )}
                                       {hasError && (
-                                        <p className="text-[10px] text-rose-400 font-sans font-semibold">
+                                        <p className="text-[10px] text-rose-600 dark:text-rose-400 font-sans font-semibold">
                                           {isOverOrdered
                                             ? `⚠️ Exceeds RM PO Item Ordered MT (${poOrderedMt.toFixed(3)} MT)`
                                             : `⚠️ Exceeds RM PO remaining allowable (${remainingAllowable?.toFixed(3)} MT)`}
@@ -2056,10 +2056,10 @@ export default function ReceivingModule() {
                                       handleUpdateGrnLineItem(idx, 'actual_quantity_mt', e.target.value)
                                     }
                                     required
-                                    className={`w-full bg-slate-950 border rounded px-2.5 py-1 text-slate-200 font-mono font-bold text-xs ${
+                                    className={`w-full bg-white dark:bg-slate-950 border rounded px-2.5 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                                       item.actual_quantity_mt === ''
                                         ? 'border-amber-500/80 ring-1 ring-amber-500/50'
-                                        : 'border-slate-700'
+                                        : 'border-slate-300 dark:border-slate-700'
                                     }`}
                                   />
                                   <div className="text-[10px] text-slate-500 font-sans">
@@ -2074,7 +2074,7 @@ export default function ReceivingModule() {
                                   <button
                                     type="button"
                                     onClick={() => handleRemoveGrnLineItem(idx)}
-                                    className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
+                                    className="p-1 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                                     title="Remove Line Item"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -2106,13 +2106,13 @@ export default function ReceivingModule() {
                 </datalist>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <div className="flex flex-col items-end gap-1">
                   <div className="flex items-center space-x-3">
                     <button
                       type="button"
                       onClick={() => setIsGrnModalOpen(false)}
-                      className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 font-medium"
+                      className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors"
                     >
                       Cancel
                     </button>
@@ -2121,25 +2121,25 @@ export default function ReceivingModule() {
                       disabled={isInvoiceMtExceeded || isTotalInvoiceMtExceeded || hasAnyItemQtyExceeded}
                       className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                         isInvoiceMtExceeded || isTotalInvoiceMtExceeded || hasAnyItemQtyExceeded
-                          ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                          : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30'
+                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700'
+                          : 'bg-[#4F46E5] hover:bg-[#4338CA] text-white shadow-md shadow-indigo-600/20'
                       }`}
                     >
                       {isEditGrnMode ? 'Update GRN Record' : 'Save GRN Record'}
                     </button>
                   </div>
                   {isInvoiceMtExceeded && (
-                    <span className="text-[10px] text-rose-400 font-sans font-medium">
+                    <span className="text-[10px] text-rose-600 dark:text-rose-400 font-sans font-medium">
                       ⚠️ Total Invoice Weight exceeds PO Ordered Weight ({poTotalOrderedMt.toFixed(3)} MT).
                     </span>
                   )}
                   {isTotalInvoiceMtExceeded && (
-                    <span className="text-[10px] text-rose-400 font-sans font-medium">
+                    <span className="text-[10px] text-rose-600 dark:text-rose-400 font-sans font-medium">
                       ⚠️ Sum of all &quot;Qty as per invoice (MT)&quot; ({(currentGrnItemsMtTotal + existingGrnInvoiceMtSum).toFixed(3)} MT) exceeds PO Total Ordered MT ({poTotalOrderedMt.toFixed(3)} MT).
                     </span>
                   )}
                   {hasAnyItemQtyExceeded && (
-                    <span className="text-[10px] text-rose-400 font-sans font-medium">
+                    <span className="text-[10px] text-rose-600 dark:text-rose-400 font-sans font-medium">
                       ⚠️ One or more line items exceed the PO Ordered MT or remaining allowable MT.
                     </span>
                   )}
@@ -2153,26 +2153,26 @@ export default function ReceivingModule() {
       {/* New Lot Tally Sheet Modal with Bulk Length Inwarding */}
       {isTallyModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
               <div>
-                <h3 className="text-sm font-bold text-white">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   {isEditTallyMode ? 'Edit Lot Tally Sheet & Cutting Yield Log' : 'New Lot Tally Sheet & Cutting Yield Log'}
                 </h3>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
                   {isEditTallyMode
                     ? 'Modify lot-by-lot tube counts, total lengths, parting measurements, and recalculate yields.'
                     : 'Enter lot-by-lot tube counts and total combined tube lengths for automated yield, expected parts, and scrap calculation.'}
                 </p>
               </div>
-              <button onClick={() => setIsTallyModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsTallyModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
                 <span>{formError}</span>
               </div>
             )}
@@ -2181,22 +2181,22 @@ export default function ReceivingModule() {
               {/* Header Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Tally Sheet ID</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Tally Sheet ID</label>
                   <input
                     type="text"
                     value={tallyForm.ts_id}
                     onChange={(e) => setTallyForm({ ...tallyForm, ts_id: e.target.value })}
                     required
                     readOnly={isEditTallyMode}
-                    className={`w-full border rounded px-2 py-1.5 font-mono ${
+                    className={`w-full border rounded px-2 py-1.5 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                       isEditTallyMode
-                        ? 'bg-slate-900 border-slate-700 text-slate-400 cursor-not-allowed'
-                        : 'bg-slate-950 border-slate-800 text-slate-200'
+                        ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed'
+                        : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-200'
                     }`}
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1 font-semibold text-blue-400">
+                  <label className="block text-[#4F46E5] dark:text-blue-400 mb-1 font-semibold">
                     Source GRN & Item
                   </label>
                   <select
@@ -2217,7 +2217,7 @@ export default function ReceivingModule() {
                       }));
                     }}
                     required
-                    className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-200 font-mono text-xs"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   >
                     <option value="">-- Choose GRN Item --</option>
                     {grns.flatMap((g) =>
@@ -2230,54 +2230,54 @@ export default function ReceivingModule() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Default Heat Number</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Default Heat Number</label>
                   <input
                     type="text"
                     placeholder="e.g. HT-84920"
                     value={tallyForm.heat_no}
                     onChange={(e) => handleDefaultHeatChange(e.target.value)}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono font-bold text-blue-400"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-[#4F46E5] dark:text-blue-400 font-mono font-bold focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Default Lot Number</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Default Lot Number</label>
                   <input
                     type="text"
                     placeholder="e.g. LOT-2026-A1"
                     value={tallyForm.lot_no}
                     onChange={(e) => setTallyForm({ ...tallyForm, lot_no: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Default MTC Number</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Default MTC Number</label>
                   <input
                     type="text"
                     placeholder="e.g. MTC-TEN-84920-REV1"
                     value={tallyForm.mill_test_certificate_no}
                     onChange={(e) => setTallyForm({ ...tallyForm, mill_test_certificate_no: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Inspector Name</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Inspector Name</label>
                   <input
                     type="text"
                     placeholder="e.g. Marcus Vance (Level III NDT)"
                     value={tallyForm.inspector_name}
                     onChange={(e) => setTallyForm({ ...tallyForm, inspector_name: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-slate-200"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Bundle Count</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Bundle Count</label>
                   <input
                     type="number"
                     min="1"
@@ -2285,15 +2285,15 @@ export default function ReceivingModule() {
                     value={tallyForm.bundle_count}
                     onChange={(e) => setTallyForm({ ...tallyForm, bundle_count: parseInt(e.target.value) || 1 })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-slate-400 text-xs font-semibold">
+                    <label className="text-slate-700 dark:text-slate-400 text-xs font-semibold">
                       Target Parting Length (Coupling Size)
                     </label>
-                    <span className="text-[11px] text-emerald-400 font-mono font-bold bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800">
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-bold bg-emerald-50 dark:bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                       {tallyForm.defaultPartingLength} mm
                     </span>
                   </div>
@@ -2320,7 +2320,7 @@ export default function ReceivingModule() {
                         }
                       }}
                       required
-                      className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-200 font-mono text-xs font-bold text-emerald-400 focus:border-emerald-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold focus:border-[#4F46E5] focus:outline-none"
                     >
                       <option value="" disabled>-- Select Coupling Size / Length --</option>
                       <optgroup label="── Tubing Coupling Sizes (API 5CT) ──">
@@ -2358,9 +2358,9 @@ export default function ReceivingModule() {
                             }));
                           }}
                           required
-                          className="w-full bg-slate-950 border border-amber-600/80 rounded px-2 py-1 text-amber-300 font-mono font-bold text-xs focus:ring-1 focus:ring-amber-500"
+                          className="w-full bg-white dark:bg-slate-950 border border-amber-500 rounded px-2 py-1 text-amber-700 dark:text-amber-300 font-mono font-bold text-xs focus:ring-1 focus:ring-amber-500"
                         />
-                        <span className="text-xs text-amber-400 font-mono font-bold shrink-0">mm</span>
+                        <span className="text-xs text-amber-700 dark:text-amber-400 font-mono font-bold shrink-0">mm</span>
                       </div>
                     )}
                   </div>
@@ -2368,16 +2368,16 @@ export default function ReceivingModule() {
               </div>
 
               {/* Dynamic Bulk Lot Grid with Live Cutting Yield Formula */}
-              <div className="pt-2 border-t border-slate-800 space-y-3">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <Scissors className="w-4 h-4 text-emerald-400" />
-                      <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                      <Scissors className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
                         Lot-by-Lot Dimensional Inwarding ({tallyForm.lots.length} Lot{tallyForm.lots.length === 1 ? '' : 's'})
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                       Under one GRN Item there can be multiple Heat Numbers, and under each Heat Number there can be multiple Lot Numbers. &quot;Total Tube Length (mm)&quot; represents total length of all tubes in that lot.
                     </p>
                   </div>
@@ -2396,10 +2396,10 @@ export default function ReceivingModule() {
 
                       return (
                         <div className={`px-2.5 py-1 rounded-lg border text-xs font-mono flex items-center space-x-1.5 ${
-                          isFormOver ? 'bg-rose-950/80 border-rose-700 text-rose-300' : 'bg-slate-900 border-slate-700 text-slate-300'
+                          isFormOver ? 'bg-rose-50 dark:bg-rose-950/80 border-rose-200 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                         }`}>
-                          <span className="text-slate-400 text-[10px]">Total Length:</span>
-                          <span className={`font-bold ${isFormOver ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          <span className="text-slate-500 dark:text-slate-400 text-[10px]">Total Length:</span>
+                          <span className={`font-bold ${isFormOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                             {formTotalLengthM.toFixed(2)} m
                           </span>
                           {invLimitM > 0 && (
@@ -2413,7 +2413,7 @@ export default function ReceivingModule() {
                     <button
                       type="button"
                       onClick={handleAddLot}
-                      className="px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1.5 border bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border-emerald-700 cursor-pointer transition-all shrink-0 shadow"
+                      className="px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1.5 border bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/60 dark:hover:bg-emerald-800 text-emerald-700 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700 cursor-pointer transition-all shrink-0 shadow-sm"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Add Lot Row</span>
@@ -2439,14 +2439,14 @@ export default function ReceivingModule() {
                     return (
                       <div
                         key={idx}
-                        className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2.5 text-xs shadow-md"
+                        className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5 text-xs shadow-sm"
                       >
-                        <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80 pb-2">
                           <div className="flex items-center space-x-2">
-                            <span className="font-mono font-bold text-slate-300 text-xs bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                            <span className="font-mono font-bold text-slate-700 dark:text-slate-300 text-xs bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">
                               Lot Entry #{lot.tube_sr_no}
                             </span>
-                            <span className="font-mono text-xs text-amber-400 font-bold">
+                            <span className="font-mono text-xs text-amber-700 dark:text-amber-400 font-bold">
                               Tag: {lot.ti_id}
                             </span>
                           </div>
@@ -2454,7 +2454,7 @@ export default function ReceivingModule() {
                             type="button"
                             onClick={() => handleRemoveLot(idx)}
                             disabled={tallyForm.lots.length === 1}
-                            className="p-1 rounded text-rose-400 hover:bg-rose-950/60 disabled:text-slate-700 transition-colors"
+                            className="p-1 rounded text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 disabled:text-slate-300 dark:disabled:text-slate-700 transition-colors"
                             title={tallyForm.lots.length === 1 ? 'At least one lot row is required' : 'Remove lot row'}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -2464,42 +2464,42 @@ export default function ReceivingModule() {
                         {/* Top row: Heat No, Lot No, MTC, Tubes Qty, Total Tube Length, Parting */}
                         <div className="grid grid-cols-1 sm:grid-cols-6 gap-2.5">
                           <div>
-                            <label className="text-[10px] text-blue-400 block mb-1 font-semibold">Heat Number *</label>
+                            <label className="text-[10px] text-[#4F46E5] dark:text-blue-400 block mb-1 font-semibold">Heat Number *</label>
                             <input
                               type="text"
                               value={lot.heat_no}
                               onChange={(e) => handleLotChange(idx, 'heat_no', e.target.value)}
                               required
                               placeholder="e.g. HT-99142"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono font-bold text-blue-400"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 font-mono font-bold text-[#4F46E5] dark:text-blue-400 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-300 block mb-1 font-semibold">Lot Number *</label>
+                            <label className="text-[10px] text-slate-700 dark:text-slate-300 block mb-1 font-semibold">Lot Number *</label>
                             <input
                               type="text"
                               value={lot.lot_no}
                               onChange={(e) => handleLotChange(idx, 'lot_no', e.target.value)}
                               required
                               placeholder="e.g. LOT-2026-B1"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono text-slate-200"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 font-mono text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-400 block mb-1">MTC Number</label>
+                            <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1 font-medium">MTC Number</label>
                             <input
                               type="text"
                               value={lot.mill_test_certificate_no}
                               onChange={(e) => handleLotChange(idx, 'mill_test_certificate_no', e.target.value)}
                               placeholder="e.g. MTC-REV1"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono text-slate-300"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 font-mono text-slate-700 dark:text-slate-300 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-emerald-400 block mb-1 font-semibold">Tubes in Lot (Qty) *</label>
+                            <label className="text-[10px] text-emerald-700 dark:text-emerald-400 block mb-1 font-semibold">Tubes in Lot (Qty) *</label>
                             <input
                               type="number"
                               min="1"
@@ -2508,13 +2508,13 @@ export default function ReceivingModule() {
                               onChange={(e) => handleLotChange(idx, 'tube_count', e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                               required
                               placeholder="e.g. 1"
-                              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono font-bold text-emerald-400"
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 font-mono font-bold text-emerald-700 dark:text-emerald-400 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                             />
                           </div>
 
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <label className="text-[10px] text-slate-200 block font-semibold">Total Tube Length *</label>
+                              <label className="text-[10px] text-slate-700 dark:text-slate-200 block font-semibold">Total Tube Length *</label>
                               <span className="text-[9px] text-slate-500 font-mono">(Lot mm)</span>
                             </div>
                             <div className="relative">
@@ -2526,14 +2526,14 @@ export default function ReceivingModule() {
                                 onChange={(e) => handleLotChange(idx, 'tube_length_mm', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                                 required
                                 placeholder="Total lot mm..."
-                                className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono font-bold pr-7"
+                                className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono font-bold pr-7 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                               />
                               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-mono">mm</span>
                             </div>
                           </div>
 
                           <div>
-                            <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Parting Length *</label>
+                            <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Parting Length *</label>
                             <div className="relative">
                               <input
                                 type="number"
@@ -2545,7 +2545,7 @@ export default function ReceivingModule() {
                                 }
                                 required
                                 placeholder="e.g. 135"
-                                className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono pr-7"
+                                className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono pr-7 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                               />
                               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-mono">mm</span>
                             </div>
@@ -2553,12 +2553,12 @@ export default function ReceivingModule() {
                         </div>
 
                         {/* Bottom row: Barcode / Lot Tag & Live Cutting Yield Box */}
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center pt-1 border-t border-slate-900">
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center pt-1 border-t border-slate-200 dark:border-slate-900">
                           <div className="sm:col-span-4">
                             <div className="flex items-center justify-between">
-                              <label className="text-[10px] text-slate-500 block">Lot Tag / Barcode</label>
+                              <label className="text-[10px] text-slate-600 dark:text-slate-500 block font-medium">Lot Tag / Barcode</label>
                               {(isDuplicateInForm || existingSheetCollision) && (
-                                <span className="text-[9px] text-rose-400 font-medium">Duplicate</span>
+                                <span className="text-[9px] text-rose-600 dark:text-rose-400 font-medium">Duplicate</span>
                               )}
                             </div>
                             <input
@@ -2567,42 +2567,42 @@ export default function ReceivingModule() {
                               onChange={(e) => handleLotChange(idx, 'ti_id', e.target.value)}
                               required
                               placeholder="Auto or Tag ID..."
-                              className={`w-full bg-slate-900 border rounded px-2 py-1 font-mono font-bold ${
+                              className={`w-full bg-white dark:bg-slate-900 border rounded px-2 py-1 font-mono font-bold focus:outline-none ${
                                 isDuplicateInForm || existingSheetCollision
-                                  ? 'border-rose-500 text-rose-300 focus:ring-1 focus:ring-rose-500'
-                                  : 'border-slate-700 text-amber-400'
+                                  ? 'border-rose-500 text-rose-700 dark:text-rose-300 focus:ring-1 focus:ring-rose-500'
+                                  : 'border-slate-300 dark:border-slate-700 text-amber-700 dark:text-amber-400 focus:border-[#4F46E5]'
                               }`}
                             />
                             {isDuplicateInForm && (
-                              <span className="text-[9px] text-rose-400 block mt-0.5">⚠️ Duplicate barcode in form</span>
+                              <span className="text-[9px] text-rose-600 dark:text-rose-400 block mt-0.5">⚠️ Duplicate barcode in form</span>
                             )}
                             {!isDuplicateInForm && existingSheetCollision && (
-                              <span className="text-[9px] text-rose-400 block mt-0.5 truncate" title={`Already used in ${existingSheetCollision.ts_id}`}>
+                              <span className="text-[9px] text-rose-600 dark:text-rose-400 block mt-0.5 truncate" title={`Already used in ${existingSheetCollision.ts_id}`}>
                                 ⚠️ In {existingSheetCollision.ts_id}
                               </span>
                             )}
                           </div>
 
-                          <div className="sm:col-span-8 bg-slate-900/90 p-2.5 rounded-lg border border-slate-800 font-mono text-xs flex justify-around items-center">
+                          <div className="sm:col-span-8 bg-white dark:bg-slate-900/90 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 font-mono text-xs flex justify-around items-center shadow-sm">
                             <div>
                               <span className="text-slate-500 text-[9px] block uppercase font-sans">Expected Parts (Yield)</span>
-                              <span className="text-emerald-400 font-bold text-sm">{calc.roundedQty} pcs</span>
+                              <span className="text-emerald-700 dark:text-emerald-400 font-bold text-sm">{calc.roundedQty} pcs</span>
                               <span className="text-slate-500 text-[9px] block">({calc.expectedQty.toFixed(2)} exact)</span>
                             </div>
-                            <div className="h-6 w-px bg-slate-800"></div>
+                            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
                             <div>
                               <span className="text-slate-500 text-[9px] block uppercase font-sans">End Scrap</span>
-                              <span className="text-amber-400 font-bold">{calc.endScrapMm} mm</span>
+                              <span className="text-amber-700 dark:text-amber-400 font-bold">{calc.endScrapMm} mm</span>
                             </div>
-                            <div className="h-6 w-px bg-slate-800"></div>
+                            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
                             <div>
                               <span className="text-slate-500 text-[9px] block uppercase font-sans">Cutting Yield</span>
-                              <span className="text-blue-400 font-bold text-sm">{calc.yieldPct}%</span>
+                              <span className="text-[#4F46E5] dark:text-blue-400 font-bold text-sm">{calc.yieldPct}%</span>
                             </div>
-                            <div className="h-6 w-px bg-slate-800"></div>
+                            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
                             <div>
                               <span className="text-slate-500 text-[9px] block uppercase font-sans">Avg Length / Tube</span>
-                              <span className="text-slate-300 font-bold">
+                              <span className="text-slate-700 dark:text-slate-300 font-bold">
                                 {(((Number(lot.tube_length_mm) || 0) / (Number(lot.tube_count) || 1))).toFixed(0)} mm
                               </span>
                             </div>
@@ -2614,17 +2614,17 @@ export default function ReceivingModule() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsTallyModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 font-medium"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-lg shadow-emerald-600/20"
+                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-md shadow-emerald-600/20"
                 >
                   {isEditTallyMode ? 'Update Lot Tally Sheet' : 'Save Lot Tally Sheet & Generate Barcodes'}
                 </button>

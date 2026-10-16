@@ -927,7 +927,7 @@ export default function ShopFloorModule() {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleOpenReleaseModal}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Release Work Order</span>
@@ -959,7 +959,7 @@ export default function ShopFloorModule() {
                     onClick={() => setSelectedWo(wo)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-blue-50/60 dark:bg-slate-850 border-blue-500 shadow-sm'
+                        ? 'bg-[#EEF2FF] dark:bg-slate-850 border-[#4F46E5] shadow-sm'
                         : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                     }`}
                   >
@@ -1401,22 +1401,22 @@ export default function ShopFloorModule() {
       {/* Release Work Order Modal */}
       {isWoModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
               <div className="flex items-center space-x-2">
-                <Wrench className="w-4 h-4 text-blue-400" />
-                <h3 className="text-sm font-bold text-white">
+                <Wrench className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   {isEditWoMode ? `Edit Work Order Job Card (${woForm.wo_id})` : 'Release Work Order Job Card'}
                 </h3>
               </div>
-              <button onClick={() => setIsWoModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsWoModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
                 <span>{formError}</span>
               </div>
             )}
@@ -1425,15 +1425,15 @@ export default function ShopFloorModule() {
               {/* Header: WO ID, Date, and Status (when editing) */}
               <div className={`grid gap-3 ${isEditWoMode ? 'grid-cols-3' : 'grid-cols-2'}`}>
                 <div>
-                  <label className="block text-slate-400 mb-1">Work Order ID *</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Work Order ID *</label>
                   <input
                     type="text"
                     value={woForm.wo_id}
                     onChange={(e) => setWoForm({ ...woForm, wo_id: e.target.value })}
                     disabled={isEditWoMode}
                     required
-                    className={`w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500 ${
-                      isEditWoMode ? 'opacity-60 cursor-not-allowed bg-slate-900' : ''
+                    className={`w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
+                      isEditWoMode ? 'opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-900 text-slate-400' : ''
                     }`}
                   />
                   {isEditWoMode && (
@@ -1441,22 +1441,22 @@ export default function ShopFloorModule() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Work Order Date *</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Work Order Date *</label>
                   <input
                     type="date"
                     value={woForm.wo_date}
                     onChange={(e) => setWoForm({ ...woForm, wo_date: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 {isEditWoMode && (
                   <div>
-                    <label className="block text-slate-400 mb-1">Status</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Status</label>
                     <select
                       value={woForm.wo_status}
                       onChange={(e) => setWoForm({ ...woForm, wo_status: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 text-xs font-mono focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 text-xs font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     >
                       <option value="Released">Released</option>
                       <option value="In Progress">In Progress</option>
@@ -1469,10 +1469,10 @@ export default function ShopFloorModule() {
               </div>
 
               {/* Step 1: Customer's PO (that could be none also) */}
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
+              <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-300 font-bold flex items-center space-x-1.5">
-                    <span className="w-5 h-5 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">1</span>
+                  <label className="text-slate-900 dark:text-slate-300 font-bold flex items-center space-x-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#EEF2FF] dark:bg-blue-900/60 text-[#4F46E5] dark:text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">1</span>
                     <span>Customer&apos;s PO No. (Demand Allocation)</span>
                   </label>
                   <span className="text-[10px] text-slate-500 font-mono">Optional • None for Stock</span>
@@ -1494,7 +1494,7 @@ export default function ShopFloorModule() {
                       order_quantity: firstItm ? Number(firstItm.quantity) : prev.order_quantity,
                     }));
                   }}
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 font-mono text-xs focus:border-blue-500"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                 >
                   <option value="">-- None (Internal / Make-to-Stock / Unassigned) --</option>
                   {customerOrders.map((co) => (
@@ -1506,14 +1506,14 @@ export default function ShopFloorModule() {
 
                 {/* Customer PO Spec Preview if selected */}
                 {selectedCustomerOrder && customerSpecs.length > 0 && (
-                  <div className="p-2.5 bg-blue-950/30 border border-blue-900/40 rounded-lg space-y-1 text-[11px]">
-                    <div className="text-blue-300 font-medium flex items-center justify-between">
+                  <div className="p-2.5 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 rounded-lg space-y-1 text-[11px]">
+                    <div className="text-[#4F46E5] dark:text-blue-300 font-medium flex items-center justify-between">
                       <span>Customer PO Specifications:</span>
-                      <span className="text-slate-400 font-mono">{selectedCustomerOrder.customer_name}</span>
+                      <span className="text-slate-600 dark:text-slate-400 font-mono">{selectedCustomerOrder.customer_name}</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {customerSpecs.map((cs: any, idx: number) => (
-                        <span key={idx} className="px-2 py-0.5 rounded bg-blue-900/60 border border-blue-700/60 text-blue-200 font-mono text-[10px]">
+                        <span key={idx} className="px-2 py-0.5 rounded bg-white dark:bg-blue-900/60 border border-indigo-200 dark:border-blue-700/60 text-[#4F46E5] dark:text-blue-200 font-mono text-[10px] shadow-sm">
                           #{idx + 1}: {cs.size} • {cs.grade} {cs.thread} ({cs.quantity} pcs)
                         </span>
                       ))}
@@ -1523,17 +1523,17 @@ export default function ShopFloorModule() {
               </div>
 
               {/* Step 2: Material Sourcing: Purchase Order PO No. OR Stock (Inventory) */}
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-3">
+              <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-300 font-bold flex items-center space-x-1.5">
-                    <span className="w-5 h-5 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">2</span>
+                  <label className="text-slate-900 dark:text-slate-300 font-bold flex items-center space-x-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#EEF2FF] dark:bg-blue-900/60 text-[#4F46E5] dark:text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">2</span>
                     <span>Material Sourcing: Raw Material PO (RM PO) No. or Stock (Inventory)</span>
                   </label>
                   <span className="text-[10px] text-slate-500 font-mono">Source Type</span>
                 </div>
 
                 {/* Toggle between Purchase Order and Stock */}
-                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-lg border border-slate-800">
+                <div className="grid grid-cols-2 gap-2 p-1 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => {
@@ -1541,8 +1541,8 @@ export default function ShopFloorModule() {
                     }}
                     className={`py-1.5 px-3 rounded-md text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all ${
                       woForm.source_type === 'PO'
-                        ? 'bg-blue-600 text-white shadow'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#4F46E5] text-white shadow'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
@@ -1556,7 +1556,7 @@ export default function ShopFloorModule() {
                     className={`py-1.5 px-3 rounded-md text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all ${
                       woForm.source_type === 'Stock'
                         ? 'bg-amber-600 text-white shadow'
-                        : 'text-slate-400 hover:text-slate-200'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     <Boxes className="w-3.5 h-3.5" />
@@ -1567,7 +1567,7 @@ export default function ShopFloorModule() {
                 {/* If Purchase Order is selected */}
                 {woForm.source_type === 'PO' ? (
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
+                    <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                       <span>Raw Material PO (RM PO) No.</span>
                       <span className="text-[10px] text-slate-500 font-mono">
                         {woForm.customer_po_no ? 'Filtered by Customer PO Size & Grade' : 'All Open RM POs'}
@@ -1587,7 +1587,7 @@ export default function ShopFloorModule() {
                         }));
                       }}
                       required={woForm.source_type === 'PO'}
-                      className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 font-mono text-xs focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     >
                       <option value="">-- Select Raw Material PO (RM PO) No. --</option>
                       {filteredPurchaseOrders.map((po) => {
@@ -1608,24 +1608,24 @@ export default function ShopFloorModule() {
                     </select>
 
                     {filteredPurchaseOrders.length === 0 && (
-                      <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/50 text-amber-300 text-[11px]">
+                      <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300 text-[11px]">
                         ⚠️ No Raw Material Purchase Orders (RM PO) match the Size and Grade specifications of <strong>{woForm.customer_po_no}</strong>. You can switch to <strong>Stock (Inventory)</strong> above to fulfill from existing warehouse stock.
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="p-2.5 rounded-lg bg-amber-950/30 border border-amber-900/40 text-[11px] text-amber-300 flex items-center space-x-2">
-                    <Boxes className="w-4 h-4 shrink-0 text-amber-400" />
+                  <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-[11px] text-amber-800 dark:text-amber-300 flex items-center space-x-2">
+                    <Boxes className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
                     <span>Allocating raw material directly from free warehouse stock &amp; available pipe inventory.</span>
                   </div>
                 )}
               </div>
 
               {/* Step 3: Dependent Dropdowns of Size, Grade, and Thread */}
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-3">
+              <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-300 font-bold flex items-center space-x-1.5">
-                    <span className="w-5 h-5 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">3</span>
+                  <label className="text-slate-900 dark:text-slate-300 font-bold flex items-center space-x-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#EEF2FF] dark:bg-blue-900/60 text-[#4F46E5] dark:text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">3</span>
                     <span>Dependent Product Specifications</span>
                   </label>
                   <span className="text-[10px] text-slate-500 font-mono">Size → Grade → Thread</span>
@@ -1634,7 +1634,7 @@ export default function ShopFloorModule() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {/* Size Dropdown */}
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Size *</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Size *</label>
                     <select
                       value={woForm.size}
                       onChange={(e) => {
@@ -1647,7 +1647,7 @@ export default function ShopFloorModule() {
                         }));
                       }}
                       required
-                      className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono text-xs focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     >
                       <option value="">-- Select Size --</option>
                       {availableSizes.map((s) => (
@@ -1660,7 +1660,7 @@ export default function ShopFloorModule() {
 
                   {/* Grade Dropdown (Dependent on selected Size) */}
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Grade *</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Grade *</label>
                     <select
                       value={woForm.grade}
                       onChange={(e) => {
@@ -1673,7 +1673,7 @@ export default function ShopFloorModule() {
                       }}
                       disabled={!woForm.size}
                       required
-                      className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono text-xs focus:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <option value="">{woForm.size ? '-- Select Grade --' : '-- Size First --'}</option>
                       {availableGrades.map((g) => (
@@ -1686,7 +1686,7 @@ export default function ShopFloorModule() {
 
                   {/* Thread Dropdown (Dependent on selected Size & Grade) */}
                   <div>
-                    <label className="block text-slate-400 mb-1 font-semibold">Thread *</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Thread *</label>
                     <select
                       value={woForm.thread}
                       onChange={(e) => {
@@ -1698,7 +1698,7 @@ export default function ShopFloorModule() {
                       }}
                       disabled={!woForm.grade}
                       required
-                      className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-slate-200 font-mono text-xs focus:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <option value="">{woForm.grade ? '-- Select Thread --' : '-- Grade First --'}</option>
                       {availableThreads.map((t) => (
@@ -1712,13 +1712,13 @@ export default function ShopFloorModule() {
               </div>
 
               {/* Step 4: Qty (User Entry) */}
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
+              <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-slate-300 font-bold flex items-center space-x-1.5">
-                    <span className="w-5 h-5 rounded-full bg-blue-900/60 text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">4</span>
+                  <label className="text-slate-900 dark:text-slate-300 font-bold flex items-center space-x-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#EEF2FF] dark:bg-blue-900/60 text-[#4F46E5] dark:text-blue-400 flex items-center justify-center text-[10px] font-mono font-bold">4</span>
                     <span>Quantity to Produce (User Entry) *</span>
                   </label>
-                  <span className="text-[10px] text-emerald-400 font-mono font-bold">In Pieces (Pcs)</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono font-bold">In Pieces (Pcs)</span>
                 </div>
                 <div className="relative">
                   <input
@@ -1731,38 +1731,38 @@ export default function ShopFloorModule() {
                     onChange={(e) =>
                       setWoForm({ ...woForm, order_quantity: e.target.value === '' ? '' : parseInt(e.target.value) || 0 })
                     }
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 font-mono text-sm font-bold focus:border-blue-500 pr-14"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-2 text-slate-900 dark:text-slate-200 font-mono text-sm font-bold focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] pr-14"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">
                     Pcs
                   </span>
                 </div>
                 {woForm.customer_po_no && (
-                  <div className="text-[11px] text-slate-400 flex items-center justify-between">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
                     <span>Customer Order Reference:</span>
-                    <span className="font-mono text-blue-300">{woForm.customer_po_no}</span>
+                    <span className="font-mono text-[#4F46E5] dark:text-blue-300">{woForm.customer_po_no}</span>
                   </div>
                 )}
               </div>
 
               {/* Machine & Shift Selection */}
-              <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+              <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
                 <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Assigned Machine / Cell</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Assigned Machine / Cell</label>
                   <input
                     type="text"
                     value={woForm.machine_line_no}
                     placeholder="e.g. CNC-CELL-01"
                     onChange={(e) => setWoForm({ ...woForm, machine_line_no: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono text-xs focus:border-blue-500"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1 font-semibold">Production Shift</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-semibold">Production Shift</label>
                   <select
                     value={woForm.shift}
                     onChange={(e) => setWoForm({ ...woForm, shift: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-slate-200 text-xs focus:border-blue-500"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                   >
                     <option value="">-- Select Shift --</option>
                     <option value="Shift A">Shift A (Morning 06:00 - 14:00)</option>
@@ -1775,11 +1775,11 @@ export default function ShopFloorModule() {
               {/* Matched Available Lot / Pipe Tag in Stock (Optional) - Filtered to matching PO */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-300 font-semibold text-xs">
+                  <label className="text-slate-700 dark:text-slate-300 font-semibold text-xs">
                     Matched Available Lot / Pipe Tag in Stock (Optional)
                   </label>
                   {woForm.source_type === 'PO' && woForm.po_no && (
-                    <span className="text-[10px] text-blue-400 font-mono">
+                    <span className="text-[10px] text-[#4F46E5] dark:text-blue-400 font-mono font-medium">
                       RM PO: {woForm.po_no} ({matchingAvailableLots.length} lot{matchingAvailableLots.length !== 1 ? 's' : ''} available)
                     </span>
                   )}
@@ -1787,7 +1787,7 @@ export default function ShopFloorModule() {
                 <select
                   value={woForm.ti_id}
                   onChange={(e) => setWoForm({ ...woForm, ti_id: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-amber-400 font-mono text-xs focus:border-amber-500"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded px-3 py-2 text-amber-700 dark:text-amber-400 font-mono text-xs focus:border-amber-500 focus:outline-none"
                 >
                   <option value="">
                     {woForm.source_type === 'PO' && !woForm.po_no
@@ -1808,7 +1808,7 @@ export default function ShopFloorModule() {
                   ))}
                 </select>
                 {woForm.source_type === 'PO' && woForm.po_no && matchingAvailableLots.length > 0 && (
-                  <div className="mt-1 text-[10px] text-emerald-400 font-mono">
+                  <div className="mt-1 text-[10px] text-emerald-700 dark:text-emerald-400 font-mono font-medium">
                     ✓ Showing only Heat/Lot inwardings associated with matching RM PO ({woForm.po_no})
                   </div>
                 )}
@@ -1819,17 +1819,17 @@ export default function ShopFloorModule() {
                 )}
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsWoModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all text-xs"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-all text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-all text-xs"
+                  className="px-5 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold shadow-md shadow-indigo-600/20 transition-all text-xs"
                 >
                   {isEditWoMode ? 'Save Changes' : 'Release Job Card'}
                 </button>
@@ -1842,30 +1842,30 @@ export default function ShopFloorModule() {
       {/* Production Posting Modal with Strict Balance Gate Check */}
       {isPostingModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                  {isEditPostingMode ? <Pencil className="w-4 h-4 text-blue-400" /> : <Play className="w-4 h-4 text-emerald-400" />}
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                  {isEditPostingMode ? <Pencil className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" /> : <Play className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
                   <span>
                     {isEditPostingMode
                       ? `Edit Routing Stage (${postingForm.process_stage_name} • OP ${postingForm.operation_seq_no})`
                       : 'Log Routing Stage Completion'}
                   </span>
                 </h3>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
                   {isEditPostingMode
                     ? 'Modify quantities, defect classifications or station assignments'
                     : 'Strict Quantity Balance Gate Enforced'}
                 </p>
               </div>
-              <button onClick={() => setIsPostingModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsPostingModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs">
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs">
                 {formError}
               </div>
             )}
@@ -1874,9 +1874,9 @@ export default function ShopFloorModule() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-slate-400">Posting ID</label>
+                    <label className="text-slate-700 dark:text-slate-400 font-medium">Posting ID</label>
                     {isEditPostingMode && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800/80 font-mono">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/80 font-mono font-medium">
                         Locked ID
                       </span>
                     )}
@@ -1887,15 +1887,15 @@ export default function ShopFloorModule() {
                     readOnly={isEditPostingMode}
                     onChange={(e) => setPostingForm({ ...postingForm, pp_id: e.target.value })}
                     required
-                    className={`w-full border rounded px-3 py-1.5 text-slate-200 font-mono ${
+                    className={`w-full border rounded px-3 py-1.5 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                       isEditPostingMode
-                        ? 'bg-slate-900 border-slate-800 text-slate-400 cursor-not-allowed'
-                        : 'bg-slate-950 border-slate-800'
+                        ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 cursor-not-allowed'
+                        : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-200'
                     }`}
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Process Stage</label>
+                  <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Process Stage</label>
                   <select
                     value={postingForm.process_stage_name}
                     disabled={isEditPostingMode}
@@ -1903,10 +1903,10 @@ export default function ShopFloorModule() {
                       const stage = PROCESS_STAGES.find((s) => s.name === e.target.value);
                       if (stage) handleStageSelect(stage.name, stage.seq);
                     }}
-                    className={`w-full border rounded px-3 py-1.5 text-slate-200 font-semibold ${
+                    className={`w-full border rounded px-3 py-1.5 font-semibold focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] ${
                       isEditPostingMode
-                        ? 'bg-slate-900 border-slate-800 text-slate-400 cursor-not-allowed'
-                        : 'bg-slate-950 border-slate-800'
+                        ? 'bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 cursor-not-allowed'
+                        : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-200'
                     }`}
                   >
                     {PROCESS_STAGES.map((s) => (
@@ -1919,29 +1919,29 @@ export default function ShopFloorModule() {
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1">Operator & Machine Station *</label>
+                <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Operator & Machine Station *</label>
                 <input
                   type="text"
                   placeholder="e.g. CNC-CELL-01 / Op: J.Smith"
                   value={postingForm.operator_machine_id}
                   onChange={(e) => setPostingForm({ ...postingForm, operator_machine_id: e.target.value })}
                   required
-                  className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-slate-200 font-mono"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                 />
               </div>
 
               {/* Quantity Balance Gate Box */}
-              <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-200">
-                    <Scale className="w-4 h-4 text-blue-400" />
+                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                    <Scale className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
                     <span>Production Quantity Balance Gate</span>
                   </div>
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                       balanceCheck.isBalanced
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                        : 'bg-rose-950 text-rose-300 border border-rose-800 animate-pulse'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                        : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300 dark:border-rose-800 animate-pulse'
                     }`}
                   >
                     {balanceCheck.isBalanced
@@ -1952,7 +1952,7 @@ export default function ShopFloorModule() {
 
                 <div className="grid grid-cols-4 gap-2 font-mono">
                   <div>
-                    <label className="text-[10px] text-slate-400 block mb-0.5">Input Qty</label>
+                    <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-0.5 font-medium">Input Qty</label>
                     <input
                       type="number"
                       min="0"
@@ -1960,13 +1960,13 @@ export default function ShopFloorModule() {
                       placeholder="0"
                       onChange={(e) => handlePostingInputQtyChange(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-blue-400 font-bold focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-[#4F46E5] dark:text-blue-400 font-bold focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-0.5">
-                      <label className="text-[10px] text-slate-400 block">Accepted Qty</label>
-                      <span className="text-[9px] text-emerald-400 font-sans font-medium">Input - Rej</span>
+                      <label className="text-[10px] text-slate-600 dark:text-slate-400 block font-medium">Accepted Qty</label>
+                      <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-sans font-medium">Input - Rej</span>
                     </div>
                     <input
                       type="number"
@@ -1975,41 +1975,41 @@ export default function ShopFloorModule() {
                       placeholder="0"
                       onChange={(e) => handlePostingAcceptedQtyChange(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                       required
-                      className="w-full bg-slate-900 border border-emerald-600/60 rounded px-2 py-1 text-emerald-400 font-bold focus:border-emerald-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-emerald-500 dark:border-emerald-600/60 rounded px-2 py-1 text-emerald-700 dark:text-emerald-400 font-bold focus:border-emerald-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-400 block mb-0.5">Rejected Qty</label>
+                    <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-0.5 font-medium">Rejected Qty</label>
                     <input
                       type="number"
                       min="0"
                       value={postingForm.rejected_quantity}
                       onChange={(e) => handlePostingRejectedQtyChange(parseInt(e.target.value) || 0)}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-rose-400 font-bold focus:border-rose-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-rose-700 dark:text-rose-400 font-bold focus:border-rose-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-400 block mb-0.5">Rework Qty</label>
+                    <label className="text-[10px] text-slate-600 dark:text-slate-400 block mb-0.5 font-medium">Rework Qty</label>
                     <input
                       type="number"
                       min="0"
                       value={postingForm.rework_quantity}
                       onChange={(e) => handlePostingReworkQtyChange(parseInt(e.target.value) || 0)}
                       required
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-amber-400 font-bold focus:border-amber-500"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-amber-700 dark:text-amber-400 font-bold focus:border-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono">
-                  <span className="text-slate-400">Balance Rule:</span>
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-slate-600 dark:text-slate-400">Balance Rule:</span>
                   <div className="flex items-center space-x-1.5 font-bold">
-                    <span className="text-blue-400">Input ({postingForm.input_quantity})</span>
-                    <span className="text-slate-500">-</span>
-                    <span className="text-rose-400">Rejected ({postingForm.rejected_quantity})</span>
-                    <span className="text-slate-500">=</span>
-                    <span className="text-emerald-400">Accepted ({postingForm.accepted_quantity})</span>
+                    <span className="text-[#4F46E5] dark:text-blue-400">Input ({postingForm.input_quantity})</span>
+                    <span className="text-slate-400 dark:text-slate-500">-</span>
+                    <span className="text-rose-700 dark:text-rose-400">Rejected ({postingForm.rejected_quantity})</span>
+                    <span className="text-slate-400 dark:text-slate-500">=</span>
+                    <span className="text-emerald-700 dark:text-emerald-400">Accepted ({postingForm.accepted_quantity})</span>
                   </div>
                 </div>
               </div>
@@ -2018,20 +2018,20 @@ export default function ShopFloorModule() {
               <div
                 className={`p-4 rounded-xl border text-xs space-y-3 transition-all ${
                   woQuantityGate.isExceeded
-                    ? 'bg-rose-950/40 border-rose-800 text-rose-200'
-                    : 'bg-slate-950 border border-slate-800 text-slate-300'
+                    ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+                    : 'bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-200">
-                    <Scale className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                    <Scale className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Work Order Quantity to Produce Gate</span>
                   </div>
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                       woQuantityGate.isExceeded
                         ? 'bg-rose-600 text-white animate-pulse'
-                        : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
                     }`}
                   >
                     {woQuantityGate.isExceeded
@@ -2041,28 +2041,28 @@ export default function ShopFloorModule() {
                 </div>
 
                 <div className="grid grid-cols-4 gap-2 text-center font-mono text-[11px]">
-                  <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                    <div className="text-slate-400 text-[10px] font-sans">WO Qty to Produce</div>
-                    <div className="font-bold text-white mt-0.5">{woTargetQty} Pcs</div>
+                  <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">WO Qty to Produce</div>
+                    <div className="font-bold text-slate-900 dark:text-white mt-0.5">{woTargetQty} Pcs</div>
                   </div>
-                  <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                    <div className="text-slate-400 text-[10px] font-sans">Prior Logged (Acc+Rej)</div>
-                    <div className="font-bold text-amber-300 mt-0.5">{existingStageAcc + existingStageRej} Pcs</div>
+                  <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">Prior Logged (Acc+Rej)</div>
+                    <div className="font-bold text-amber-600 dark:text-amber-300 mt-0.5">{existingStageAcc + existingStageRej} Pcs</div>
                   </div>
-                  <div className="bg-slate-900/90 p-2 rounded border border-slate-800">
-                    <div className="text-slate-400 text-[10px] font-sans">This Posting (Acc+Rej)</div>
-                    <div className="font-bold text-blue-300 mt-0.5">
+                  <div className="bg-white dark:bg-slate-900/90 p-2 rounded border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">This Posting (Acc+Rej)</div>
+                    <div className="font-bold text-[#4F46E5] dark:text-blue-300 mt-0.5">
                       {(Number(postingForm.accepted_quantity) || 0) + postingForm.rejected_quantity} Pcs
                     </div>
                   </div>
                   <div
-                    className={`p-2 rounded border ${
+                    className={`p-2 rounded border shadow-sm ${
                       woQuantityGate.isExceeded
-                        ? 'bg-rose-950/80 border-rose-700 text-rose-300 font-bold'
-                        : 'bg-slate-900/90 border-slate-800 text-emerald-400 font-bold'
+                        ? 'bg-rose-50 dark:bg-rose-950/80 border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-300 font-bold'
+                        : 'bg-white dark:bg-slate-900/90 border-slate-200 dark:border-slate-800 text-emerald-700 dark:text-emerald-400 font-bold'
                     }`}
                   >
-                    <div className="text-slate-400 text-[10px] font-sans">Cumulative / Limit</div>
+                    <div className="text-slate-500 dark:text-slate-400 text-[10px] font-sans font-medium">Cumulative / Limit</div>
                     <div className="mt-0.5">
                       {woQuantityGate.cumulativeStageQty} / {woTargetQty} Pcs
                     </div>
@@ -2070,7 +2070,7 @@ export default function ShopFloorModule() {
                 </div>
 
                 {woQuantityGate.isExceeded && (
-                  <p className="text-[11px] text-rose-300 bg-rose-950/80 border border-rose-800/80 rounded px-2.5 py-1.5 font-sans">
+                  <p className="text-[11px] text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800/80 rounded px-2.5 py-1.5 font-sans">
                     {woQuantityGate.errorMessage}
                   </p>
                 )}
@@ -2078,8 +2078,8 @@ export default function ShopFloorModule() {
 
               {/* Conditional Defect Sub-Form if Rejected > 0 */}
               {postingForm.rejected_quantity > 0 && (
-                <div className="p-4 bg-rose-950/20 border border-rose-800/60 rounded-xl space-y-3">
-                  <div className="flex items-center space-x-2 text-rose-300 font-semibold">
+                <div className="p-4 bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/60 rounded-xl space-y-3">
+                  <div className="flex items-center space-x-2 text-rose-700 dark:text-rose-300 font-semibold">
                     <ShieldAlert className="w-4 h-4" />
                     <span>Defect Categorization & Scrap Disposition</span>
                   </div>
@@ -2088,7 +2088,7 @@ export default function ShopFloorModule() {
                     <div key={idx} className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-slate-400 mb-1">Defect Category (14 Options)</label>
+                          <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Defect Category (14 Options)</label>
                           <select
                             value={rej.defect_category}
                             onChange={(e) => {
@@ -2097,7 +2097,7 @@ export default function ShopFloorModule() {
                               setPostingForm({ ...postingForm, rejections: updated });
                             }}
                             required
-                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-slate-200"
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none"
                           >
                             <option value="">-- Select Defect Category --</option>
                             {DEFECT_CATEGORIES.map((cat) => (
@@ -2109,7 +2109,7 @@ export default function ShopFloorModule() {
                         </div>
 
                         <div>
-                          <label className="block text-slate-400 mb-1">Disposition Action *</label>
+                          <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Disposition Action *</label>
                           <select
                             value={rej.disposition_action}
                             onChange={(e) => {
@@ -2118,7 +2118,7 @@ export default function ShopFloorModule() {
                               setPostingForm({ ...postingForm, rejections: updated });
                             }}
                             required
-                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-slate-200"
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none"
                           >
                             <option value="">-- Select Disposition Action --</option>
                             {DISPOSITION_ACTIONS.map((action) => (
@@ -2131,7 +2131,7 @@ export default function ShopFloorModule() {
                       </div>
 
                       <div>
-                        <label className="block text-slate-400 mb-1">Inspector Root Cause Remarks</label>
+                        <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Inspector Root Cause Remarks</label>
                         <input
                           type="text"
                           placeholder="e.g. Broken tool insert causing flat thread flanks"
@@ -2141,7 +2141,7 @@ export default function ShopFloorModule() {
                             updated[idx].inspector_remarks = e.target.value;
                             setPostingForm({ ...postingForm, rejections: updated });
                           }}
-                          className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-slate-200"
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none"
                         />
                       </div>
                     </div>
@@ -2149,18 +2149,18 @@ export default function ShopFloorModule() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsPostingModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 font-medium"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!balanceCheck.isBalanced || woQuantityGate.isExceeded}
-                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold disabled:opacity-50 shadow-lg shadow-emerald-600/30 transition-all"
+                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold disabled:opacity-50 shadow-md shadow-emerald-600/20 transition-all"
                 >
                   {isEditPostingMode ? 'Save Routing Changes' : 'Commit Stage Routing'}
                 </button>

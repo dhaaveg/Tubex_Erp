@@ -517,7 +517,7 @@ export default function UserManagementModule() {
           {isSuperAdmin && (
             <button
               onClick={handleOpenAddModal}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
               title="Super Administrator: Unrestricted account provisioning"
             >
               <UserPlus className="w-4 h-4" />
@@ -528,7 +528,7 @@ export default function UserManagementModule() {
           {isAdmin && canAdminProvision && (
             <button
               onClick={handleOpenAddModal}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
               title={`Admin Provisioning Quota: ${nonSuperAdminCount}/5 non-Super-Admin accounts active`}
             >
               <UserPlus className="w-4 h-4" />
@@ -608,7 +608,7 @@ export default function UserManagementModule() {
           onClick={() => setActiveAdminTab('users')}
           className={`px-4 py-2.5 text-xs font-semibold rounded-t-lg transition flex items-center space-x-2 border-b-2 cursor-pointer ${
             activeAdminTab === 'users'
-              ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-900/80 shadow-sm'
+              ? 'border-[#4F46E5] text-[#4F46E5] dark:border-indigo-400 dark:text-indigo-400 bg-white dark:bg-slate-900/80 shadow-sm'
               : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/30'
           }`}
         >
@@ -627,7 +627,7 @@ export default function UserManagementModule() {
           }}
           className={`px-4 py-2.5 text-xs font-semibold rounded-t-lg transition flex items-center space-x-2 border-b-2 cursor-pointer ${
             activeAdminTab === 'matrix'
-              ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-900/80 shadow-sm'
+              ? 'border-[#4F46E5] text-[#4F46E5] dark:border-indigo-400 dark:text-indigo-400 bg-white dark:bg-slate-900/80 shadow-sm'
               : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/30'
           }`}
         >
@@ -840,29 +840,29 @@ export default function UserManagementModule() {
       {activeAdminTab === 'matrix' && (
         <div className="space-y-5 animate-in fade-in duration-200">
           {/* Multi-Role Union Notice */}
-          <div className="p-4 rounded-xl bg-blue-950/40 border border-blue-600/40 text-blue-200 text-xs flex items-start space-x-3 shadow-sm">
-            <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl bg-indigo-50 dark:bg-blue-950/40 border border-indigo-200 dark:border-blue-600/40 text-indigo-900 dark:text-blue-200 text-xs flex items-start space-x-3 shadow-sm">
+            <Info className="w-5 h-5 text-[#4F46E5] dark:text-blue-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <div className="font-bold text-blue-300 text-sm flex items-center space-x-2">
+              <div className="font-bold text-indigo-950 dark:text-blue-300 text-sm flex items-center space-x-2">
                 <span>Multi-Role Union Permission Architecture</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-900/60 text-blue-200 border border-blue-700/50">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-100 dark:bg-blue-900/60 text-indigo-800 dark:text-blue-200 border border-indigo-300 dark:border-blue-700/50">
                   Enterprise RBAC
                 </span>
               </div>
-              <p className="text-blue-200/90 leading-relaxed text-xs">
+              <p className="text-indigo-900/90 dark:text-blue-200/90 leading-relaxed text-xs">
                 When a user is assigned multiple departmental roles (e.g., <code>QUALITY</code> + <code>INVENTORY</code>), the system dynamically calculates the <strong>mathematical union</strong> of all module access rights across those roles. If a module is enabled in <em>any</em> of their active roles, the user is granted access. Write mutations are permitted if <em>at least one</em> matching active role has write permissions enabled.
               </p>
             </div>
           </div>
 
           {/* Role Selection Tabs */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block font-mono">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wider block font-mono">
                   Select Role to Configure
                 </span>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
                   Toggle modules, assign read-only vs read/write rights, or reset individual roles to factory defaults.
                 </span>
               </div>
@@ -872,7 +872,7 @@ export default function UserManagementModule() {
                 type="button"
                 onClick={fetchMatrix}
                 disabled={matrixLoading}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium transition cursor-pointer"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${matrixLoading ? 'animate-spin' : ''}`} />
                 <span>Refresh Matrix</span>
@@ -894,28 +894,28 @@ export default function UserManagementModule() {
                     }}
                     className={`p-3 rounded-xl border text-left transition relative flex flex-col justify-between cursor-pointer ${
                       isSelected
-                        ? 'bg-slate-800 border-blue-500 shadow-md shadow-blue-500/10'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+                        ? 'bg-indigo-50 border-[#4F46E5] shadow-md shadow-indigo-500/10 dark:bg-slate-800 dark:border-blue-500'
+                        : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900/60'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <span
                         className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase ${
-                          ROLE_BADGE_STYLES[role] || 'bg-slate-800 text-slate-400'
+                          ROLE_BADGE_STYLES[role] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}
                       >
                         {role}
                       </span>
                       {isSuper && (
                         <span title="Root IT Protection">
-                          <Lock className="w-3.5 h-3.5 text-rose-400" />
+                          <Lock className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
                         </span>
                       )}
                     </div>
-                    <div className="text-xs font-bold text-white truncate">
+                    <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
                       {ROLE_LABELS[role]}
                     </div>
-                    <div className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">
                       {ROLE_DESCRIPTIONS[role]}
                     </div>
                   </button>
@@ -925,28 +925,28 @@ export default function UserManagementModule() {
           </div>
 
           {/* Selected Role Configuration Panel */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-lg">
             {/* Role Panel Header */}
-            <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-950/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center space-x-2.5">
                   <span
                     className={`text-xs font-mono font-bold px-2 py-0.5 rounded border uppercase ${
-                      ROLE_BADGE_STYLES[selectedMatrixRole] || 'bg-slate-800 text-slate-300'
+                      ROLE_BADGE_STYLES[selectedMatrixRole] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                     }`}
                   >
                     {selectedMatrixRole}
                   </span>
-                  <h3 className="text-base font-bold text-white">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     {ROLE_LABELS[selectedMatrixRole]} Permissions
                   </h3>
                   {matrixDirty && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 animate-pulse">
                       Unsaved Changes
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-400 max-w-2xl">
+                <p className="text-xs text-slate-600 dark:text-slate-400 max-w-2xl">
                   {ROLE_DESCRIPTIONS[selectedMatrixRole]}
                 </p>
               </div>
@@ -959,10 +959,10 @@ export default function UserManagementModule() {
                       type="button"
                       onClick={() => handleResetRole(selectedMatrixRole)}
                       disabled={matrixSaving || matrixLoading}
-                      className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition cursor-pointer"
+                      className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold transition cursor-pointer"
                       title={`Reset ${ROLE_LABELS[selectedMatrixRole]} back to initial factory defaults`}
                     >
-                      <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                      <RotateCcw className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Reset to Defaults</span>
                     </button>
 
@@ -970,10 +970,10 @@ export default function UserManagementModule() {
                       type="button"
                       onClick={handleSaveMatrix}
                       disabled={matrixSaving || matrixLoading || !matrixDirty}
-                      className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition shadow-lg ${
+                      className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition shadow-md ${
                         matrixDirty
-                          ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30 cursor-pointer'
-                          : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+                          ? 'bg-[#4F46E5] hover:bg-[#4338CA] text-white shadow-indigo-600/30 cursor-pointer'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
                       }`}
                     >
                       <Save className="w-3.5 h-3.5" />
@@ -981,8 +981,8 @@ export default function UserManagementModule() {
                     </button>
                   </>
                 ) : (
-                  <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-300 text-xs">
-                    <Lock className="w-4 h-4 text-rose-400" />
+                  <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300 text-xs">
+                    <Lock className="w-4 h-4 text-rose-500 dark:text-rose-400" />
                     <span className="font-semibold">Root IT Privileges Immutable</span>
                   </div>
                 )}
@@ -991,8 +991,8 @@ export default function UserManagementModule() {
 
             {/* Super Admin Notice if selected */}
             {selectedMatrixRole === 'SUPER_ADMIN' && (
-              <div className="px-5 py-3 bg-rose-950/30 border-b border-rose-800/40 text-rose-200 text-xs flex items-center space-x-2.5">
-                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="px-5 py-3 bg-rose-50/70 dark:bg-rose-950/30 border-b border-rose-200 dark:border-rose-800/40 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2.5">
+                <ShieldAlert className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0" />
                 <span>
                   SUPER_ADMIN possesses unrestricted core privilege across all current and future modules. To prevent system lockouts, these settings are non-revocable.
                 </span>
@@ -1003,14 +1003,14 @@ export default function UserManagementModule() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400 font-mono text-[11px] uppercase">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 text-slate-600 dark:text-slate-400 font-mono text-[11px] uppercase">
                     <th className="px-5 py-3.5">ERP Module &amp; Route</th>
                     <th className="px-4 py-3.5">Module Scope &amp; Function</th>
                     <th className="px-4 py-3.5 text-center">Access Status</th>
                     <th className="px-5 py-3.5 text-right">Access Mode</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                   {CANONICAL_MODULES.map((mod) => {
                     const roleMap = matrixByRole[selectedMatrixRole] || {};
                     const perm = roleMap[mod.key] || {
@@ -1024,17 +1024,17 @@ export default function UserManagementModule() {
                     return (
                       <tr
                         key={mod.key}
-                        className={`hover:bg-slate-800/30 transition ${
-                          perm.is_enabled ? 'bg-slate-900/40' : 'bg-slate-950/30 opacity-70'
+                        className={`hover:bg-slate-50 dark:hover:bg-slate-800/30 transition ${
+                          perm.is_enabled ? 'bg-white dark:bg-slate-900/40' : 'bg-slate-50/60 dark:bg-slate-950/30 opacity-70'
                         }`}
                       >
                         {/* Module Name & Route */}
                         <td className="px-5 py-4">
-                          <div className="font-bold text-white text-xs flex items-center space-x-2">
+                          <div className="font-bold text-slate-900 dark:text-white text-xs flex items-center space-x-2">
                             <span>{mod.label}</span>
                           </div>
                           <div className="flex items-center space-x-1.5 mt-1">
-                            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">
+                            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60">
                               {perm.route_path || mod.route_path}
                             </span>
                             <span className="font-mono text-[10px] text-slate-500">
@@ -1044,14 +1044,14 @@ export default function UserManagementModule() {
                         </td>
 
                         {/* Description */}
-                        <td className="px-4 py-4 text-slate-400 text-xs max-w-sm">
+                        <td className="px-4 py-4 text-slate-600 dark:text-slate-400 text-xs max-w-sm">
                           {mod.description}
                         </td>
 
                         {/* Access Status Toggle */}
                         <td className="px-4 py-4 text-center">
                           {isSuper ? (
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-[11px] font-bold">
                               <Check className="w-3 h-3" />
                               <span>Enabled (Root)</span>
                             </span>
@@ -1061,13 +1061,13 @@ export default function UserManagementModule() {
                               onClick={() => handleToggleModuleEnabled(selectedMatrixRole, mod.key)}
                               className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition border cursor-pointer ${
                                 perm.is_enabled
-                                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
-                                  : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:text-slate-200'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 dark:hover:bg-emerald-500/30'
+                                  : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200'
                               }`}
                             >
                               {perm.is_enabled ? (
                                 <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                   <span>Enabled</span>
                                 </>
                               ) : (
@@ -1083,18 +1083,18 @@ export default function UserManagementModule() {
                         {/* Access Mode (Read-Only vs Read/Write) */}
                         <td className="px-5 py-4 text-right">
                           {isSuper ? (
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 text-[11px] font-bold">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 text-[11px] font-bold">
                               <span>Read / Write</span>
                             </span>
                           ) : perm.is_enabled ? (
-                            <div className="inline-flex items-center rounded-lg border border-slate-700 bg-slate-950 p-0.5">
+                            <div className="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 p-0.5">
                               <button
                                 type="button"
                                 onClick={() => handleSetWriteMode(selectedMatrixRole, mod.key, false)}
                                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer flex items-center space-x-1 ${
                                   !perm.can_write
                                     ? 'bg-purple-600 text-white shadow-sm'
-                                    : 'text-slate-400 hover:text-slate-200'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                                 }`}
                               >
                                 <Eye className="w-3 h-3" />
@@ -1105,8 +1105,8 @@ export default function UserManagementModule() {
                                 onClick={() => handleSetWriteMode(selectedMatrixRole, mod.key, true)}
                                 className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer flex items-center space-x-1 ${
                                   perm.can_write
-                                    ? 'bg-blue-600 text-white shadow-sm'
-                                    : 'text-slate-400 hover:text-slate-200'
+                                    ? 'bg-[#4F46E5] text-white shadow-sm'
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                                 }`}
                               >
                                 <Edit2 className="w-3 h-3" />
@@ -1114,7 +1114,7 @@ export default function UserManagementModule() {
                               </button>
                             </div>
                           ) : (
-                            <span className="text-[11px] text-slate-600 font-mono italic">
+                            <span className="text-[11px] text-slate-500 dark:text-slate-600 font-mono italic">
                               Not Applicable
                             </span>
                           )}
@@ -1128,15 +1128,15 @@ export default function UserManagementModule() {
           </div>
 
           {/* Global Enterprise Permission Matrix Overview */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg space-y-0">
-            <div className="p-4 border-b border-slate-800 bg-slate-950/70 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-lg space-y-0">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
-                <h4 className="text-sm font-bold text-white">
+                <Layers className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                   Full Enterprise Access Matrix (At a Glance)
                 </h4>
               </div>
-              <span className="text-[10px] text-slate-400 font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                 8 Roles × 10 Modules (80 Permission Points)
               </span>
             </div>
@@ -1144,13 +1144,13 @@ export default function UserManagementModule() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-950/50 text-[10px] font-mono uppercase text-slate-400">
-                    <th className="px-4 py-3 sticky left-0 bg-slate-950/90 z-10">ERP Module</th>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 text-[10px] font-mono uppercase text-slate-600 dark:text-slate-400">
+                    <th className="px-4 py-3 sticky left-0 bg-slate-50 dark:bg-slate-950/90 z-10">ERP Module</th>
                     {ALL_ROLES.map((r) => (
                       <th key={r} className="px-3 py-3 text-center">
                         <span
                           className={`px-1.5 py-0.5 rounded border text-[9px] ${
-                            ROLE_BADGE_STYLES[r] || 'bg-slate-800 text-slate-400'
+                            ROLE_BADGE_STYLES[r] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                           }`}
                         >
                           {r}
@@ -1159,18 +1159,18 @@ export default function UserManagementModule() {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40 font-mono text-[11px]">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/40 font-mono text-[11px]">
                   {CANONICAL_MODULES.map((mod) => (
-                    <tr key={mod.key} className="hover:bg-slate-800/30 transition">
-                      <td className="px-4 py-2.5 font-bold text-slate-200 sticky left-0 bg-slate-900/90 z-10 whitespace-nowrap">
+                    <tr key={mod.key} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition">
+                      <td className="px-4 py-2.5 font-bold text-slate-800 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-900/90 z-10 whitespace-nowrap">
                         {mod.label}
                       </td>
                       {ALL_ROLES.map((r) => {
                         const perm = matrixByRole[r]?.[mod.key];
                         if (!perm || !perm.is_enabled) {
                           return (
-                            <td key={r} className="px-3 py-2.5 text-center text-slate-600">
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950/60 text-slate-500 border border-slate-800/60">
+                            <td key={r} className="px-3 py-2.5 text-center text-slate-400 dark:text-slate-600">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-950/60 text-slate-500 dark:text-slate-500 border border-slate-200 dark:border-slate-800/60">
                                 Disabled
                               </span>
                             </td>
@@ -1179,7 +1179,7 @@ export default function UserManagementModule() {
                         if (perm.can_write) {
                           return (
                             <td key={r} className="px-3 py-2.5 text-center">
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold">
                                 Write
                               </span>
                             </td>
@@ -1187,7 +1187,7 @@ export default function UserManagementModule() {
                         }
                         return (
                           <td key={r} className="px-3 py-2.5 text-center">
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30 font-semibold">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/30 font-semibold">
                               Read
                             </span>
                           </td>
@@ -1204,12 +1204,12 @@ export default function UserManagementModule() {
 
       {/* MODAL: ADD NEW USER */}
       {isAddModalOpen && canProvisionUser && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950 shrink-0">
+        <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950 shrink-0">
               <div className="flex items-center space-x-2">
-                <UserPlus className="w-4 h-4 text-blue-400" />
-                <h3 className="text-sm font-bold text-white uppercase font-mono">
+                <UserPlus className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase font-mono">
                   {isSuperAdmin
                     ? 'Provision New Enterprise User (Root Super Admin)'
                     : `Provision New Enterprise User (Admin Quota: ${nonSuperAdminCount}/5)`}
@@ -1217,7 +1217,7 @@ export default function UserManagementModule() {
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1226,7 +1226,7 @@ export default function UserManagementModule() {
             <form onSubmit={handleCreateUser} className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <div className="p-5 space-y-4 overflow-y-auto flex-1 overscroll-contain">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -1235,12 +1235,12 @@ export default function UserManagementModule() {
                   placeholder="e.g. Ramesh Kulkarni"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Corporate Email *
                 </label>
                 <input
@@ -1249,12 +1249,12 @@ export default function UserManagementModule() {
                   placeholder="r.kulkarni@energyoilfield.com"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Department Title
                 </label>
                 <input
@@ -1262,16 +1262,16 @@ export default function UserManagementModule() {
                   placeholder="e.g. Sourcing / Plant / QA"
                   value={newDepartment}
                   onChange={(e) => setNewDepartment(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-slate-300">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Assigned Roles * (Multi-Role Support)
                   </label>
-                  <span className="text-[10px] text-blue-400 font-mono font-semibold">
+                  <span className="text-[10px] text-[#4F46E5] dark:text-blue-400 font-mono font-semibold">
                     {newRoles.length} selected
                   </span>
                 </div>
@@ -1289,14 +1289,14 @@ export default function UserManagementModule() {
                         className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition cursor-pointer ${
                           isSelected
                             ? `${ROLE_BADGE_STYLES[r]} border-current font-bold shadow-sm`
-                            : 'bg-slate-950/70 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
+                            : 'bg-slate-50 dark:bg-slate-950/70 text-slate-700 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200'
                         }`}
                       >
                         <span className="font-mono text-[11px]">{r}</span>
                         {isSelected ? (
                           <CheckCircle className="w-3.5 h-3.5 shrink-0" />
                         ) : (
-                          <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
+                          <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
                         )}
                       </button>
                     );
@@ -1305,7 +1305,7 @@ export default function UserManagementModule() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Temporary Initial Password *
                 </label>
                 <PasswordInput
@@ -1323,18 +1323,18 @@ export default function UserManagementModule() {
               </div>
 
               {/* Persistent Sticky Footer */}
-              <div className="px-5 py-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-end space-x-2 shrink-0 z-10 shadow-lg">
+              <div className="px-5 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-end space-x-2 shrink-0 z-10 shadow-lg">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1.5"
+                  className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1.5"
                 >
                   {isCreating ? (
                     <>
@@ -1353,16 +1353,16 @@ export default function UserManagementModule() {
 
       {/* MODAL: EDIT USER PROFILE */}
       {editingUser && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950 shrink-0">
+        <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950 shrink-0">
               <div className="flex items-center space-x-2">
-                <Edit2 className="w-4 h-4 text-blue-400" />
-                <h3 className="text-sm font-bold text-white uppercase font-mono">
+                <Edit2 className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase font-mono">
                   Edit User Identity: {editingUser.name}
                 </h3>
               </div>
-              <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+              <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1370,15 +1370,15 @@ export default function UserManagementModule() {
             <form onSubmit={handleUpdateUser} className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <div className="p-5 space-y-4 overflow-y-auto flex-1 overscroll-contain">
                 {/* User Identity Section */}
-              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80 space-y-3">
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-400 uppercase font-mono tracking-wider">
+              <div className="bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-3">
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-[#4F46E5] dark:text-blue-400 uppercase font-mono tracking-wider">
                   <User className="w-3.5 h-3.5" />
-                  <span>User Identity & Credentials</span>
+                  <span>User Identity &amp; Credentials</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                       Full Name *
                     </label>
                     <input
@@ -1387,12 +1387,12 @@ export default function UserManagementModule() {
                       placeholder="e.g. Ramesh Kulkarni"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                       Corporate Mail ID *
                     </label>
                     <input
@@ -1401,13 +1401,13 @@ export default function UserManagementModule() {
                       placeholder="r.kulkarni@energyoilfield.com"
                       value={editEmail}
                       onChange={(e) => setEditEmail(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-slate-100 font-mono text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-lg text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Department / Unit Title
                   </label>
                   <input
@@ -1415,17 +1415,17 @@ export default function UserManagementModule() {
                     placeholder="e.g. Quality Assurance / Sourcing / Plant"
                     value={editDepartment}
                     onChange={(e) => setEditDepartment(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] outline-none"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-slate-300">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Assigned Roles * (Multi-Role Support)
                   </label>
-                  <span className="text-[10px] text-blue-400 font-mono font-semibold">
+                  <span className="text-[10px] text-[#4F46E5] dark:text-blue-400 font-mono font-semibold">
                     {editRoles.length} selected
                   </span>
                 </div>
@@ -1443,14 +1443,14 @@ export default function UserManagementModule() {
                         className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition cursor-pointer ${
                           isSelected
                             ? `${ROLE_BADGE_STYLES[r]} border-current font-bold shadow-sm`
-                            : 'bg-slate-950/70 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
+                            : 'bg-slate-50 dark:bg-slate-950/70 text-slate-700 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200'
                         }`}
                       >
                         <span className="font-mono text-[11px]">{r}</span>
                         {isSelected ? (
                           <CheckCircle className="w-3.5 h-3.5 shrink-0" />
                         ) : (
-                          <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
+                          <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
                         )}
                       </button>
                     );
@@ -1459,16 +1459,16 @@ export default function UserManagementModule() {
               </div>
 
               {/* Status & Security Toggles */}
-              <div className="space-y-3 pt-2 border-t border-slate-800">
+              <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
                 <label className="flex items-center space-x-2.5 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editIsActive}
                     onChange={(e) => setEditIsActive(e.target.checked)}
-                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-950 border-slate-700"
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700"
                   />
                   <div>
-                    <span className="text-xs font-semibold text-slate-200 block">Account Active</span>
+                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block">Account Active</span>
                     <span className="text-[10px] text-slate-500 block">
                       Deactivating revokes all active database sessions immediately.
                     </span>
@@ -1486,10 +1486,10 @@ export default function UserManagementModule() {
                         setEditTempPassword('');
                       }
                     }}
-                    className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-slate-950 border-slate-700"
+                    className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700"
                   />
                   <div>
-                    <span className="text-xs font-semibold text-slate-200 block">
+                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block">
                       Force Password Change on Next Login
                     </span>
                     <span className="text-[10px] text-slate-500 block">
@@ -1501,27 +1501,27 @@ export default function UserManagementModule() {
 
               {/* Administrative Section: Security & Credentials Reset (Shown ONLY if Force Password Change is ticked) */}
               {editForcePassword && (
-                <div className="bg-slate-950/80 border border-amber-600/30 rounded-xl p-3.5 space-y-3 animate-in fade-in duration-200">
+                <div className="bg-amber-50 dark:bg-slate-950/80 border border-amber-200 dark:border-amber-600/30 rounded-xl p-3.5 space-y-3 animate-in fade-in duration-200">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2">
-                      <KeyRound className="w-4 h-4 text-amber-400 shrink-0" />
-                      <span className="text-xs font-bold text-slate-200 uppercase font-mono">
+                      <KeyRound className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <span className="text-xs font-bold text-amber-900 dark:text-slate-200 uppercase font-mono">
                         Security &amp; Credentials Reset
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={generateSecurePassword}
-                      className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition cursor-pointer"
+                      className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-600/20 dark:hover:bg-indigo-600/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 text-[11px] font-semibold transition cursor-pointer"
                       title="Generate a cryptographically complex temporary password"
                     >
-                      <RefreshCw className="w-3 h-3 text-indigo-400" />
+                      <RefreshCw className="w-3 h-3 text-[#4F46E5] dark:text-indigo-400" />
                       <span>Generate Secure Password</span>
                     </button>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                       Set Temporary Password
                     </label>
                     <PasswordInput
@@ -1531,8 +1531,8 @@ export default function UserManagementModule() {
                       className="font-mono text-xs"
                       autoComplete="new-password"
                     />
-                    <p className="text-[10px] text-amber-300/90 mt-2 leading-relaxed bg-amber-950/30 border border-amber-800/30 rounded-lg p-2.5 flex items-start space-x-2">
-                      <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-[10px] text-amber-900/90 dark:text-amber-300/90 mt-2 leading-relaxed bg-amber-100/70 dark:bg-amber-950/30 border border-amber-300/80 dark:border-amber-800/30 rounded-lg p-2.5 flex items-start space-x-2">
+                      <ShieldAlert className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                       <span>
                         Setting a temporary password will immediately overwrite the existing hash and set the &apos;Reset on First Login&apos; flag so the user is forced to choose a new password upon next sign-in.
                       </span>
@@ -1544,18 +1544,18 @@ export default function UserManagementModule() {
               </div>
 
               {/* Persistent Sticky Footer */}
-              <div className="px-5 py-3.5 border-t border-slate-800 bg-slate-950 flex items-center justify-end space-x-2 shrink-0 z-10 shadow-lg">
+              <div className="px-5 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-end space-x-2 shrink-0 z-10 shadow-lg">
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1.5"
+                  className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1.5"
                 >
                   {isUpdating ? (
                     <>

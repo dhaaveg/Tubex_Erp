@@ -326,14 +326,14 @@ export default function CustomerOrdersModule() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 uppercase font-semibold tracking-wider">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#EEF2FF] dark:bg-blue-950 text-[#4F46E5] dark:text-blue-300 border border-[#E0E7FF] dark:border-blue-800/60 uppercase font-semibold tracking-wider">
               Step 4 • Sales &amp; Demand Allocation
             </span>
             <span className="text-slate-400 dark:text-slate-500">•</span>
             <span className="text-xs text-slate-500 dark:text-slate-400">Pre-Production Work Order Driver</span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mt-1 flex items-center space-x-2">
-            <FileSpreadsheet className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <FileSpreadsheet className="w-5 h-5 text-[#4F46E5] dark:text-blue-400" />
             <span>Customer&apos;s Orders &amp; Demand Master</span>
           </h2>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
@@ -344,7 +344,7 @@ export default function CustomerOrdersModule() {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleOpenCreateModal}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
+            className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>New Customer Order</span>
@@ -655,39 +655,39 @@ export default function CustomerOrdersModule() {
       {/* Creation & Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
               <div className="flex items-center space-x-2">
-                <FileSpreadsheet className="w-5 h-5 text-blue-400" />
-                <h3 className="text-sm font-bold text-white">
+                <FileSpreadsheet className="w-5 h-5 text-[#4F46E5] dark:text-blue-400" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   {isEditMode ? "Edit Customer's Order" : "Log New Customer's Order"}
                 </h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
                 <span>{formError}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmitOrder} className="p-6 space-y-5 overflow-y-auto flex-1 text-xs">
               {/* Header Details Section */}
-              <div className="space-y-3 bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                <div className="text-[11px] font-bold text-blue-400 uppercase tracking-wider font-mono">
+              <div className="space-y-3 bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80">
+                <div className="text-[11px] font-bold text-[#4F46E5] dark:text-blue-400 uppercase tracking-wider font-mono">
                   1. Customer PO Header Details (User Entry)
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Customer&apos;s PO No. *</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Customer&apos;s PO No. *</label>
                     <input
                       type="text"
                       placeholder="e.g. CPO-2026-901"
@@ -695,74 +695,74 @@ export default function CustomerOrdersModule() {
                       onChange={(e) => setCustomerPoNo(e.target.value)}
                       disabled={isEditMode}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500 disabled:opacity-75 disabled:cursor-not-allowed"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Customer&apos;s Name *</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Customer&apos;s Name *</label>
                     <input
                       type="text"
                       placeholder="e.g. Saudi Aramco / ExxonMobil"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Paying Terms *</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Paying Terms *</label>
                     <input
                       type="text"
                       placeholder="e.g. Net 30 Days, 50% Advance"
                       value={paymentTerms}
                       onChange={(e) => setPaymentTerms(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Delivery Terms *</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Delivery Terms *</label>
                     <input
                       type="text"
                       placeholder="e.g. FOB Port Houston, CIF Dammam"
                       value={deliveryTerms}
                       onChange={(e) => setDeliveryTerms(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Delivery Due Date *</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Delivery Due Date *</label>
                     <input
                       type="date"
                       value={deliveryDueDate}
                       onChange={(e) => setDeliveryDueDate(e.target.value)}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                   <div className="sm:col-span-3">
-                    <label className="block text-slate-300 mb-1 font-medium">Remarks / Handling Instructions</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Remarks / Handling Instructions</label>
                     <input
                       type="text"
                       placeholder="e.g. High pressure sour service, inspect thread protectors"
                       value={remarks}
                       onChange={(e) => setRemarks(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Order Status</label>
+                    <label className="block text-slate-700 dark:text-slate-300 mb-1 font-medium">Order Status</label>
                     <select
                       value={orderStatus}
                       onChange={(e) => setOrderStatus(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     >
                       <option value="Open">Open</option>
                       <option value="In Production">In Production</option>
@@ -775,15 +775,15 @@ export default function CustomerOrdersModule() {
               </div>
 
               {/* Dynamic Line Items Section */}
-              <div className="space-y-3 bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+              <div className="space-y-3 bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80">
                 <div className="flex items-center justify-between">
-                  <div className="text-[11px] font-bold text-blue-400 uppercase tracking-wider font-mono">
+                  <div className="text-[11px] font-bold text-[#4F46E5] dark:text-blue-400 uppercase tracking-wider font-mono">
                     2. Customer PO Line Items (User Entry)
                   </div>
                   <button
                     type="button"
                     onClick={handleAddLineItem}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-blue-600/90 hover:bg-blue-600 text-white text-[11px] font-semibold"
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-[11px] font-semibold transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add Line Item</span>
@@ -791,8 +791,8 @@ export default function CustomerOrdersModule() {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border border-slate-800 rounded-lg">
-                    <thead className="bg-slate-950 text-slate-400 font-mono text-[11px] uppercase border-b border-slate-800">
+                  <table className="w-full text-left text-xs border border-slate-200 dark:border-slate-800 rounded-lg">
+                    <thead className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 font-mono text-[11px] uppercase border-b border-slate-200 dark:border-slate-800">
                       <tr>
                         <th className="px-3 py-2 w-8">#</th>
                         <th className="px-3 py-2 min-w-[150px]">Size *</th>
@@ -804,10 +804,10 @@ export default function CustomerOrdersModule() {
                         <th className="px-2 py-2 w-10 text-center"></th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-slate-900/40">
                       {lineItems.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-slate-850/50">
-                          <td className="px-3 py-2 font-mono text-slate-400 text-center">{idx + 1}</td>
+                        <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-850/50">
+                          <td className="px-3 py-2 font-mono text-slate-500 dark:text-slate-400 text-center">{idx + 1}</td>
                           <td className="px-2 py-1.5">
                             <input
                               type="text"
@@ -815,7 +815,7 @@ export default function CustomerOrdersModule() {
                               value={item.size}
                               onChange={(e) => handleItemChange(idx, 'size', e.target.value)}
                               required
-                              className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:border-blue-500"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none"
                             />
                           </td>
                           <td className="px-2 py-1.5">
@@ -823,7 +823,7 @@ export default function CustomerOrdersModule() {
                               value={item.grade}
                               onChange={(e) => handleItemChange(idx, 'grade', e.target.value)}
                               required
-                              className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono focus:border-blue-500"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none"
                             >
                               <option value="">-- Select Grade --</option>
                               <option value="J55">J55</option>
@@ -847,7 +847,7 @@ export default function CustomerOrdersModule() {
                               }
                               onChange={(e) => handleItemChange(idx, 'thread', e.target.value)}
                               required
-                              className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono focus:border-blue-500"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none"
                             >
                               <option value="">-- Select Thread --</option>
                               <option value="BTC">BTC (Buttress)</option>
@@ -869,7 +869,7 @@ export default function CustomerOrdersModule() {
                               value={item.quantity ?? ''}
                               onChange={(e) => handleItemChange(idx, 'quantity', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                               required
-                              className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-right focus:border-blue-500"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono text-right focus:border-[#4F46E5] focus:outline-none"
                             />
                           </td>
                           <td className="px-2 py-1.5">
@@ -883,10 +883,10 @@ export default function CustomerOrdersModule() {
                                 handleItemChange(idx, 'price_per_unit', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
                               }
                               required
-                              className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-right focus:border-blue-500"
+                              className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded px-2 py-1 text-slate-900 dark:text-slate-200 font-mono text-right focus:border-[#4F46E5] focus:outline-none"
                             />
                           </td>
-                          <td className="px-3 py-2 text-right font-mono font-bold text-emerald-400">
+                          <td className="px-3 py-2 text-right font-mono font-bold text-emerald-700 dark:text-emerald-400">
                             ${item.line_total?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className="px-2 py-2 text-center">
@@ -894,7 +894,7 @@ export default function CustomerOrdersModule() {
                               type="button"
                               onClick={() => handleRemoveLineItem(idx)}
                               disabled={lineItems.length <= 1}
-                              className="text-slate-500 hover:text-rose-400 disabled:opacity-30 disabled:cursor-not-allowed p-1 rounded"
+                              className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 disabled:opacity-30 disabled:cursor-not-allowed p-1 rounded"
                               title="Delete line"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -907,28 +907,28 @@ export default function CustomerOrdersModule() {
                 </div>
 
                 {/* Summary Bar */}
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-900 border border-slate-800">
-                  <div className="text-slate-400 font-mono text-xs">
-                    Total Ordered Volume: <span className="text-white font-bold">{totalOrderQty.toLocaleString()} Pcs</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <div className="text-slate-600 dark:text-slate-400 font-mono text-xs">
+                    Total Ordered Volume: <span className="text-slate-900 dark:text-white font-bold">{totalOrderQty.toLocaleString()} Pcs</span>
                   </div>
-                  <div className="text-slate-400 font-mono text-xs">
-                    Grand Total Value: <span className="text-emerald-400 font-black text-sm">${totalOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <div className="text-slate-600 dark:text-slate-400 font-mono text-xs">
+                    Grand Total Value: <span className="text-emerald-700 dark:text-emerald-400 font-black text-sm">${totalOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
               </div>
 
               {/* Modal Footer */}
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30"
+                  className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold shadow-md shadow-indigo-600/20"
                 >
                   {isEditMode ? 'Update Customer Order' : 'Save Customer Order'}
                 </button>
@@ -941,11 +941,11 @@ export default function CustomerOrdersModule() {
       {/* Customer Order Specification & Commercial Preview Tag Modal */}
       {previewTagOrder && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
-            <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
               <div className="flex items-center space-x-2">
-                <Tag className="w-4 h-4 text-blue-400" />
-                <span className="font-bold text-white text-xs">
+                <Tag className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />
+                <span className="font-bold text-slate-900 dark:text-white text-xs">
                   Customer Commercial Order Tag (Master Preview)
                 </span>
               </div>
@@ -957,7 +957,7 @@ export default function CustomerOrdersModule() {
                     setPreviewTagOrder(null);
                     handleOpenEditModal(ord);
                   }}
-                  className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors border border-slate-700"
+                  className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-blue-300 hover:text-slate-900 dark:hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700"
                 >
                   <Edit className="w-3.5 h-3.5" />
                   <span>Edit Order</span>
@@ -965,7 +965,7 @@ export default function CustomerOrdersModule() {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow"
+                  className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-md shadow-indigo-600/20"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print Tag</span>
@@ -973,7 +973,7 @@ export default function CustomerOrdersModule() {
                 <button
                   type="button"
                   onClick={() => setPreviewTagOrder(null)}
-                  className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -981,11 +981,11 @@ export default function CustomerOrdersModule() {
             </div>
 
             {/* Industrial Tag Content */}
-            <div className="p-6 flex justify-center bg-slate-950/60 overflow-y-auto max-h-[80vh]">
-              <div className="w-full max-w-md bg-white text-slate-900 p-6 rounded-2xl border-4 border-dashed border-blue-600 shadow-2xl relative select-none font-mono">
+            <div className="p-6 flex justify-center bg-slate-50 dark:bg-slate-950/60 overflow-y-auto max-h-[80vh]">
+              <div className="w-full max-w-md bg-white text-slate-900 p-6 rounded-2xl border-4 border-dashed border-[#4F46E5] shadow-2xl relative select-none font-mono">
                 {/* Punch Hole */}
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-slate-950 border-2 border-slate-700 flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-950 border-2 border-slate-400 dark:border-slate-700 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-400 dark:bg-slate-900"></div>
                 </div>
 
                 {/* Header & Barcode */}
@@ -993,7 +993,7 @@ export default function CustomerOrdersModule() {
                   <div className="text-[10px] uppercase tracking-widest text-slate-600 font-sans font-black">
                     OFFICIAL CUSTOMER DEMAND ORDER
                   </div>
-                  <div className="text-xl font-black tracking-tight text-blue-900 font-sans mt-0.5">
+                  <div className="text-xl font-black tracking-tight text-[#4F46E5] font-sans mt-0.5">
                     {previewTagOrder.customer_name}
                   </div>
                   <div className="mt-1 font-mono tracking-widest text-base font-bold bg-slate-100 py-1 rounded border border-slate-300">
@@ -1013,7 +1013,7 @@ export default function CustomerOrdersModule() {
                   </div>
                   <div>
                     <span className="text-[9px] text-slate-500 block uppercase font-sans">DUE DATE</span>
-                    <span className="font-bold text-blue-900 font-mono">
+                    <span className="font-bold text-[#4F46E5] font-mono">
                       {formatDate(previewTagOrder.delivery_due_date)}
                     </span>
                   </div>

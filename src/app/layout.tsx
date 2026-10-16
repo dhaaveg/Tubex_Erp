@@ -42,7 +42,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body className="bg-[#F4F6F8] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen antialiased overflow-x-hidden transition-colors duration-150">
+      <body className="bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen antialiased overflow-x-hidden transition-colors duration-150">
         <Suspense fallback={null}>
           <AuthProvider>
             <ThemeProvider>

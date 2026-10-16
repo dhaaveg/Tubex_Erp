@@ -9,16 +9,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'primary-600': '#4F46E5',
+        'primary-700': '#4338CA',
+        'primary-50': '#EEF2FF',
+        'bg-app': 'var(--bg-app)',
+        'bg-surface': 'var(--bg-surface)',
+        'border-subtle': 'var(--border-subtle)',
+        'text-main': 'var(--text-main)',
+        'text-muted': 'var(--text-muted)',
+        'status-success': '#10B981',
+        'status-warning': '#F59E0B',
+        'status-danger': '#EF4444',
+        primary: {
+          50: '#EEF2FF',
+          600: '#4F46E5',
+          700: '#4338CA',
+        },
+        status: {
+          success: '#10B981',
+          warning: '#F59E0B',
+          danger: '#EF4444',
+        },
         corporate: {
-          bg: '#F4F6F8',
+          bg: '#F8FAFC',
           border: '#E2E8F0',
           navy: '#0F172A',
-          blue: '#0070F2',
+          blue: '#4F46E5',
           surface: '#FFFFFF',
           card: '#FFFFFF',
           text: '#0F172A',
-          muted: '#475569',
-          accent: '#0284C7',
+          muted: '#64748B',
+          accent: '#4338CA',
         },
         steel: {
           50: '#f8fafc',
@@ -35,17 +56,29 @@ module.exports = {
         },
         industrial: {
           amber: '#f59e0b',
-          blue: '#2563eb',
+          blue: '#4f46e5',
           emerald: '#10b981',
-          rose: '#f43f5e',
+          rose: '#ef4444',
           cyan: '#06b6d4',
-          indigo: '#6366f1'
-        }
+          indigo: '#6366f1',
+        },
+      },
+      backgroundColor: {
+        app: 'var(--bg-app)',
+        surface: 'var(--bg-surface)',
+      },
+      textColor: {
+        main: 'var(--text-main)',
+        muted: 'var(--text-muted)',
+      },
+      borderColor: {
+        subtle: 'var(--border-subtle)',
       },
       fontFamily: {
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-      }
+      },
     },
   },
   plugins: [],
-}
+};
+

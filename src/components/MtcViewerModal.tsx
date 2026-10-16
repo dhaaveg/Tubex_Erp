@@ -20,30 +20,30 @@ export default function MtcViewerModal({ tallySheet, product, supplier, onClose 
   const supplierName = supplier?.supplier_name || 'Tenaris Global Tubulars Ltd';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
-          <div className="flex items-center space-x-2 text-xs font-bold text-slate-200">
-            <Award className="w-4 h-4 text-emerald-400" />
+        <div className="px-6 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
+          <div className="flex items-center space-x-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+            <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Digital Mill Test Certificate (EN 10204 Type 3.1)</span>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => window.print()}
-              className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5"
+              className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print MTC</span>
             </button>
-            <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800">
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Certificate Body (Clean Paper Design) */}
-        <div className="p-6 overflow-y-auto flex-1 bg-slate-950/40">
+        <div className="p-6 overflow-y-auto flex-1 bg-slate-100 dark:bg-slate-950/40">
           <div className="bg-white text-slate-900 p-8 rounded-xl border border-slate-300 shadow-xl space-y-6 select-none font-sans text-xs">
             {/* Header / Mill Logo */}
             <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">

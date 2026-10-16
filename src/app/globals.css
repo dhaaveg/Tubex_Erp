@@ -3,25 +3,49 @@
 @tailwind utilities;
 
 :root {
-  --corporate-bg: #F4F6F8;
+  --bg-app: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --border-subtle: #E2E8F0;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --primary-brand: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
+  --status-success: #10B981;
+  --status-warning: #F59E0B;
+  --status-danger: #EF4444;
+
+  --corporate-bg: #F8FAFC;
   --corporate-surface: #FFFFFF;
   --corporate-navy: #0F172A;
   --corporate-border: #E2E8F0;
-  --corporate-blue: #0070F2;
+  --corporate-blue: #4F46E5;
   --corporate-text: #0F172A;
-  --corporate-muted: #475569;
+  --corporate-muted: #64748B;
 
   --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 244, 246, 248;
+  --background-start-rgb: 248, 250, 252;
   --background-end-rgb: 241, 245, 249;
 }
 
 .dark, [data-theme='dark'] {
+  --bg-app: #020617;
+  --bg-surface: #0f172a;
+  --border-subtle: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary-brand: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #1e1b4b;
+  --status-success: #10b981;
+  --status-warning: #f59e0b;
+  --status-danger: #ef4444;
+
   --corporate-bg: #020617;
   --corporate-surface: #0f172a;
   --corporate-navy: #0F172A;
   --corporate-border: #1e293b;
-  --corporate-blue: #0070F2;
+  --corporate-blue: #6366f1;
   --corporate-text: #f8fafc;
   --corporate-muted: #94a3b8;
 
@@ -29,6 +53,13 @@
   --background-start-rgb: 2, 6, 23;
   --background-end-rgb: 15, 23, 42;
 }
+
+/* Explicit Token Classes */
+.bg-app { background-color: var(--bg-app); }
+.bg-surface { background-color: var(--bg-surface); }
+.border-subtle { border-color: var(--border-subtle); }
+.text-main { color: var(--text-main); }
+.text-muted { color: var(--text-muted); }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -43,7 +74,7 @@ html.dark body {
 
 html:not(.dark) body,
 html.light body {
-  background-color: #F4F6F8;
+  background-color: #F8FAFC;
   color: #0F172A;
 }
 
@@ -87,7 +118,7 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 }
 
 .glow-blue {
-  box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.2);
 }
 
 .glow-emerald {
@@ -95,16 +126,17 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 }
 
 /* ==========================================================================
-   CLASSIC CORPORATE TRUST - COMPREHENSIVE LIGHT THEME DESIGN SYSTEM
+   TUBEX INDUSTRIAL TRUST - COMPREHENSIVE LIGHT THEME DESIGN SYSTEM
    Professional Enterprise Industrial ERP Palette:
-   - Root Background: #F4F6F8 (Executive Cool Slate-Gray)
+   - Root Background: #F8FAFC (Slate 50)
    - Cards / Containers / Toolbars: #FFFFFF (Pure White) with #E2E8F0 borders
    - Headings & Primary Values: #0F172A (Deep Slate Navy, 100% High Contrast)
    - Secondary Text / Captions: #475569 (Slate-600)
    - Muted Metadata / Sub-labels: #64748B (Slate-500)
-   - Action Buttons: #F1F5F9 with #CBD5E1 border, hover #E2E8F0
-   - Table Headers: #F8FAFC with #E2E8F0 border and uppercase #475569 text
-   - Inputs & Selects: #FFFFFF with #CBD5E1 border and #0F172A text
+   - Action Buttons (Primary): #4F46E5 (Hover: #4338CA, Text: #FFFFFF)
+   - Action Buttons (Secondary): #FFFFFF with #E2E8F0 border, text #0F172A
+   - Table Headers: #F8FAFC with #E2E8F0 border and uppercase #0F172A text
+   - Inputs & Selects: #FFFFFF with #E2E8F0 border, #0F172A text, #94A3B8 placeholder
    ========================================================================== */
 
 /* 1. Root & Shell Backgrounds */
@@ -112,7 +144,7 @@ html.light,
 html.light body,
 html:not(.dark),
 html:not(.dark) body {
-  background-color: #F4F6F8 !important;
+  background-color: #F8FAFC !important;
   color: #0F172A !important;
 }
 
@@ -162,6 +194,16 @@ html:not(.dark) .text-white {
 }
 
 /* 4. Solid Colored Primary Buttons & Badges - Retain Crisp White Text */
+html.light .bg-primary-600,
+html.light .bg-primary-600 *,
+html.light .bg-primary-700,
+html.light .bg-primary-700 *,
+html.light button.bg-primary-600,
+html.light button.bg-primary-600 *,
+html.light button.bg-primary-700,
+html.light button.bg-primary-700 *,
+html.light a.bg-primary-600,
+html.light a.bg-primary-600 *,
 html.light .bg-blue-600,
 html.light .bg-blue-600 *,
 html.light .bg-blue-700,
@@ -170,6 +212,8 @@ html.light .bg-blue-500,
 html.light .bg-blue-500 *,
 html.light .bg-indigo-600,
 html.light .bg-indigo-600 *,
+html.light .bg-indigo-700,
+html.light .bg-indigo-700 *,
 html.light .bg-emerald-600,
 html.light .bg-emerald-600 *,
 html.light .bg-rose-600,
@@ -184,6 +228,16 @@ html.light button.bg-rose-600,
 html.light button.bg-rose-600 *,
 html.light a.bg-blue-600,
 html.light a.bg-blue-600 *,
+html:not(.dark) .bg-primary-600,
+html:not(.dark) .bg-primary-600 *,
+html:not(.dark) .bg-primary-700,
+html:not(.dark) .bg-primary-700 *,
+html:not(.dark) button.bg-primary-600,
+html:not(.dark) button.bg-primary-600 *,
+html:not(.dark) button.bg-primary-700,
+html:not(.dark) button.bg-primary-700 *,
+html:not(.dark) a.bg-primary-600,
+html:not(.dark) a.bg-primary-600 *,
 html:not(.dark) .bg-blue-600,
 html:not(.dark) .bg-blue-600 *,
 html:not(.dark) .bg-blue-700,
@@ -527,9 +581,9 @@ html.light textarea:focus,
 html:not(.dark) input:focus,
 html:not(.dark) select:focus,
 html:not(.dark) textarea:focus {
-  border-color: #0070F2 !important;
+  border-color: #4F46E5 !important;
   outline: none !important;
-  box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
 }
 
 html.light input::placeholder,
@@ -552,7 +606,7 @@ html:not(.dark) thead,
 html:not(.dark) thead tr,
 html:not(.dark) thead th {
   background-color: #F8FAFC !important;
-  color: #475569 !important;
+  color: #0F172A !important;
   border-color: #E2E8F0 !important;
   font-weight: 600 !important;
 }
@@ -561,12 +615,25 @@ html.light tbody tr,
 html:not(.dark) tbody tr {
   background-color: #FFFFFF !important;
   color: #0F172A !important;
-  border-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
 }
 
 html.light tbody tr:hover,
 html:not(.dark) tbody tr:hover {
   background-color: #F8FAFC !important;
+}
+
+html.light tr.selected,
+html.light tr[aria-selected="true"],
+html.light tr.bg-blue-50,
+html.light tr.bg-indigo-50,
+html.light tr.bg-primary-50,
+html:not(.dark) tr.selected,
+html:not(.dark) tr[aria-selected="true"],
+html:not(.dark) tr.bg-blue-50,
+html:not(.dark) tr.bg-indigo-50,
+html:not(.dark) tr.bg-primary-50 {
+  background-color: #EEF2FF !important;
 }
 
 /* 12. Modal Dialogs & Popovers */

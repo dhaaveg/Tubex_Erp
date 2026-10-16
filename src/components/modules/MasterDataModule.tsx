@@ -295,7 +295,7 @@ export default function MasterDataModule() {
               onClick={() => setActiveTab('suppliers')}
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                 activeTab === 'suppliers'
-                  ? 'bg-blue-600 text-white shadow'
+                  ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold dark:bg-[#4F46E5] dark:text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -306,7 +306,7 @@ export default function MasterDataModule() {
               onClick={() => setActiveTab('products')}
               className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                 activeTab === 'products'
-                  ? 'bg-blue-600 text-white shadow'
+                  ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold dark:bg-[#4F46E5] dark:text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -318,7 +318,7 @@ export default function MasterDataModule() {
                 onClick={() => setActiveTab('lov')}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-2 transition-all ${
                   activeTab === 'lov'
-                    ? 'bg-blue-600 text-white shadow'
+                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold dark:bg-[#4F46E5] dark:text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -331,7 +331,7 @@ export default function MasterDataModule() {
           {activeTab !== 'lov' && (
             <button
               onClick={handleOpenCreateModal}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Add {activeTab === 'suppliers' ? 'Supplier' : 'Product'}</span>
@@ -354,7 +354,7 @@ export default function MasterDataModule() {
             </p>
             <button
               onClick={() => setActiveTab('suppliers')}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-all"
+              className="mt-4 px-4 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold rounded-lg shadow-md transition-all"
             >
               Return to Suppliers & Mills
             </button>
@@ -573,10 +573,10 @@ export default function MasterDataModule() {
       {/* Creation Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                {isEditMode ? <Edit className="w-4 h-4 text-amber-400" /> : <Plus className="w-4 h-4 text-blue-400" />}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                {isEditMode ? <Edit className="w-4 h-4 text-amber-500 dark:text-amber-400" /> : <Plus className="w-4 h-4 text-[#4F46E5] dark:text-blue-400" />}
                 <span>
                   {activeTab === 'suppliers'
                     ? isEditMode ? 'Edit Supplier & Mill Master' : 'Register New Supplier Master'
@@ -585,15 +585,15 @@ export default function MasterDataModule() {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="mx-6 mt-4 p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
                 <span>{formError}</span>
               </div>
             )}
@@ -607,8 +607,8 @@ export default function MasterDataModule() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-slate-400">Supplier ID</label>
-                        <span className="text-[10px] text-blue-400 bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-800/60 font-mono">
+                        <label className="block text-slate-700 dark:text-slate-400 font-medium">Supplier ID</label>
+                        <span className="text-[10px] text-[#4F46E5] dark:text-blue-400 bg-[#EEF2FF] dark:bg-blue-950/80 px-1.5 py-0.5 rounded border border-[#E0E7FF] dark:border-blue-800/60 font-mono font-medium">
                           {isEditMode ? 'Locked' : 'Auto-Generated'}
                         </span>
                       </div>
@@ -618,102 +618,102 @@ export default function MasterDataModule() {
                         value={supplierForm.supplier_id}
                         onChange={(e) => setSupplierForm({ ...supplierForm, supplier_id: e.target.value })}
                         disabled={isEditMode}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500 disabled:opacity-75 disabled:cursor-not-allowed"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-900"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Supplier Name</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Supplier Name</label>
                       <input
                         type="text"
                         placeholder="Company legal name"
                         value={supplierForm.supplier_name}
                         onChange={(e) => setSupplierForm({ ...supplierForm, supplier_name: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-slate-400 mb-1">Mill Name</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Mill Name</label>
                       <input
                         type="text"
                         placeholder="Manufacturing mill name"
                         value={supplierForm.mill_name}
                         onChange={(e) => setSupplierForm({ ...supplierForm, mill_name: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">GST / Tax ID (Optional)</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">GST / Tax ID (Optional)</label>
                       <input
                         type="text"
                         placeholder="e.g. US-9842019 (Optional)"
                         value={supplierForm.gst_tax_id}
                         onChange={(e) => setSupplierForm({ ...supplierForm, gst_tax_id: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1">Mill Physical Address</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Mill Physical Address</label>
                     <input
                       type="text"
                       placeholder="Mill plant facility address"
                       value={supplierForm.mill_address}
                       onChange={(e) => setSupplierForm({ ...supplierForm, mill_address: e.target.value })}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1">Supplier Commercial Address</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Supplier Commercial Address</label>
                     <input
                       type="text"
                       placeholder="Headquarters address"
                       value={supplierForm.supplier_address}
                       onChange={(e) => setSupplierForm({ ...supplierForm, supplier_address: e.target.value })}
                       required
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-slate-400 mb-1">Contact Person</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Contact Person</label>
                       <input
                         type="text"
                         placeholder="Key account rep"
                         value={supplierForm.contact_person}
                         onChange={(e) => setSupplierForm({ ...supplierForm, contact_person: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Telephone</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Telephone</label>
                       <input
                         type="text"
                         placeholder="+1 555 0192"
                         value={supplierForm.telephone_no}
                         onChange={(e) => setSupplierForm({ ...supplierForm, telephone_no: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Email</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Email</label>
                       <input
                         type="email"
                         placeholder="sales@mill.com"
                         value={supplierForm.supplier_mail}
                         onChange={(e) => setSupplierForm({ ...supplierForm, supplier_mail: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                   </div>
@@ -723,8 +723,8 @@ export default function MasterDataModule() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-slate-400">Product ID</label>
-                        <span className="text-[10px] text-blue-400 bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-800/60 font-mono">
+                        <label className="block text-slate-700 dark:text-slate-400 font-medium">Product ID</label>
+                        <span className="text-[10px] text-[#4F46E5] dark:text-blue-400 bg-[#EEF2FF] dark:bg-blue-950/80 px-1.5 py-0.5 rounded border border-[#E0E7FF] dark:border-blue-800/60 font-mono font-medium">
                           {isEditMode ? 'Locked' : 'Auto-Generated'}
                         </span>
                       </div>
@@ -734,16 +734,16 @@ export default function MasterDataModule() {
                         value={productForm.product_id}
                         onChange={(e) => setProductForm({ ...productForm, product_id: e.target.value })}
                         disabled={isEditMode}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500 disabled:opacity-75 disabled:cursor-not-allowed"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-900"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Steel Grade *</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Steel Grade *</label>
                       <select
                         value={productForm.grade}
                         onChange={(e) => setProductForm({ ...productForm, grade: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       >
                         <option value="">-- Select Grade --</option>
                         <option value="J55">J55</option>
@@ -759,19 +759,19 @@ export default function MasterDataModule() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 mb-1">Description</label>
+                    <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Description</label>
                     <input
                       type="text"
                       placeholder="e.g. 7 in OD x 0.408 in WT L80 BTC Casing Pipe"
                       value={productForm.product_description}
                       onChange={(e) => setProductForm({ ...productForm, product_description: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                     />
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-slate-400 mb-1">Outer Dia (OD mm) *</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Outer Dia (OD mm) *</label>
                       <input
                         type="number"
                         step="0.01"
@@ -779,11 +779,11 @@ export default function MasterDataModule() {
                         value={productForm.size_od ?? ''}
                         onChange={(e) => setProductForm({ ...productForm, size_od: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Wall Thickness (mm) *</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Wall Thickness (mm) *</label>
                       <input
                         type="number"
                         step="0.01"
@@ -791,16 +791,16 @@ export default function MasterDataModule() {
                         value={productForm.wall_thickness ?? ''}
                         onChange={(e) => setProductForm({ ...productForm, wall_thickness: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Thread Type *</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Thread Type *</label>
                       <select
                         value={productForm.thread_type}
                         onChange={(e) => setProductForm({ ...productForm, thread_type: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       >
                         <option value="">-- Select Thread Type --</option>
                         <option value="BTC">BTC (Buttress)</option>
@@ -815,17 +815,17 @@ export default function MasterDataModule() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-slate-400 mb-1">CVN Requirement</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">CVN Requirement</label>
                       <input
                         type="text"
                         placeholder="e.g. 27J @ -10°C (Optional)"
                         value={productForm.cvn_requirement}
                         onChange={(e) => setProductForm({ ...productForm, cvn_requirement: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-400 mb-1">Nominal Weight (kg/m) *</label>
+                      <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Nominal Weight (kg/m) *</label>
                       <input
                         type="number"
                         step="0.01"
@@ -833,24 +833,24 @@ export default function MasterDataModule() {
                         value={productForm.nominal_weight_kg_m ?? ''}
                         onChange={(e) => setProductForm({ ...productForm, nominal_weight_kg_m: e.target.value === '' ? '' : parseFloat(e.target.value) || 0 })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-slate-200 font-mono focus:border-blue-500"
+                        className="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-slate-900 dark:text-slate-200 font-mono focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
                       />
                     </div>
                   </div>
                 </>
               )}
 
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30"
+                  className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold shadow-md shadow-indigo-600/20"
                 >
                   {isEditMode ? 'Update Master Record' : 'Save Master Record'}
                 </button>

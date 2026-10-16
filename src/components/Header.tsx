@@ -31,14 +31,14 @@ interface HeaderProps {
 }
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
-  SUPER_ADMIN: 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/30',
-  ADMIN: 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30',
-  MD: 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/30',
-  PROCUREMENT: 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30',
-  MANUFACTURING: 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30',
-  SALES: 'bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-500/30',
-  INVENTORY: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30',
-  QUALITY: 'bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-500/30',
+  SUPER_ADMIN: 'bg-rose-50 dark:bg-rose-500/10 text-[#BE123C] dark:text-rose-300 border-rose-200 dark:border-rose-500/30',
+  ADMIN: 'bg-indigo-50 dark:bg-indigo-500/10 text-[#4338CA] dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30',
+  MD: 'bg-purple-50 dark:bg-purple-500/10 text-[#6D28D9] dark:text-purple-300 border-purple-200 dark:border-purple-500/30',
+  PROCUREMENT: 'bg-blue-50 dark:bg-blue-500/10 text-[#1D4ED8] dark:text-blue-300 border-blue-200 dark:border-blue-500/30',
+  MANUFACTURING: 'bg-amber-50 dark:bg-amber-500/10 text-[#B45309] dark:text-amber-300 border-amber-200 dark:border-amber-500/30',
+  SALES: 'bg-orange-50 dark:bg-orange-500/10 text-[#C2410C] dark:text-orange-300 border-orange-200 dark:border-orange-500/30',
+  INVENTORY: 'bg-emerald-50 dark:bg-emerald-500/10 text-[#047857] dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30',
+  QUALITY: 'bg-cyan-50 dark:bg-cyan-500/10 text-[#0E7490] dark:text-cyan-300 border-cyan-200 dark:border-cyan-500/30',
 };
 
 export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoading }: HeaderProps) {
@@ -254,7 +254,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                 onClick={() => setProfileTab('profile')}
                 className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
                   profileTab === 'profile'
-                    ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400'
+                    ? 'border-[#4F46E5] text-[#4F46E5] dark:border-indigo-400 dark:text-indigo-400'
                     : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
@@ -267,7 +267,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                 onClick={() => setProfileTab('activity')}
                 className={`px-3 py-2 text-xs font-bold border-b-2 transition flex items-center space-x-1.5 cursor-pointer ${
                   profileTab === 'activity'
-                    ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400'
+                    ? 'border-[#4F46E5] text-[#4F46E5] dark:border-indigo-400 dark:text-indigo-400'
                     : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
@@ -283,14 +283,14 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
             ) : (
             <form onSubmit={handleSaveProfile} className="p-5 space-y-4">
               {errorMsg && (
-                <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-700/60 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2">
+                <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-700/60 text-[#BE123C] dark:text-rose-200 text-xs flex items-center space-x-2">
                   <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
 
               {successMsg && (
-                <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-200 text-xs flex items-center space-x-2">
+                <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-700/60 text-[#047857] dark:text-emerald-200 text-xs flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>{successMsg}</span>
                 </div>
@@ -306,7 +306,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                   required
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] outline-none"
                   placeholder="e.g. Ramesh Kulkarni"
                 />
               </div>
@@ -321,7 +321,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                   required
                   value={profileEmail}
                   onChange={(e) => setProfileEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-[#4F46E5] focus:border-[#4F46E5] outline-none"
                   placeholder="name@energyoilfield.com"
                 />
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
@@ -359,7 +359,7 @@ export default function Header({ onQuickSearch, onRefresh, onExportClick, isLoad
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow disabled:opacity-50"
+                  className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold transition shadow disabled:opacity-50"
                 >
                   {isSaving ? 'Updating...' : 'Save Identity Changes'}
                 </button>

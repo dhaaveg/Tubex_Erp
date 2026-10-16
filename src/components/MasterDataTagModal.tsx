@@ -40,12 +40,12 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
         {/* Modal Top Bar */}
-        <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
-          <div className="flex items-center space-x-2 text-xs font-bold text-slate-200">
-            <Barcode className="w-4 h-4 text-amber-400" />
+        <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
+          <div className="flex items-center space-x-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+            <Barcode className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             <span>
               {type === 'supplier'
                 ? 'Approved Mill & Supplier Identification Tag (Master Preview)'
@@ -60,7 +60,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
                   onClose();
                   onEdit();
                 }}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors border border-slate-700"
+                className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[#4F46E5] hover:text-[#4338CA] dark:text-blue-300 dark:hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Edit Record</span>
@@ -69,7 +69,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow"
+              className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Tag</span>
@@ -77,7 +77,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
             <button
               type="button"
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+              className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -85,7 +85,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
         </div>
 
         {/* Physical Industrial Tag Container */}
-        <div className="p-6 flex justify-center bg-slate-950/60 overflow-y-auto max-h-[80vh]">
+        <div className="p-6 flex justify-center bg-slate-100 dark:bg-slate-950/60 overflow-y-auto max-h-[80vh]">
           {type === 'supplier' ? (
             /* ================= SUPPLIER / MILL MASTER TAG ================= */
             <div className="w-full max-w-md bg-white text-slate-900 p-6 rounded-2xl border-4 border-dashed border-amber-500 shadow-2xl relative select-none font-mono">

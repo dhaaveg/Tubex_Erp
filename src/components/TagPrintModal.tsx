@@ -27,30 +27,30 @@ export default function TagPrintModal({ pipe, tallySheet, product, onClose }: Ta
   const tubeCount = pipe.tube_count || 1;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
         {/* Header Actions */}
-        <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
-          <div className="flex items-center space-x-2 text-xs font-bold text-slate-200">
-            <Barcode className="w-4 h-4 text-amber-400" />
+        <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
+          <div className="flex items-center space-x-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+            <Barcode className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             <span>Industrial Lot Barcode Tag Preview (API 5CT)</span>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
-              className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow"
+              className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Tag</span>
             </button>
-            <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800">
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Physical Tag Container (Styled like a heavy-duty vinyl outdoor pipe tag) */}
-        <div className="p-6 flex justify-center bg-slate-950/60">
+        <div className="p-6 flex justify-center bg-slate-100 dark:bg-slate-950/60">
           <div className="w-full max-w-sm bg-white text-slate-900 p-5 rounded-xl border-4 border-dashed border-amber-500 shadow-2xl relative select-none font-mono">
             {/* Tag Eyelet Hole for steel wire tie */}
             <div className="absolute top-3 right-3 w-4 h-4 rounded-full border-2 border-slate-400 bg-slate-200 flex items-center justify-center">
