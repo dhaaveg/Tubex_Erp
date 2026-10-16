@@ -341,10 +341,10 @@ export default function LovManagementTab() {
           <button
             type="button"
             onClick={() => setSelectedCategory('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
               selectedCategory === 'ALL'
                 ? 'bg-[#4F46E5] text-white shadow-md shadow-indigo-600/30'
-                : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
+                : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800'
             }`}
           >
             All Categories ({items.length})
@@ -354,10 +354,10 @@ export default function LovManagementTab() {
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-[#4F46E5] text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
+                  : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800'
               }`}
             >
               {cat.replace(/_/g, ' ')}
@@ -369,7 +369,7 @@ export default function LovManagementTab() {
           <button
             type="button"
             onClick={fetchItems}
-            className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer"
+            className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-slate-200 dark:border-slate-800 transition-colors duration-150 cursor-pointer"
             title="Reload LOV Items"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -378,7 +378,7 @@ export default function LovManagementTab() {
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all duration-150 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Add Dropdown Option</span>
@@ -424,7 +424,7 @@ export default function LovManagementTab() {
                 </tr>
               ) : (
                 filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors">
+                  <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                     <td className="px-4 py-3 font-mono font-medium text-slate-700 dark:text-slate-300">
                       <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px] text-[#4F46E5] dark:text-blue-400 font-bold">
                         {item.category}
@@ -448,7 +448,7 @@ export default function LovManagementTab() {
                               type="button"
                               onClick={() => handleMove(item, 'up')}
                               disabled={isReordering}
-                              className="p-0.5 text-slate-400 hover:text-blue-400 disabled:opacity-30 transition-colors"
+                              className="p-0.5 text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 disabled:opacity-30 transition-colors duration-150 cursor-pointer"
                               title="Move Up"
                             >
                               <ChevronUp className="w-3 h-3" />
@@ -457,7 +457,7 @@ export default function LovManagementTab() {
                               type="button"
                               onClick={() => handleMove(item, 'down')}
                               disabled={isReordering}
-                              className="p-0.5 text-slate-400 hover:text-blue-400 disabled:opacity-30 transition-colors"
+                              className="p-0.5 text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 disabled:opacity-30 transition-colors duration-150 cursor-pointer"
                               title="Move Down"
                             >
                               <ChevronDown className="w-3 h-3" />
@@ -482,7 +482,7 @@ export default function LovManagementTab() {
                         <button
                           type="button"
                           onClick={() => handleToggleActive(item)}
-                          className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-semibold border transition-all ${
+                          className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-semibold border transition-all duration-150 cursor-pointer ${
                             item.is_active
                               ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60'
                               : 'bg-red-950/60 text-red-400 border-red-800/60 hover:bg-red-900/60'
@@ -526,7 +526,7 @@ export default function LovManagementTab() {
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(item)}
-                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 dark:bg-slate-950 dark:hover:bg-blue-600/20 text-slate-600 hover:text-[#4F46E5] dark:text-slate-400 dark:hover:text-blue-400 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 dark:bg-slate-950 dark:hover:bg-blue-600/20 text-slate-600 hover:text-[#4F46E5] dark:text-slate-400 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-800 transition-colors duration-150 cursor-pointer"
                             title="Edit LOV"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
@@ -535,14 +535,14 @@ export default function LovManagementTab() {
                             <button
                               type="button"
                               onClick={() => handleDelete(item)}
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-950 dark:hover:bg-red-600/20 text-slate-600 hover:text-rose-600 dark:text-slate-400 dark:hover:text-red-400 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-950 dark:hover:bg-red-600/20 text-slate-600 hover:text-rose-600 dark:text-slate-400 dark:hover:text-red-300 border border-slate-200 dark:border-slate-800 transition-colors duration-150 cursor-pointer"
                               title="Delete custom option"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           ) : (
                             <span
-                              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-950 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-850 cursor-not-allowed opacity-50"
+                              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-950 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-800 cursor-not-allowed opacity-50"
                               title="System defaults cannot be deleted"
                             >
                               <Lock className="w-3.5 h-3.5" />
@@ -580,7 +580,7 @@ export default function LovManagementTab() {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -704,14 +704,14 @@ export default function LovManagementTab() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors duration-150 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold shadow-md shadow-indigo-600/30 transition-all duration-150 disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? 'Saving...' : editingItem ? 'Save Changes' : 'Create Option'}
                 </button>

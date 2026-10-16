@@ -310,7 +310,7 @@ export default function Sidebar({
               className={`w-9 h-9 rounded-xl border flex items-center justify-center cursor-help transition-all shadow-sm ${
                 isTransitioning
                   ? 'bg-amber-50 dark:bg-amber-950/70 border-amber-300 dark:border-amber-700/80'
-                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 border-slate-200 dark:border-slate-700'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
               }`}
               title={`${currentShift.displayName} (${currentShift.startTime.slice(0, 5)} - ${currentShift.endTime.slice(0, 5)})`}
             >
@@ -325,7 +325,7 @@ export default function Sidebar({
             </div>
 
             {/* Rich Collapsed Popover Tooltip */}
-            <div className="absolute left-full ml-3 px-3 py-2.5 bg-slate-900 dark:bg-slate-850 text-white text-xs rounded-xl shadow-2xl border border-slate-700 whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-150 transform scale-95 group-hover:scale-100 space-y-1">
+            <div className="absolute left-full ml-3 px-3 py-2.5 bg-slate-900 dark:bg-slate-800 text-white text-xs rounded-xl shadow-2xl border border-slate-700 whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-150 transform scale-95 group-hover:scale-100 space-y-1">
               <div className="flex items-center space-x-2 pb-1.5 border-b border-slate-700/80">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-bold text-slate-100">{currentShift.displayName}</span>
@@ -375,7 +375,7 @@ export default function Sidebar({
                 } ${
                   isActive
                     ? 'bg-[#EEF2FF] text-[#4F46E5] dark:bg-[#4F46E5] dark:text-white font-semibold border border-[#C7D2FE]/70 dark:border-transparent shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-[#4338CA] dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-[#4338CA] dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/70'
                 }`}
               >
                 <div className={`flex items-center ${isCollapsed ? 'justify-center relative' : 'space-x-2.5 truncate mr-2'}`}>
@@ -477,7 +477,7 @@ export default function Sidebar({
                 href="https://github.com/dhaaveg"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[9px] font-mono font-bold tracking-tight px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-850 text-slate-400 dark:text-slate-500 hover:text-[#4F46E5] dark:hover:text-indigo-400 transition-colors block text-center"
+                className="text-[9px] font-mono font-bold tracking-tight px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-[#4F46E5] dark:hover:text-indigo-400 transition-colors block text-center"
               >
                 @Dh
               </a>

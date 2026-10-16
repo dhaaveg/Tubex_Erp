@@ -406,7 +406,7 @@ export default function PoInvoiceModal({ po, onClose }: PoInvoiceModalProps) {
                           .trim();
 
                         return (
-                          <tr key={item.po_item_id || idx} className="hover:bg-slate-50 avoid-break print:break-inside-avoid">
+                          <tr key={item.po_item_id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-100 transition-colors duration-150 avoid-break print:break-inside-avoid print:hover:bg-transparent">
                             <td className="p-2 text-center text-slate-500">{idx + 1}</td>
                             <td className="p-2 font-bold text-blue-900">{item.po_item_id}</td>
                             <td className="p-2 font-sans font-medium text-slate-800">

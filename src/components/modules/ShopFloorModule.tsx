@@ -962,7 +962,7 @@ export default function ShopFloorModule() {
                     onClick={() => setSelectedWo(wo)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-[#EEF2FF] dark:bg-slate-850 border-[#4F46E5] shadow-sm'
+                        ? 'bg-[#EEF2FF] dark:bg-slate-800 border-[#4F46E5] shadow-sm'
                         : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                     }`}
                   >
@@ -1298,7 +1298,7 @@ export default function ShopFloorModule() {
                       </thead>
                       <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                         {selectedWo.production_postings.map((p: any) => (
-                          <tr key={p.pp_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/40 transition-colors">
+                          <tr key={p.pp_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                             <td className="px-3 py-2 font-bold text-slate-800 dark:text-slate-200">
                               <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-300">
                                 OP {p.operation_seq_no}: {p.process_stage_name}
@@ -1369,7 +1369,7 @@ export default function ShopFloorModule() {
                       </thead>
                       <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                         {selectedWo.rejection_postings.map((r: any) => (
-                          <tr key={r.rp_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/40">
+                          <tr key={r.rp_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                             <td className="px-3 py-2 text-rose-600 dark:text-rose-400">{r.rp_id}</td>
                             <td className="px-3 py-2 font-bold text-slate-800 dark:text-slate-200">{r.defect_category}</td>
                             <td className="px-3 py-2 text-rose-600 dark:text-rose-400 font-bold">{r.defect_quantity} pcs</td>

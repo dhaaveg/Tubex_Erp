@@ -96,7 +96,7 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-slate-850 dark:to-blue-950/80 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm dark:shadow-xl relative overflow-hidden">
+      <div className="bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-slate-800 dark:to-blue-950/80 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm dark:shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>

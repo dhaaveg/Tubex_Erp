@@ -974,8 +974,8 @@ export default function ReceivingModule() {
                         <React.Fragment key={g.grn_id}>
                           <tr
                             onClick={() => setExpandedGrn(isExpanded ? null : g.grn_id)}
-                            className={`hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors cursor-pointer select-none ${
-                              isExpanded ? 'bg-slate-50/80 dark:bg-slate-850/40' : ''
+                            className={`hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150 cursor-pointer select-none ${
+                              isExpanded ? 'bg-slate-50/80 dark:bg-slate-800/40' : ''
                             }`}
                           >
                             <td className="px-3 py-3 text-center">
@@ -1167,7 +1167,7 @@ export default function ReceivingModule() {
                                               (ts) => ts.grn_item_id === item.grn_item_id
                                             );
                                             return (
-                                              <tr key={item.grn_item_id} className="hover:bg-slate-850/50">
+                                              <tr key={item.grn_item_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                                                 <td className="px-3 py-2 font-bold text-blue-400 font-mono">
                                                   {item.grn_item_id}
                                                 </td>
@@ -1496,7 +1496,7 @@ export default function ReceivingModule() {
                           ((item.rounded_qty * item.parting_length_mm) / item.tube_length_mm) * 100
                         ).toFixed(1);
                         return (
-                          <tr key={item.ti_id} className="hover:bg-slate-850/40">
+                          <tr key={item.ti_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                             <td className="px-3 py-2 text-slate-500">{item.tube_sr_no}</td>
                             <td className="px-3 py-2">
                               <button
@@ -1896,7 +1896,7 @@ export default function ReceivingModule() {
                           {grnForm.items.map((item, idx) => (
                             <tr
                               key={idx}
-                              className="bg-white dark:bg-slate-900/70 hover:bg-slate-50 dark:hover:bg-slate-850/50 transition-colors"
+                              className="bg-white dark:bg-slate-900/70 hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150"
                             >
                               {/* 1. Size */}
                               <td className="px-3 py-2.5">

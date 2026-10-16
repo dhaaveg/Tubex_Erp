@@ -340,7 +340,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                       postings.map((p: any) => {
                         const isBalanced = p.input_quantity === p.accepted_quantity + p.rejected_quantity + p.rework_quantity;
                         return (
-                          <tr key={p.pp_id} className="hover:bg-slate-50 dark:hover:bg-slate-850/40">
+                          <tr key={p.pp_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                             <td className="px-3 py-2.5 text-blue-600 dark:text-blue-400 font-bold">OP {p.operation_seq_no}</td>
                             <td className="px-3 py-2.5 font-sans font-medium text-slate-800 dark:text-slate-200">{p.process_stage_name}</td>
                             <td className="px-3 py-2.5 text-slate-600 dark:text-slate-400">{p.operator_machine_id}</td>

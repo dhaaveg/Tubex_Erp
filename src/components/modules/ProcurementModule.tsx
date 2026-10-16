@@ -982,12 +982,12 @@ export default function ProcurementModule() {
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="py-3.5 px-4"><div className="w-4 h-4 bg-slate-200 dark:bg-slate-800 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-36 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-24 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4"><div className="w-32 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-20 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="w-16 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-12 h-3 bg-slate-100 dark:bg-slate-850 rounded ml-auto" /></td>
-                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-28 h-3 bg-slate-100 dark:bg-slate-850 rounded ml-auto" /></td>
-                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-850 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-800 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-36 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-24 h-3 bg-slate-100 dark:bg-slate-800 rounded" /></td>
+                    <td className="py-3.5 px-4"><div className="w-32 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-20 h-3 bg-slate-100 dark:bg-slate-800 rounded" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="w-16 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-12 h-3 bg-slate-100 dark:bg-slate-800 rounded ml-auto" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="w-20 h-4 bg-slate-200 dark:bg-slate-800 rounded ml-auto mb-1.5" /><div className="w-28 h-3 bg-slate-100 dark:bg-slate-800 rounded ml-auto" /></td>
+                    <td className="py-3.5 px-4"><div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-1.5" /><div className="w-16 h-3 bg-slate-100 dark:bg-slate-800 rounded" /></td>
                     <td className="py-3.5 px-4 text-right"><div className="w-20 h-6 bg-slate-200 dark:bg-slate-800 rounded ml-auto" /></td>
                   </tr>
                 ))
@@ -1287,9 +1287,9 @@ export default function ProcurementModule() {
                                         <th className="py-2.5 px-3 text-center">Status</th>
                                       </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-mono text-xs">
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-xs">
                                       {po.po_items?.map((item: any, idx: number) => (
-                                        <tr key={item.po_item_id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-850/40 transition">
+                                        <tr key={item.po_item_id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors duration-150">
                                           <td className="py-2 px-3 text-blue-600 dark:text-blue-400 font-bold">
                                             #{idx + 1}
                                           </td>

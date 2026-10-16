@@ -335,7 +335,7 @@ export default function RecentActivityFeed({
               <div className="w-6 h-6 rounded-md bg-slate-200 dark:bg-slate-800" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/3" />
-                <div className="h-2.5 bg-slate-100 dark:bg-slate-850 rounded w-2/3" />
+                <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded w-2/3" />
               </div>
               <div className="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-16" />
             </div>

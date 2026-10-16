@@ -60,7 +60,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
                   onClose();
                   onEdit();
                 }}
-                className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[#4F46E5] hover:text-[#4338CA] dark:text-blue-300 dark:hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+                className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[#4F46E5] hover:text-[#4338CA] dark:text-blue-300 dark:hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors duration-150 border border-slate-200 dark:border-slate-700 cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Edit Record</span>
@@ -69,7 +69,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors cursor-pointer"
+              className="px-3 py-1 rounded bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold flex items-center space-x-1.5 shadow transition-colors duration-150 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Tag</span>
@@ -77,7 +77,7 @@ export default function MasterDataTagModal({ type, data, onClose, onEdit }: Mast
             <button
               type="button"
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>

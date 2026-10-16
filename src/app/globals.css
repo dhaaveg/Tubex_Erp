@@ -623,6 +623,14 @@ html:not(.dark) tbody tr:hover {
   background-color: #F8FAFC !important;
 }
 
+html.dark tbody tr {
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark tbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.7);
+}
+
 html.light tr.selected,
 html.light tr[aria-selected="true"],
 html.light tr.bg-blue-50,

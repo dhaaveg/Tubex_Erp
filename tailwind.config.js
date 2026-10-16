@@ -20,6 +20,10 @@ module.exports = {
         'status-success': '#10B981',
         'status-warning': '#F59E0B',
         'status-danger': '#EF4444',
+        slate: {
+          750: '#293548',
+          850: '#172033',
+        },
         primary: {
           50: '#EEF2FF',
           600: '#4F46E5',
