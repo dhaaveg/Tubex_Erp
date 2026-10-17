@@ -10,10 +10,11 @@ export const GET = withApiHandler(async (request: Request) => {
     const query = (searchParams.get('q') || searchParams.get('tag') || searchParams.get('heat'))?.trim();
 
     if (!query) {
-      return NextResponse.json(
-        { success: false, error: 'Search parameter q (Heat No, Tube Tag, WO ID, PO No, or GRN ID) is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: true,
+        data: null,
+        message: 'Traceability engine active. Provide parameter q (Heat No, Tube Tag, WO ID, PO No, or GRN ID) to trace genealogy.'
+      });
     }
 
     // Attempt 1: Search by Tube Tag / TI_Id

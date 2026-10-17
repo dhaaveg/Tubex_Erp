@@ -29,7 +29,7 @@ interface TraceabilityModuleProps {
   initialQuery?: string;
 }
 
-export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }: TraceabilityModuleProps) {
+export default function TraceabilityModule({ initialQuery = '' }: TraceabilityModuleProps) {
   const [query, setQuery] = useState(initialQuery);
   const [data, setData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +57,10 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
   };
 
   useEffect(() => {
-    handleSearch(initialQuery);
-  }, []);
+    if (initialQuery) {
+      handleSearch(initialQuery);
+    }
+  }, [initialQuery]);
 
   // Extract entities from returned payload
   const tallyItem = data?.tallyItem || data?.primaryItem;
@@ -91,7 +93,7 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by Heat No (HT-84920), Pipe Tag (TAG-HT84920-001), WO ID (WO-2026-001), RM PO No..."
+              placeholder="Search by Heat No, Pipe Barcode Tag, Work Order ID, Customer PO, or RM PO..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -107,45 +109,21 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
           </button>
         </div>
 
-        {/* Preset Quick Clicks */}
+        {/* Supported Identifier Chips */}
         <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-          <span className="text-slate-500 dark:text-slate-400 text-[11px]">Quick Samples:</span>
-          <button
-            onClick={() => {
-              setQuery('HT-84920');
-              handleSearch('HT-84920');
-            }}
-            className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700"
-          >
-            Heat No: HT-84920
-          </button>
-          <button
-            onClick={() => {
-              setQuery('TAG-HT84920-001');
-              handleSearch('TAG-HT84920-001');
-            }}
-            className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700"
-          >
-            Pipe Tag: TAG-HT84920-001
-          </button>
-          <button
-            onClick={() => {
-              setQuery('WO-2026-001');
-              handleSearch('WO-2026-001');
-            }}
-            className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700"
-          >
-            Work Order: WO-2026-001
-          </button>
-          <button
-            onClick={() => {
-              setQuery('PO-2026-001');
-              handleSearch('PO-2026-001');
-            }}
-            className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700"
-          >
-            Raw Material PO: PO-2026-001
-          </button>
+          <span className="text-slate-500 dark:text-slate-400 text-[11px]">Supported Query Types:</span>
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700">
+            Heat Number
+          </span>
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700">
+            Pipe Serial / Barcode Tag
+          </span>
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700">
+            Work Order ID
+          </span>
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-mono text-[11px] border border-slate-200 dark:border-slate-700">
+            Raw Material PO / Customer Order
+          </span>
         </div>
       </div>
 
@@ -171,13 +149,13 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Master</span>
               </div>
               <div className="font-bold text-slate-900 dark:text-white text-sm">
-                {supplier?.supplier_name || 'Tenaris Global Tubulars Ltd'}
+                {supplier?.supplier_name || '—'}
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-medium">
-                Mill: {supplier?.mill_name || 'Dalmine Seamless Tube Mill'}
+                Mill: {supplier?.mill_name || '—'}
               </div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                GST: {supplier?.gst_tax_id || 'LU-218492019'}
+                GST: {supplier?.gst_tax_id || '—'}
               </div>
             </div>
 
@@ -191,14 +169,14 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Inwarded</span>
               </div>
               <div className="font-mono font-bold text-slate-900 dark:text-white text-sm">
-                GRN: {grn?.grn_id || 'GRN-2026-001'}
+                GRN: {grn?.grn_id || '—'}
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300">
-                RM PO: <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">{po?.po_no || 'PO-2026-001'}</span>
+                RM PO: <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">{po?.po_no || '—'}</span>
               </div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex justify-between">
-                <span>Weighbridge: {grn?.actual_weighbridge_weight_mt || 42.38} MT</span>
-                <span className="text-amber-600 dark:text-amber-400 font-semibold">Δ {grn?.weight_difference_mt || -0.12} MT</span>
+                <span>Weighbridge: {grn?.actual_weighbridge_weight_mt != null ? `${grn.actual_weighbridge_weight_mt} MT` : '—'}</span>
+                <span className="text-amber-600 dark:text-amber-400 font-semibold">{grn?.weight_difference_mt != null ? `Δ ${grn.weight_difference_mt} MT` : '—'}</span>
               </div>
             </div>
 
@@ -212,14 +190,14 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Dimensional</span>
               </div>
               <div className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm">
-                {tallyItem?.ti_id || 'TAG-HT84920-001'}
+                {tallyItem?.ti_id || '—'}
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-mono">
-                Heat: <span className="text-blue-600 dark:text-blue-300 font-bold">{tallySheet?.heat_no || 'HT-84920'}</span> • Lot:{' '}
-                {tallySheet?.lot_no || 'LOT-2026-A1'}
+                Heat: <span className="text-blue-600 dark:text-blue-300 font-bold">{tallySheet?.heat_no || '—'}</span> • Lot:{' '}
+                {tallySheet?.lot_no || '—'}
               </div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex justify-between items-center pt-1 border-t border-slate-200 dark:border-slate-800">
-                <span>MTC: {tallySheet?.mill_test_certificate_no || 'MTC-TEN-84920'}</span>
+                <span>MTC: {tallySheet?.mill_test_certificate_no || '—'}</span>
                 <div className="flex items-center space-x-1">
                   <button
                     onClick={() => setActivePrintPipe({ ...tallyItem, tally_sheet: tallySheet, product })}
@@ -255,14 +233,14 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
                       : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300'
                   }`}
                 >
-                  {workOrder?.wo_status || 'In Progress'}
+                  {workOrder?.wo_status || '—'}
                 </span>
               </div>
               <div className="font-mono font-bold text-slate-900 dark:text-white text-sm">
-                {workOrder?.wo_id || 'WO-2026-001'}
+                {workOrder?.wo_id || '—'}
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-mono">
-                Line: {workOrder?.machine_line_no || 'CNC-CELL-01'} • {workOrder?.shift || 'Shift A'}
+                Line: {workOrder?.machine_line_no || '—'} • {workOrder?.shift || '—'}
               </div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex justify-between">
                 <span>Stages: {postings.length} / 8</span>
@@ -405,6 +383,21 @@ export default function TraceabilityModule({ initialQuery = 'TAG-HT84920-001' }:
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Empty Initial Search State */}
+      {!data && !isLoading && !error && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center mx-auto mb-4 text-blue-600 dark:text-blue-400">
+            <Search className="w-6 h-6" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+            Trace Provenance Across Manufacturing Lifecycle
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+            Enter any active Heat Number, Pipe Barcode Tag, Work Order, or Raw Material PO above to audit real-time genealogy and stage progression.
+          </p>
         </div>
       )}
 

@@ -65,7 +65,7 @@ function ErpShellContent({ initialTab = 'home' }: { initialTab?: NavigationTab }
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [quickSearchQuery, setQuickSearchQuery] = useState<string>(() => {
-    return searchParams.get('search') || searchParams.get('q') || 'TAG-HT84920-001';
+    return searchParams.get('search') || searchParams.get('q') || '';
   });
 
   // Persistent Collapsible Sidebar State

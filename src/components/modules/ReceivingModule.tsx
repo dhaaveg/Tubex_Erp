@@ -613,8 +613,8 @@ export default function ReceivingModule() {
     setTallyForm({
       ts_id: ts.ts_id,
       grn_item_id: ts.grn_item_id,
-      lot_no: ts.lot_no || 'LOT-2026-B1',
-      heat_no: ts.heat_no || 'HT-99142',
+      lot_no: ts.lot_no || '',
+      heat_no: ts.heat_no || '',
       mill_test_certificate_no: ts.mill_test_certificate_no || '',
       tally_sheet_date: ts.tally_sheet_date ? new Date(ts.tally_sheet_date).toISOString().split('T')[0] : '',
       inspector_name: ts.inspector_name,
@@ -2264,7 +2264,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Default Heat Number</label>
                   <input
                     type="text"
-                    placeholder="e.g. HT-84920"
+                    placeholder="Enter Mill Heat Number"
                     value={tallyForm.heat_no}
                     onChange={(e) => handleDefaultHeatChange(e.target.value)}
                     required
@@ -2275,7 +2275,7 @@ export default function ReceivingModule() {
                   <label className="block text-slate-700 dark:text-slate-400 mb-1 font-medium">Default Lot Number</label>
                   <input
                     type="text"
-                    placeholder="e.g. LOT-2026-A1"
+                    placeholder="Enter Lot Identifier"
                     value={tallyForm.lot_no}
                     onChange={(e) => setTallyForm({ ...tallyForm, lot_no: e.target.value })}
                     required

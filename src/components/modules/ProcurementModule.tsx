@@ -374,9 +374,9 @@ export default function ProcurementModule() {
     setPoNo(po.po_no);
     setPoDate(po.po_date ? new Date(po.po_date).toISOString().split('T')[0] : '');
     setSupplierId(po.supplier_id);
-    setShippingAddress(po.shipping_address || 'Dock 4, Tubular Inwarding Yard, Precision Hub');
+    setShippingAddress(po.shipping_address || '');
     setDeliveryDate(po.delivery_date ? new Date(po.delivery_date).toISOString().split('T')[0] : '');
-    setPaymentTerms(po.payment_terms || '30% Advance, Net 60 Days');
+    setPaymentTerms(po.payment_terms || '');
     setDeliveryTerms(po.delivery_terms || 'FOB Mill Yard');
     setAdvanceAmount(po.advance_amount || 0);
     setQualityStipulations(po.quality_stipulations || DEFAULT_QUALITY_STIPULATIONS);
@@ -386,33 +386,33 @@ export default function ProcurementModule() {
       po.po_items && po.po_items.length > 0
         ? po.po_items.map((item: any) => {
             const prd = item.product || products.find((p) => p.product_id === item.product_id);
-            const od = item.size_od || prd?.size_od || 177.8;
-            const wt = item.wall_thickness || prd?.wall_thickness || 10.36;
+            const od = item.size_od || prd?.size_od || 0;
+            const wt = item.wall_thickness || prd?.wall_thickness || 0;
             return {
               po_item_id: item.po_item_id,
               product_id: item.product_id || '',
               size_od: od,
-              grade: item.grade || prd?.grade || 'L80',
+              grade: item.grade || prd?.grade || '',
               wall_thickness: wt,
               schedule: wt <= 7 ? 'Sch 40' : wt <= 10 ? 'Sch 80' : 'Sch 120',
               cvn_requirement: item.cvn_requirement || prd?.cvn_requirement || DEFAULT_CVN_REQUIREMENT,
-              ordered_qty: item.ordered_qty || 1000,
-              ordered_qty_mt: item.ordered_qty_mt || calcEstMt(item.ordered_qty || 1000, od, wt),
-              unit_rate: item.unit_rate || 45,
+              ordered_qty: item.ordered_qty || 0,
+              ordered_qty_mt: item.ordered_qty_mt || (od && wt ? calcEstMt(item.ordered_qty || 0, od, wt) : 0),
+              unit_rate: item.unit_rate || 0,
               tolerable_variance_pct: item.tolerable_variance_pct ?? 5,
             };
           })
         : [
             {
               product_id: '',
-              size_od: 177.8,
-              grade: 'L80',
-              wall_thickness: 10.36,
-              schedule: 'Sch 80',
+              size_od: 0,
+              grade: '',
+              wall_thickness: 0,
+              schedule: '',
               cvn_requirement: DEFAULT_CVN_REQUIREMENT,
-              ordered_qty: 1000,
-              ordered_qty_mt: 43.15,
-              unit_rate: 45,
+              ordered_qty: 0,
+              ordered_qty_mt: 0,
+              unit_rate: 0,
               tolerable_variance_pct: 5,
             },
           ]
@@ -426,9 +426,9 @@ export default function ProcurementModule() {
     setPoNo(`PO-${new Date().getFullYear()}-${String(purchaseOrders.length + 1).padStart(3, '0')}`);
     setPoDate(new Date().toISOString().split('T')[0]);
     setSupplierId(po.supplier_id);
-    setShippingAddress(po.shipping_address || 'Dock 4, Tubular Inwarding Yard, Precision Hub');
+    setShippingAddress(po.shipping_address || '');
     setDeliveryDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-    setPaymentTerms(po.payment_terms || '30% Advance, Net 60 Days');
+    setPaymentTerms(po.payment_terms || '');
     setDeliveryTerms(po.delivery_terms || 'FOB Mill Yard');
     setAdvanceAmount(0);
     setQualityStipulations(po.quality_stipulations || DEFAULT_QUALITY_STIPULATIONS);
@@ -437,14 +437,14 @@ export default function ProcurementModule() {
     setItems(
       po.po_items?.map((item: any) => ({
         product_id: item.product_id || '',
-        size_od: item.size_od || 177.8,
-        grade: item.grade || 'L80',
-        wall_thickness: item.wall_thickness || 10.36,
-        schedule: item.schedule || 'Sch 80',
+        size_od: item.size_od || 0,
+        grade: item.grade || '',
+        wall_thickness: item.wall_thickness || 0,
+        schedule: item.schedule || '',
         cvn_requirement: item.cvn_requirement || DEFAULT_CVN_REQUIREMENT,
-        ordered_qty: item.ordered_qty || 1000,
-        ordered_qty_mt: item.ordered_qty_mt || 43.15,
-        unit_rate: item.unit_rate || 45,
+        ordered_qty: item.ordered_qty || 0,
+        ordered_qty_mt: item.ordered_qty_mt || 0,
+        unit_rate: item.unit_rate || 0,
         tolerable_variance_pct: item.tolerable_variance_pct || 5,
       })) || []
     );
@@ -1094,7 +1094,7 @@ export default function ProcurementModule() {
                               </div>
                               <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center space-x-1.5">
                                 <span className="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono text-[10px]">
-                                  {firstItem.grade || firstItem.product?.grade || 'L80'}
+                                  {firstItem.grade || firstItem.product?.grade || '—'}
                                 </span>
                                 {po.po_items && po.po_items.length > 1 && (
                                   <span className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">

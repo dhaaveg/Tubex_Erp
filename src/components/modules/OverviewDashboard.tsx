@@ -30,7 +30,7 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
     {
       title: 'Active Suppliers',
       value: stats?.totalSuppliers ?? 0,
-      subtext: 'Dalmine, Vallourec, JFE Mills',
+      subtext: 'Vetted Pipe Mills & Vendors',
       icon: Factory,
       color: 'blue',
       tab: 'master-data' as NavigationTab,
@@ -38,7 +38,7 @@ export default function OverviewDashboard({ stats, onNavigate }: OverviewDashboa
     {
       title: 'OCTG Products',
       value: stats?.totalProducts ?? 0,
-      subtext: 'API 5CT J55, L80, P110',
+      subtext: 'API 5CT Casing & Tubing Spec',
       icon: Package,
       color: 'indigo',
       tab: 'master-data' as NavigationTab,

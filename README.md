@@ -166,7 +166,7 @@ The system includes pre-configured administrative and operational users across a
    # Seed default role-to-module permission allocations
    node scripts/seed-role-permissions.mjs
 
-   # Seed initial supplier, product catalog, and work orders (optional)
+   # Seed system Lists of Values (LOV) master reference catalog
    node prisma/seed.js
    ```
 

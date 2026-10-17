@@ -49,14 +49,14 @@ export const GET = withApiHandler(async (request: Request) => {
         'Rounded Yield Pcs': item.rounded_qty,
         'End Scrap (mm)': item.end_scrap_mm,
         'Allocation Status': item.pipe_allocation_status,
-        'Steel Grade': item.tally_sheet?.grn_item?.product?.grade || 'L80',
-        'OD (mm)': item.tally_sheet?.grn_item?.product?.size_od || 177.8,
-        'WT (mm)': item.tally_sheet?.grn_item?.product?.wall_thickness || 10.36,
-        'Thread Spec': item.tally_sheet?.grn_item?.product?.thread_type || 'BTC',
-        'Supplier Name': item.tally_sheet?.grn_item?.po_item?.purchase_order?.supplier?.supplier_name || 'JFE Steel Corporation',
-        'PO Number': item.tally_sheet?.grn_item?.po_item?.purchase_order?.po_no || 'PO-2026-001',
-        'GRN Number': item.tally_sheet?.grn_item?.grn_id || 'GRN-2026-001',
-        'Inspector': item.tally_sheet?.inspector_name || 'QA Lead',
+        'Steel Grade': item.tally_sheet?.grn_item?.product?.grade || '',
+        'OD (mm)': item.tally_sheet?.grn_item?.product?.size_od || 0,
+        'WT (mm)': item.tally_sheet?.grn_item?.product?.wall_thickness || 0,
+        'Thread Spec': item.tally_sheet?.grn_item?.product?.thread_type || '',
+        'Supplier Name': item.tally_sheet?.grn_item?.po_item?.purchase_order?.supplier?.supplier_name || '',
+        'PO Number': item.tally_sheet?.grn_item?.po_item?.purchase_order?.po_no || '',
+        'GRN Number': item.tally_sheet?.grn_item?.grn_id || '',
+        'Inspector': item.tally_sheet?.inspector_name || '',
         'Tally Date': item.tally_sheet?.tally_sheet_date ? formatDate(item.tally_sheet.tally_sheet_date) : '',
       }));
     };
@@ -86,7 +86,7 @@ export const GET = withApiHandler(async (request: Request) => {
         'Rework Quantity': p.rework_quantity,
         'Completion Date': p.stage_completion_timestamp ? formatDateTime(p.stage_completion_timestamp) : '',
         'Target Product': p.work_order?.target_product?.product_description || '',
-        'WO Shift': p.work_order?.shift || 'Shift A',
+        'WO Shift': p.work_order?.shift || '',
       }));
     };
 

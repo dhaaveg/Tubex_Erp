@@ -12,12 +12,12 @@ interface MtcViewerModalProps {
 }
 
 export default function MtcViewerModal({ tallySheet, product, supplier, onClose }: MtcViewerModalProps) {
-  const mtcNo = tallySheet?.mill_test_certificate_no || 'MTC-TEN-84920-REV2';
-  const heatNo = tallySheet?.heat_no || 'HT-84920';
-  const lotNo = tallySheet?.lot_no || 'LOT-2026-A1';
-  const inspector = tallySheet?.inspector_name || 'Marcus Vance (Level III NDT)';
-  const millName = supplier?.mill_name || 'Dalmine Seamless Tube Mill';
-  const supplierName = supplier?.supplier_name || 'Tenaris Global Tubulars Ltd';
+  const mtcNo = tallySheet?.mill_test_certificate_no || 'N/A';
+  const heatNo = tallySheet?.heat_no || 'N/A';
+  const lotNo = tallySheet?.lot_no || 'N/A';
+  const inspector = tallySheet?.inspector_name || 'Authorized QA Inspector';
+  const millName = supplier?.mill_name || supplier?.supplier_name || 'Authorized Pipe Mill';
+  const supplierName = supplier?.supplier_name || 'Authorized Tubular Supplier';
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -75,11 +75,11 @@ export default function MtcViewerModal({ tallySheet, product, supplier, onClose 
               </div>
               <div>
                 <span className="text-[9px] text-slate-500 block uppercase font-sans">STEEL GRADE</span>
-                <span className="font-black text-slate-900">{product?.grade || 'L80'}</span>
+                <span className="font-black text-slate-900">{product?.grade || 'N/A'}</span>
               </div>
               <div>
                 <span className="text-[9px] text-slate-500 block uppercase font-sans">CONNECTION</span>
-                <span className="font-black text-slate-900">{product?.thread_type || 'BTC'}</span>
+                <span className="font-black text-slate-900">{product?.thread_type || 'N/A'}</span>
               </div>
             </div>
 

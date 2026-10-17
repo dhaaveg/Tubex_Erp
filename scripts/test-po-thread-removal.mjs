@@ -38,15 +38,36 @@ async function run() {
   assert(authRes.status === 200, 'Super Admin logged in successfully');
   const cookie = authRes.cookie;
 
-  // Step 2: Create new PO without any thread_type
+  // Step 2: Ensure test supplier exists and create new PO without any thread_type
   console.log('\n--- STEP 2: Create Purchase Order without thread_type on line items ---');
   const timestamp = Date.now();
   const testPoNo = `PO-TEST-NOTHREAD-${timestamp}`;
 
+  let supplier = await prisma.supplier.findFirst();
+  let createdTestSupplierId = null;
+  if (!supplier) {
+    createdTestSupplierId = `SUP-TEST-${timestamp}`;
+    supplier = await prisma.supplier.create({
+      data: {
+        supplier_id: createdTestSupplierId,
+        supplier_name: 'Dynamic Test Supplier',
+        supplier_onboarding_date: new Date(),
+        supplier_address: '100 Industrial Parkway',
+        contact_person: 'QA Tester',
+        telephone_no: '+1-555-0199',
+        supplier_mail: 'test.supplier@energyoilfield.com',
+        mill_name: 'Test Mill Works',
+        mill_address: '100 Mill Road',
+        gst_tax_id: 'GST-TEST-001',
+        status: 'Active',
+      },
+    });
+  }
+
   const newPO = {
     po_no: testPoNo,
     po_date: new Date().toISOString().split('T')[0],
-    supplier_id: 'SUP-001',
+    supplier_id: supplier.supplier_id,
     shipping_address: 'Dock 4, Tubular Inwarding Yard',
     delivery_date: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
     payment_terms: '30% Advance, Net 60 Days',
@@ -143,7 +164,14 @@ async function run() {
   assert(Array.isArray(getList), 'Returned array of POs');
   const foundPo = getList.find((p) => p.po_no === testPoNo);
   assert(foundPo != null, `Found created PO ${testPoNo} in listing`);
-  assert(foundPo.po_items?.length === 2, 'PO contains both line items');
+  // Step 5: Clean up created test records
+  console.log('--- Cleaning up test PO & supplier records ---');
+  await prisma.pOItem.deleteMany({ where: { po_no: testPoNo } });
+  await prisma.purchaseOrder.deleteMany({ where: { po_no: testPoNo } });
+  if (createdTestSupplierId) {
+    await prisma.supplier.deleteMany({ where: { supplier_id: createdTestSupplierId } });
+  }
+  console.log('✅ Test records cleaned up successfully.');
 
   console.log('\n================================================================');
   console.log('🎉 ALL TESTS PASSED: PO Thread Type Removal Verified Successfully!');

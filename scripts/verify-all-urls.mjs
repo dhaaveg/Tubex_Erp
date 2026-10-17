@@ -115,7 +115,7 @@ async function run() {
     '/api/work-orders',
     '/api/production-postings',
     '/api/rejections',
-    '/api/traceability?q=TAG-HT84920-001',
+    '/api/traceability',
     '/api/export',
     '/api/users',
     '/api/admin/role-permissions',

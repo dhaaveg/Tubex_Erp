@@ -17,13 +17,13 @@ export default function TagPrintModal({ pipe, tallySheet, product, onClose }: Ta
     window.print();
   };
 
-  const grade = product?.grade || 'L80';
-  const thread = product?.thread_type || 'BTC';
-  const sizeOd = product?.size_od || 177.8;
-  const wt = product?.wall_thickness || 10.36;
-  const heatNo = pipe.heat_no || tallySheet?.heat_no || 'HT-84920';
-  const lotNo = pipe.lot_no || tallySheet?.lot_no || 'LOT-2026-A1';
-  const mtc = pipe.mill_test_certificate_no || tallySheet?.mill_test_certificate_no || 'MTC-TEN-84920-REV2';
+  const grade = product?.grade || pipe?.grade || '—';
+  const thread = product?.thread_type || pipe?.thread_type || '—';
+  const sizeOd = product?.size_od || pipe?.size_od || '—';
+  const wt = product?.wall_thickness || pipe?.wall_thickness || '—';
+  const heatNo = pipe.heat_no || tallySheet?.heat_no || 'N/A';
+  const lotNo = pipe.lot_no || tallySheet?.lot_no || 'N/A';
+  const mtc = pipe.mill_test_certificate_no || tallySheet?.mill_test_certificate_no || 'N/A';
   const tubeCount = pipe.tube_count || 1;
 
   return (

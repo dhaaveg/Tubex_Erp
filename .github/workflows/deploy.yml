@@ -2,9 +2,9 @@ name: Enterprise ERP CI/CD & Production Build
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, test, master]
   pull_request:
-    branches: [main, master]
+    branches: [main, test, master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
